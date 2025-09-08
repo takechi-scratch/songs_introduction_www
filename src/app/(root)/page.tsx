@@ -6,14 +6,12 @@ import { Title } from "@mantine/core";
 
 export default function HomePage() {
     return (
-        <>
-            <MyAppShell>
-                <Title mb="lg">MIMIさん全曲紹介</Title>
-                <Title order={2} mb="md">
-                    最新の曲
-                </Title>
-                <NewSongsCarousel />
-            </MyAppShell>
-        </>
+        <MyAppShell>
+            <Title mb="lg">MIMIさん全曲紹介</Title>
+            <Title order={2} mb="md">
+                最新の曲
+            </Title>
+            <NewSongsCarousel />
+        </MyAppShell>
     );
 }

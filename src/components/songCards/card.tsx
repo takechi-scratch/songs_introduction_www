@@ -1,15 +1,16 @@
 import { Card, Group, HoverCard, Image, Text } from "@mantine/core";
 import { Song } from "@/lib/songs/types";
 import { formatDate } from "@/lib/date";
+import Link from "next/link";
 
 export default function Demo(song: Song) {
     return (
         <Card
             shadow="sm"
             padding="xl"
-            component="a"
-            href={`https://www.youtube.com/watch?v=${song.id}`}
-            target="_blank"
+            component={Link}
+            style={{ height: 350 }}
+            href={`/songs/${song.id}/`}
         >
             <Card.Section>
                 <Image

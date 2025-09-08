@@ -1,7 +1,7 @@
 "use client";
 
 import SongCards from "@/components/songCards/card";
-import { useSongs } from "@/hooks/useSongs";
+import { useSongs } from "@/hooks/songs";
 import { Carousel } from "@mantine/carousel";
 
 import "@mantine/core/styles.css";
