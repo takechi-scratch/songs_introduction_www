@@ -1,12 +1,14 @@
 import { Card, Group, HoverCard, Image, Text } from "@mantine/core";
+import { Song } from "@/lib/songs/types";
+import { formatDate } from "@/lib/date";
 
-export default function Demo() {
+export default function Demo(song: Song) {
     return (
         <Card
             shadow="sm"
             padding="xl"
             component="a"
-            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            href={`https://www.youtube.com/watch?v=${song.id}`}
             target="_blank"
         >
             <Card.Section>
@@ -26,13 +28,13 @@ export default function Demo() {
                         </Text>
                     </HoverCard.Target>
                     <HoverCard.Dropdown>
-                        <Text size="sm">2025/09/07 12:00に公開</Text>
+                        <Text size="sm">{formatDate(song.publishedTimestamp)}</Text>
                     </HoverCard.Dropdown>
                 </HoverCard>
             </Group>
 
             <Text fw={500} size="lg" mt="md">
-                テスト曲あああああ
+                {song.title}
             </Text>
         </Card>
     );

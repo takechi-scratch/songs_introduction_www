@@ -12,9 +12,12 @@
         "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
     },
     "dependencies": {
+        "@mantine/carousel": "^8.3.0",
         "@mantine/core": "^8.2.7",
         "@mantine/hooks": "^8.2.7",
         "@opennextjs/cloudflare": "^1.3.0",
+        "embla-carousel": "^8.5.2",
+        "embla-carousel-react": "^8.5.2",
         "next": "15.4.6",
         "react": "19.1.0",
         "react-dom": "19.1.0"
