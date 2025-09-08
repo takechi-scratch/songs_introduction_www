@@ -4,6 +4,9 @@ import SongCards from "@/components/songCards/card";
 import { useSongs } from "@/hooks/useSongs";
 import { Carousel } from "@mantine/carousel";
 
+import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
+
 export default function NewSongsCarousel() {
     const { songs, loading, error } = useSongs();
 
@@ -13,10 +16,10 @@ export default function NewSongsCarousel() {
     return (
         <Carousel
             withIndicators
-            height={200}
-            slideSize={{ base: "100%", sm: "50%", md: "33.333333%" }}
+            height={500}
+            slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
             slideGap={{ base: 0, sm: "md" }}
-            emblaOptions={{ loop: true, align: "start" }}
+            emblaOptions={{ align: "start" }}
         >
             {songs.map((song) => (
                 <Carousel.Slide key={song.id}>
