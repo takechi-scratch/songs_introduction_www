@@ -39,7 +39,7 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
     return (
         <MyAppShell>
             <Title mb="lg">曲ID: {song.id}</Title>
-            <Flex direction="row" gap="md" style={{ height: 400 }}>
+            <Flex direction="row" gap="md" style={{ height: 300 }}>
                 <ReactPlayer
                     src={`https://www.youtube.com/watch?v=${song.id}`}
                     width={480}
@@ -56,6 +56,9 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
                     </Tabs.List>
 
                     <Tabs.Panel value="basicInfo">
+                        <Title order={4} mb="sm">
+                            一覧
+                        </Title>
                         <Table variant="vertical" layout="fixed" withTableBorder>
                             <Table.Tbody>
                                 <Table.Tr>
@@ -101,38 +104,19 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
                     </Tabs.Panel>
 
                     <Tabs.Panel value="analysis">
-                        <Table variant="vertical" layout="fixed" withTableBorder>
+                        <Title order={4} mb="sm">
+                            基本データ
+                        </Title>
+                        <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                             <Table.Tbody>
                                 <Table.Tr>
-                                    <Table.Th w={160}>bpm</Table.Th>
+                                    <Table.Th w={160}>BPM</Table.Th>
                                     <Table.Td>{song.bpm}</Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>
                                     <Table.Th>主なキー</Table.Th>
                                     <Table.Td>{formatOriginalKey(song.mainKey)}</Table.Td>
-                                </Table.Tr>
-
-                                <Table.Tr>
-                                    <Table.Th>コード進行（6451）</Table.Th>
-                                    <Table.Td>{(song.chordRate6451 * 100).toFixed(1)}%</Table.Td>
-                                </Table.Tr>
-
-                                <Table.Tr>
-                                    <Table.Th>コード進行（4561）</Table.Th>
-                                    <Table.Td>{(song.chordRate4561 * 100).toFixed(1)}%</Table.Td>
-                                </Table.Tr>
-
-                                <Table.Tr>
-                                    <Table.Th>主なコード</Table.Th>
-                                    <Table.Td>{song.mainChord || "-"}</Table.Td>
-                                </Table.Tr>
-
-                                <Table.Tr>
-                                    <Table.Th>ピアノの使用度</Table.Th>
-                                    <Table.Td>
-                                        <Rating value={song.pianoRate} readOnly />
-                                    </Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>
@@ -146,10 +130,10 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
                             </Table.Tbody>
                         </Table>
 
-                        <Title order={4} mt="md" mb="sm">
+                        <Title order={4} mb="sm">
                             コード進行
                         </Title>
-                        <Flex direction="row" gap="lg">
+                        <Flex direction="row" gap="lg" h={120}>
                             <DonutChart
                                 data={chordData}
                                 startAngle={180}
@@ -158,6 +142,11 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
                             />
                             <Text style={{ flex: 1 }}>主なコード: {song.mainChord}</Text>
                         </Flex>
+
+                        <Title order={4} mb="sm">
+                            ピアノの使用度
+                        </Title>
+                        <Rating value={song.pianoRate} size={30} readOnly />
                     </Tabs.Panel>
 
                     <Tabs.Panel value="others">
