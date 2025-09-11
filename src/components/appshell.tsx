@@ -28,7 +28,9 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 <Group h="100%" px="md">
                     <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                     <Group justify="space-between" style={{ flex: 1 }}>
-                        Header
+                        <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+                            <h3 style={{ margin: 0 }}>MIMIさん全曲紹介</h3>
+                        </Link>
                         <Group ml="xl" gap={0} visibleFrom="sm">
                             <Buttons />
                         </Group>

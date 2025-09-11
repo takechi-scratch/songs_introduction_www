@@ -4,6 +4,7 @@ export type Song = {
     publishedTimestamp: number;
     isPublishedInOriginalChannel: boolean;
     durationSeconds: number;
+    thumbnailURL: string;
     vocal: string;
     illustrations: string;
     movie: string;

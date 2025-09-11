@@ -2,23 +2,39 @@
 
 import MyAppShell from "@/components/appshell";
 import { useSong } from "@/hooks/songs";
-import { Song } from "@/lib/songs/types";
-import { Anchor, Flex, Table, Text, Title } from "@mantine/core";
+import { Anchor, Blockquote, Flex, Rating, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
-import { use } from "react";
+import { Usable, use } from "react";
 import ReactPlayer from "react-player";
 import { Tabs } from "@mantine/core";
-import { formatDate } from "@/lib/date";
+import { DonutChart } from "@mantine/charts";
+import { formatDate, formatDuration } from "@/lib/date";
+import { formatOriginalKey } from "@/lib/musicValues";
 
-export default function SongPage({ params }: { params: { id: string } }) {
-    const resolvedParams: Song = use(params);
+import "@mantine/charts/styles.css";
+
+export default function SongPage({ params }: { params: Usable<{ id: string }> }) {
+    const resolvedParams = use(params);
     const id = resolvedParams.id;
     const { song, loading, error } = useSong(id);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <MyAppShell>Loading...</MyAppShell>;
+    if (error) return <MyAppShell>Error: {error}</MyAppShell>;
 
-    if (!song) return <div>Song not found</div>;
+    if (!song) return <MyAppShell>曲が見つかりません</MyAppShell>;
+
+    const chordData = [
+        { name: "6451進行", value: song.chordRate6451, color: "#96c3ffff" },
+        { name: "4561進行", value: song.chordRate4561, color: "#fcab7fff" },
+    ];
+
+    if (chordData[0].value + chordData[1].value < 1) {
+        chordData.push({
+            name: "その他",
+            value: 1 - (song.chordRate4561 + song.chordRate6451),
+            color: "gray.6",
+        });
+    }
 
     return (
         <MyAppShell>
@@ -29,6 +45,7 @@ export default function SongPage({ params }: { params: { id: string } }) {
                     width={480}
                     height={270}
                     controls
+                    fallback={<div style={{ width: 480, height: 270 }}>Loading...</div>}
                 />
 
                 <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
@@ -61,8 +78,8 @@ export default function SongPage({ params }: { params: { id: string } }) {
                                 </Table.Tr>
 
                                 <Table.Tr>
-                                    <Table.Th>秒数</Table.Th>
-                                    <Table.Td>{song.durationSeconds}</Table.Td>
+                                    <Table.Th>長さ</Table.Th>
+                                    <Table.Td>{formatDuration(song.durationSeconds)}</Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>
@@ -83,9 +100,76 @@ export default function SongPage({ params }: { params: { id: string } }) {
                         </Table>
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="analysis">分析情報 tab content</Tabs.Panel>
+                    <Tabs.Panel value="analysis">
+                        <Table variant="vertical" layout="fixed" withTableBorder>
+                            <Table.Tbody>
+                                <Table.Tr>
+                                    <Table.Th w={160}>bpm</Table.Th>
+                                    <Table.Td>{song.bpm}</Table.Td>
+                                </Table.Tr>
 
-                    <Tabs.Panel value="others">その他 tab content</Tabs.Panel>
+                                <Table.Tr>
+                                    <Table.Th>主なキー</Table.Th>
+                                    <Table.Td>{formatOriginalKey(song.mainKey)}</Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>コード進行（6451）</Table.Th>
+                                    <Table.Td>{(song.chordRate6451 * 100).toFixed(1)}%</Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>コード進行（4561）</Table.Th>
+                                    <Table.Td>{(song.chordRate4561 * 100).toFixed(1)}%</Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>主なコード</Table.Th>
+                                    <Table.Td>{song.mainChord || "-"}</Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>ピアノの使用度</Table.Th>
+                                    <Table.Td>
+                                        <Rating value={song.pianoRate} readOnly />
+                                    </Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>転調</Table.Th>
+                                    <Table.Td>
+                                        {song.modulationTimes !== 0
+                                            ? `${song.modulationTimes}回`
+                                            : "なし"}
+                                    </Table.Td>
+                                </Table.Tr>
+                            </Table.Tbody>
+                        </Table>
+
+                        <Title order={4} mt="md" mb="sm">
+                            コード進行
+                        </Title>
+                        <Flex direction="row" gap="lg">
+                            <DonutChart
+                                data={chordData}
+                                startAngle={180}
+                                endAngle={0}
+                                valueFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                            />
+                            <Text style={{ flex: 1 }}>主なコード: {song.mainChord}</Text>
+                        </Flex>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="others">
+                        <Title order={4}>コメント</Title>
+                        {song.comment ? (
+                            <Blockquote color="blue" m="md" w={500}>
+                                {song.comment}
+                            </Blockquote>
+                        ) : (
+                            <Text m="sm">なし</Text>
+                        )}
+                    </Tabs.Panel>
                 </Tabs>
             </Flex>
 
