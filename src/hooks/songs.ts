@@ -1,11 +1,8 @@
-// Reactで曲を取得するhooks。
-// あとで修正
-
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchSongById, fetchSongs } from "@/lib/songs/api";
-import { Song } from "@/lib/songs/types";
+import { fetchNearestSongs, fetchSongById, fetchSongs } from "@/lib/songs/api";
+import { Song, SongWithScore } from "@/lib/songs/types";
 
 export function useSongs() {
     const [songs, setSongs] = useState<Song[]>([]);
@@ -55,4 +52,29 @@ export function useSong(id: string) {
     }, [id]);
 
     return { song, loading, error, refetch: () => loadSong(id) };
+}
+
+export function useNearestSongs(id: string, limit: number = 10) {
+    const [songs, setSongs] = useState<SongWithScore[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    async function loadNearestSongs(id: string, limit: number) {
+        try {
+            setLoading(true);
+            const data = await fetchNearestSongs(id, limit);
+            setSongs(data);
+            setError(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Unknown error");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadNearestSongs(id, limit);
+    }, [id, limit]);
+
+    return { songs, loading, error, refetch: () => loadNearestSongs(id, limit) };
 }

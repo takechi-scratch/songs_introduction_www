@@ -17,3 +17,13 @@ export type Song = {
     modulationTimes: number;
     comment: string;
 };
+
+export type SongWithScore = {
+    id: string;
+    song: Song;
+    score: number;
+};
+
+export const hasScore = (item: Song | SongWithScore): item is SongWithScore => {
+    return !!(item as SongWithScore)?.score;
+};

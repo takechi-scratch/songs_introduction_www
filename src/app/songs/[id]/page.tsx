@@ -1,7 +1,7 @@
 "use client";
 
 import MyAppShell from "@/components/appshell";
-import { useSong } from "@/hooks/songs";
+import { useNearestSongs, useSong } from "@/hooks/songs";
 import { Anchor, Blockquote, Flex, Rating, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import { Usable, use } from "react";
@@ -10,6 +10,7 @@ import { Tabs } from "@mantine/core";
 import { DonutChart } from "@mantine/charts";
 import { formatDate, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
+import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 
 import "@mantine/charts/styles.css";
 
@@ -17,6 +18,7 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
     const resolvedParams = use(params);
     const id = resolvedParams.id;
     const { song, loading, error } = useSong(id);
+    const nearestSongs = useNearestSongs(id);
 
     if (loading) return <MyAppShell>Loading...</MyAppShell>;
     if (error) return <MyAppShell>Error: {error}</MyAppShell>;
@@ -165,6 +167,16 @@ export default function SongPage({ params }: { params: Usable<{ id: string }> })
             <Anchor href="/" component={Link}>
                 ホームに戻る
             </Anchor>
+
+            <Title order={2} m="md" mt={120}>
+                似ている曲
+            </Title>
+
+            <NearestSongsCarousel
+                songs={nearestSongs.songs}
+                loading={nearestSongs.loading}
+                error={nearestSongs.error}
+            />
         </MyAppShell>
     );
 }
