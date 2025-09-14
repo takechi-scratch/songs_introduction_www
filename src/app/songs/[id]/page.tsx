@@ -4,7 +4,7 @@ import MyAppShell from "@/components/appshell";
 import { useNearestSongs, useSong } from "@/hooks/songs";
 import { Anchor, Blockquote, Flex, Rating, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
-import { Usable, use } from "react";
+import { use } from "react";
 import ReactPlayer from "react-player";
 import { Tabs } from "@mantine/core";
 import { DonutChart } from "@mantine/charts";
@@ -14,7 +14,7 @@ import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 
 import "@mantine/charts/styles.css";
 
-export default function SongPage({ params }: { params: Usable<{ id: string }> }) {
+export default function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
     const id = resolvedParams.id;
     const { song, loading, error } = useSong(id);

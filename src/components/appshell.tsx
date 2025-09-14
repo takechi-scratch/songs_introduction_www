@@ -1,6 +1,6 @@
 "use client";
 
-import { AppShell, Burger, Group, UnstyledButton } from "@mantine/core";
+import { AppShell, Burger, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
@@ -43,6 +43,12 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
             </AppShell.Navbar>
 
             <AppShell.Main>{children}</AppShell.Main>
+
+            <AppShell.Footer p="md">
+                <Text size="xs">
+                    製作: <Link href="https://x.com/takechi_scratch">takechi</Link>
+                </Text>
+            </AppShell.Footer>
         </AppShell>
     );
 }

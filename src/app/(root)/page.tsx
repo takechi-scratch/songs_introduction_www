@@ -42,15 +42,15 @@ export default function HomePage() {
                 最新の曲
             </Title>
             <NewSongsCarousel songs={songs} loading={loading} error={error} />
-         <Title order={2} mb="md">
+            <Title order={2} mb="md">
                 「MIMIさん全曲紹介」について
             </Title>
-         <FadeInUp title="お気に入りの曲を発見">
+            <FadeInUp title="お気に入りの曲を発見">
                 <Text>
                     知らない曲を発見するために、全曲の分析データを作成。これをもとに、「似ている曲」を提案します。
                 </Text>
             </FadeInUp>
-         <Title order={2} mb="md">
+            <Title order={2} mb="md">
                 知っておいてほしいこと
             </Title>
             <FadeInUp title="さまざまな曲を発見するのが目的です">
@@ -72,11 +72,10 @@ export default function HomePage() {
                     生成AIはサイトのコーディングにのみ使用しています。
                     分析データは全て製作者が手動で行ったものです。
                 </Text>
-                <Text>また、楽曲の分析データをAIの入力として与えることもないよう注意しています。</Text>
+                <Text>
+                    また、楽曲の分析データをAIの入力として与えることもないよう注意しています。
+                </Text>
             </FadeInUp>
-            <Text my="xl" c="dimmed" size="sm">
-                製作: takechi (https://x.com/takechi_scratch)
-            </Text>
         </MyAppShell>
     );
 }
