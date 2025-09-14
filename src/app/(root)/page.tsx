@@ -42,15 +42,27 @@ export default function HomePage() {
                 最新の曲
             </Title>
             <NewSongsCarousel songs={songs} loading={loading} error={error} />
-            <FadeInUp title="お気に入りの曲を発見">
+         <Title order={2} mb="md">
+                「MIMIさん全曲紹介」について
+            </Title>
+         <FadeInUp title="お気に入りの曲を発見">
                 <Text>
                     知らない曲を発見するために、全曲の分析データを作成。これをもとに、「似ている曲」を提案します。
+                </Text>
+            </FadeInUp>
+         <Title order={2} mb="md">
+                知っておいてほしいこと
+            </Title>
+            <FadeInUp title="さまざまな曲を発見するのが目的です">
+                <Text>
+                    このサイトは、MIMIさんのさまざまな曲を知ってもらうために作成しました。
+                    それぞれの曲に優劣をつけたり、曲の感じ方を強制したりするといった意図はありません。
                 </Text>
             </FadeInUp>
             <Divider my="xl" />
             <FadeInUp title="収益化はしていません">
                 <Text>
-                    このサイトは、MIMIさんのさまざまな曲を知ってもらうために、個人が趣味で運営しているものです。
+                    このサイトは個人が趣味で運営しているものです。
                     広告やアフィリエイトなどの収益化は一切行っていません。
                 </Text>
             </FadeInUp>
@@ -60,10 +72,10 @@ export default function HomePage() {
                     生成AIはサイトのコーディングにのみ使用しています。
                     分析データは全て製作者が手動で行ったものです。
                 </Text>
-                <Text>また、音楽データをAIの入力として与えることもしないよう注意しています。</Text>
+                <Text>また、楽曲の分析データをAIの入力として与えることもないよう注意しています。</Text>
             </FadeInUp>
             <Text my="xl" c="dimmed" size="sm">
-                製作: takechi (https://twitter.com/takechi_scratch)
+                製作: takechi (https://x.com/takechi_scratch)
             </Text>
         </MyAppShell>
     );
