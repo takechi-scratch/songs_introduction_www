@@ -34,14 +34,20 @@ const FadeInUp = ({ children, title }: { children: React.ReactNode; title: strin
 };
 
 export default function HomePage() {
-    const { songs, loading, error } = useSongs();
+    const latestSongsData = useSongs();
+    // なぜか提供曲の絞り込みを作っていなかったので後で
+    // const colaborationSongsData = useSongs({ isPublishedInOriginalChannel: true });
 
     return (
         <MyAppShell>
             <Title order={2} mb="md">
                 最新の曲
             </Title>
-            <NewSongsCarousel songs={songs} loading={loading} error={error} />
+            <NewSongsCarousel
+                songs={latestSongsData.songs}
+                loading={latestSongsData.loading}
+                error={latestSongsData.error}
+            />
             <Title order={2} mb="md">
                 「MIMIさん全曲紹介」について
             </Title>

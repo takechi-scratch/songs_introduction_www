@@ -1,13 +1,19 @@
-export const FilterableKeys = {
-    動画のID: "id",
-    タイトル: "title",
-    ボーカル: "vocal",
-    イラスト等: "illustrations",
-    動画: "movie",
-    コメント: "comment",
-    主なコード進行: "mainChord",
-    主なキー: "mainKey",
+type FilterableContent = {
+    displayName: string;
+    key: keyof import("../songs/types").Song;
+    example: string;
 };
+
+export const FilterableContents: FilterableContent[] = [
+    { displayName: "動画のID", key: "id", example: "id-test" },
+    { displayName: "タイトル", key: "title", example: "ハナタバ" },
+    { displayName: "ボーカル", key: "vocal", example: "初音ミク" },
+    { displayName: "イラスト等", key: "illustrations", example: "ao" },
+    { displayName: "動画", key: "movie", example: "瀬戸わらび" },
+    { displayName: "コメント", key: "comment", example: "ノリが良い" },
+    { displayName: "主なコード進行", key: "mainChord", example: "6451" },
+    { displayName: "主なキー", key: "mainKey", example: "60" },
+];
 
 export const SortableKeys = {
     動画のID: "id",
@@ -20,4 +26,11 @@ export const SortableKeys = {
     "4561進行の割合": "chordRate4561",
     ピアノの使用度: "pianoRate",
     転調回数: "modulationTimes",
+};
+
+export type SearchQuery = {
+    [key in (typeof FilterableContents)[number]["key"]]?: string | boolean;
+} & {
+    order?: string;
+    asc?: boolean;
 };

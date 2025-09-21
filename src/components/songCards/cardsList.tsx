@@ -5,7 +5,7 @@ import Card from "@/components/songCards/card";
 import { Center, Pagination, SimpleGrid } from "@mantine/core";
 import { useState } from "react";
 
-export default function CardsList({ songs }: { songs: (Song | SongWithScore)[] }) {
+export default function CardsList({ songs }: { songs: (Song | SongWithScore | null)[] }) {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const songsPerPage = 10;
     const pages = Math.ceil(songs.length / songsPerPage);
@@ -20,9 +20,9 @@ export default function CardsList({ songs }: { songs: (Song | SongWithScore)[] }
             >
                 {songs
                     .slice((pageIndex - 1) * songsPerPage, pageIndex * songsPerPage)
-                    .map((song) => (
-                        <Card key={song.id} song={song} />
-                    ))}
+                    .map((song) => {
+                        return <Card key={song ? song.id : Math.random()} song={song} />;
+                    })}
             </SimpleGrid>
             <Center m="lg">
                 <Pagination total={pages} onChange={setPageIndex} />

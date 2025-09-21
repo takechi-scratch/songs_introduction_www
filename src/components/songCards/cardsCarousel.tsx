@@ -2,46 +2,21 @@
 
 import SongCards from "@/components/songCards/card";
 import { Carousel } from "@mantine/carousel";
-
-import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
-import { Skeleton } from "@mantine/core";
 import { Song, SongWithScore } from "@/lib/songs/types";
-
-function NewSongCards({
-    songs,
-    loading,
-    error,
-}: {
-    songs: (Song | SongWithScore)[];
-    loading: boolean;
-    error: string | null;
-}) {
-    if (loading) {
-        return [...Array(5)].map((_, index) => (
-            <Carousel.Slide key={index}>
-                <Skeleton height={300} />
-            </Carousel.Slide>
-        ));
-    }
-    if (error) return <div>Error: {error}</div>;
-
-    return songs.map((song) => (
-        <Carousel.Slide key={song.id}>
-            <SongCards song={song} />
-        </Carousel.Slide>
-    ));
-}
+import { Text } from "@mantine/core";
 
 export default function NewSongsCarousel({
     songs,
     loading,
     error,
 }: {
-    songs: (Song | SongWithScore)[];
+    songs: (Song | SongWithScore | null)[];
     loading: boolean;
     error: string | null;
 }) {
+    if (!loading && error) return <Text>Error: {error}</Text>;
+
     return (
         <Carousel
             withIndicators
@@ -50,7 +25,11 @@ export default function NewSongsCarousel({
             slideGap={{ base: 0, sm: "md" }}
             emblaOptions={{ align: "start" }}
         >
-            <NewSongCards songs={songs} loading={loading} error={error} />
+            {songs.map((song) => (
+                <Carousel.Slide key={song ? song.id : Math.random()}>
+                    <SongCards song={song} />
+                </Carousel.Slide>
+            ))}
         </Carousel>
     );
 }

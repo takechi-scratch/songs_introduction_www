@@ -3,16 +3,31 @@
 import { useState, useEffect } from "react";
 import { fetchNearestSongs, fetchSongById, fetchSongs } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
+import { SearchQuery } from "@/lib/search/filter";
 
-export function useSongs() {
-    const [songs, setSongs] = useState<Song[]>([]);
+export function useSongs(
+    searchType: "filter" | "nearest" = "filter",
+    query: SearchQuery = {},
+    customParams = {}
+) {
+    const [songs, setSongs] = useState<(Song | SongWithScore | null)[]>([...Array(10).fill(null)]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    async function loadSongs() {
+    async function loadSongs(
+        searchType: "filter" | "nearest",
+        query: SearchQuery,
+        customParams: Record<string, any>
+    ) {
         try {
+            setSongs([...Array(10).fill(null)]);
             setLoading(true);
-            const data = await fetchSongs();
+            let data;
+            if (searchType === "filter") {
+                data = await fetchSongs(query);
+            } else {
+                data = await fetchNearestSongs(customParams.id, customParams.limit);
+            }
             setSongs(data);
             setError(null);
         } catch (err) {
@@ -23,10 +38,10 @@ export function useSongs() {
     }
 
     useEffect(() => {
-        loadSongs();
+        loadSongs(searchType, query, customParams);
     }, []);
 
-    return { songs, loading, error, refetch: () => loadSongs() };
+    return { songs, loading, error, refetch: () => loadSongs(searchType, query, customParams) };
 }
 
 export function useSong(id: string) {

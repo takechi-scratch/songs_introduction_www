@@ -1,19 +1,22 @@
-import { Card, Group, HoverCard, Image, Text } from "@mantine/core";
+import { Card, Group, HoverCard, Image, Skeleton, Text } from "@mantine/core";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
-import { formatDate } from "@/lib/date";
+import { formatDate, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
 
-export default function SongCard({ song }: { song: Song | SongWithScore }) {
+export default function SongCard({ song }: { song: Song | SongWithScore | null }) {
+    if (!song) return <Skeleton height={350} />;
+
     let hoverData;
     if (hasScore(song)) {
         hoverData = <Text size="sm">類似度: {(song.score * 100).toFixed(2)}%</Text>;
         song = song.song as Song;
     } else {
+        const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
         hoverData = (
             <HoverCard width={200} shadow="md">
                 <HoverCard.Target>
                     <Text mt="xs" c="dimmed" size="sm">
-                        1日前
+                        {formatElapsedSeconds(timeDiff)}前
                     </Text>
                 </HoverCard.Target>
                 <HoverCard.Dropdown>
@@ -28,15 +31,15 @@ export default function SongCard({ song }: { song: Song | SongWithScore }) {
             shadow="sm"
             padding="xl"
             component={Link}
-            style={{ height: 300 }}
+            style={{ height: 350 }}
             href={`/songs/${song.id}/`}
         >
             <Card.Section>
                 <Image
                     src={song.thumbnailURL}
-                    h={150}
+                    h={200}
                     alt={`${song.title}のサムネイル`}
-                    // fit="contain"
+                    fit="contain"
                 />
             </Card.Section>
 

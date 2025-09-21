@@ -2,7 +2,17 @@
 
 import MyAppShell from "@/components/appshell";
 import { useNearestSongs, useSong } from "@/hooks/songs";
-import { Anchor, Blockquote, Flex, Rating, Table, Text, Title } from "@mantine/core";
+import {
+    Anchor,
+    Badge,
+    Blockquote,
+    Flex,
+    Rating,
+    Table,
+    Text,
+    Title,
+    Tooltip,
+} from "@mantine/core";
 import Link from "next/link";
 import { use } from "react";
 import ReactPlayer from "react-player";
@@ -13,6 +23,23 @@ import { formatOriginalKey } from "@/lib/musicValues";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 
 import "@mantine/charts/styles.css";
+
+function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
+    return (
+        <Flex align="center">
+            <Text size="sm" style={{ width: 100 }}>
+                {name}
+            </Text>
+            {isFromYoutube && (
+                <Tooltip label="YouTube Data APIを用いて取得しています">
+                    <Badge color="red" size="sm">
+                        Y
+                    </Badge>
+                </Tooltip>
+            )}
+        </Flex>
+    );
+}
 
 export default function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
@@ -64,17 +91,23 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                         <Table variant="vertical" layout="fixed" withTableBorder>
                             <Table.Tbody>
                                 <Table.Tr>
-                                    <Table.Th w={160}>タイトル</Table.Th>
+                                    <Table.Th w={160}>
+                                        <ContentName name="タイトル" isFromYoutube={true} />
+                                    </Table.Th>
                                     <Table.Td>{song.title}</Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>
-                                    <Table.Th>公開時刻</Table.Th>
+                                    <Table.Th>
+                                        <ContentName name="公開時刻" isFromYoutube={true} />
+                                    </Table.Th>
                                     <Table.Td>{formatDate(song.publishedTimestamp)}</Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>
-                                    <Table.Th>公開形式</Table.Th>
+                                    <Table.Th>
+                                        <ContentName name="公開形式" isFromYoutube={true} />
+                                    </Table.Th>
                                     <Table.Td>
                                         {song.isPublishedInOriginalChannel
                                             ? "オリジナル曲"
@@ -83,7 +116,9 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                                 </Table.Tr>
 
                                 <Table.Tr>
-                                    <Table.Th>長さ</Table.Th>
+                                    <Table.Th>
+                                        <ContentName name="長さ" isFromYoutube={true} />
+                                    </Table.Th>
                                     <Table.Td>{formatDuration(song.durationSeconds)}</Table.Td>
                                 </Table.Tr>
 
