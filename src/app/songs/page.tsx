@@ -89,6 +89,8 @@ function NearestTab() {
 
 export default function Page() {
     const [searchType, setSearchType] = useState<"filter" | "nearest">("filter");
+    // 今後追加予定
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [customParams, setCustomParams] = useState<customParams>({
         target_song_id: "some-id",
         parameters: {},
@@ -98,9 +100,6 @@ export default function Page() {
         Object.fromEntries(FilterableContents.map((content) => [content.key, ""]))
     );
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
-
-    // 今後実装予定
-    setCustomParams({ target_song_id: "some-id", parameters: {}, limit: 10 });
 
     if (error) return <div>Error: {error}</div>;
 
