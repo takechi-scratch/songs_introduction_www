@@ -34,7 +34,7 @@ const FadeInUp = ({ children, title }: { children: React.ReactNode; title: strin
 };
 
 export default function HomePage() {
-    const latestSongsData = useSongs();
+    const latestSongsData = useSongs("filter", { order: "publishedTimestamp" }, {});
     // なぜか提供曲の絞り込みを作っていなかったので後で
     // const colaborationSongsData = useSongs({ isPublishedInOriginalChannel: true });
 

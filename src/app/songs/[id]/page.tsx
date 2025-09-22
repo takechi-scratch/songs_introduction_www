@@ -31,7 +31,7 @@ function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boo
                 {name}
             </Text>
             {isFromYoutube && (
-                <Tooltip label="YouTube Data APIを用いて取得しています">
+                <Tooltip label="YouTube Data APIを用いて取得">
                     <Badge color="red" size="sm">
                         Y
                     </Badge>

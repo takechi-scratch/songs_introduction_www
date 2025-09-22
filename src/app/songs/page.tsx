@@ -4,6 +4,7 @@ import MyAppShell from "@/components/appshell";
 import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
 import { FilterableContents, SortableKeys } from "@/lib/search/filter";
+import { customParams } from "@/lib/search/nearest";
 import {
     Title,
     Tabs,
@@ -88,11 +89,18 @@ function NearestTab() {
 
 export default function Page() {
     const [searchType, setSearchType] = useState<"filter" | "nearest">("filter");
-    const [customParams, setCustomParams] = useState<{ id?: string; limit?: number }>({});
+    const [customParams, setCustomParams] = useState<customParams>({
+        target_song_id: "some-id",
+        parameters: {},
+        limit: 10,
+    });
     const [searchQuery, setSearchQuery] = useState<Record<string, string | boolean>>(
         Object.fromEntries(FilterableContents.map((content) => [content.key, ""]))
     );
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
+
+    // 今後実装予定
+    setCustomParams({ target_song_id: "some-id", parameters: {}, limit: 10 });
 
     if (error) return <div>Error: {error}</div>;
 

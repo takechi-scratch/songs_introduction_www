@@ -4,20 +4,22 @@ import { useState, useEffect } from "react";
 import { fetchNearestSongs, fetchSongById, fetchSongs } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { SearchQuery } from "@/lib/search/filter";
+import { customParams } from "@/lib/search/nearest";
 
 export function useSongs(
     searchType: "filter" | "nearest" = "filter",
     query: SearchQuery = {},
-    customParams = {}
+    customParams: customParams
 ) {
     const [songs, setSongs] = useState<(Song | SongWithScore | null)[]>([...Array(10).fill(null)]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [hasInitialized, setHasInitialized] = useState<boolean>(false);
 
     async function loadSongs(
         searchType: "filter" | "nearest",
         query: SearchQuery,
-        customParams: Record<string, any>
+        customParams: customParams
     ) {
         try {
             setSongs([...Array(10).fill(null)]);
@@ -26,7 +28,10 @@ export function useSongs(
             if (searchType === "filter") {
                 data = await fetchSongs(query);
             } else {
-                data = await fetchNearestSongs(customParams.id, customParams.limit);
+                if (!customParams.target_song_id) {
+                    throw new Error("target_song_id is required for nearest search");
+                }
+                data = await fetchNearestSongs(customParams.target_song_id, customParams.limit);
             }
             setSongs(data);
             setError(null);
@@ -38,8 +43,13 @@ export function useSongs(
     }
 
     useEffect(() => {
-        loadSongs(searchType, query, customParams);
-    }, []);
+        if (!hasInitialized) {
+            loadSongs(searchType, query, customParams);
+            setHasInitialized(true);
+            return;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasInitialized]);
 
     return { songs, loading, error, refetch: () => loadSongs(searchType, query, customParams) };
 }
