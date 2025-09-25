@@ -30,26 +30,57 @@ function FilterTab({
 }) {
     return (
         <>
-            {FilterableContents.map((content) => (
-                <TextInput
-                    key={content.key}
-                    label={
-                        <Text size="sm" style={{ width: 100 }}>
-                            {content.displayName}
-                        </Text>
-                    }
-                    placeholder={content.example}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        marginBottom: 10,
-                    }}
-                    onChange={(e) =>
-                        setSearchQuery({ ...searchQuery, [content.key]: e.target.value })
-                    }
-                />
-            ))}
+            {FilterableContents.map((content) => {
+                if (content.selectLabel && content.selectValue) {
+                    return (
+                        <Select
+                            key={content.key}
+                            data={content.selectLabel}
+                            label={
+                                <Text size="sm" style={{ width: 100 }}>
+                                    {content.displayName}
+                                </Text>
+                            }
+                            placeholder={content.example}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                                marginBottom: 10,
+                            }}
+                            onChange={(value) => {
+                                if (content.selectValue && value) {
+                                    setSearchQuery({
+                                        ...searchQuery,
+                                        [content.key]: content.selectValue[value],
+                                    });
+                                }
+                            }}
+                        />
+                    );
+                } else {
+                    return (
+                        <TextInput
+                            key={content.key}
+                            label={
+                                <Text size="sm" style={{ width: 100 }}>
+                                    {content.displayName}
+                                </Text>
+                            }
+                            placeholder={content.example}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                                marginBottom: 10,
+                            }}
+                            onChange={(e) =>
+                                setSearchQuery({ ...searchQuery, [content.key]: e.target.value })
+                            }
+                        />
+                    );
+                }
+            })}
             <Select
                 data={Object.keys(SortableKeys)}
                 label="並び替え"

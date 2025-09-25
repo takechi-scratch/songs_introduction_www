@@ -2,11 +2,20 @@ type FilterableContent = {
     displayName: string;
     key: keyof import("../songs/types").Song;
     example: string;
+    selectLabel?: string[];
+    selectValue?: { [key: string]: string | boolean };
 };
 
 export const FilterableContents: FilterableContent[] = [
     { displayName: "動画のID", key: "id", example: "id-test" },
     { displayName: "タイトル", key: "title", example: "ハナタバ" },
+    {
+        displayName: "公開形式",
+        key: "isPublishedInOriginalChannel",
+        selectLabel: ["すべて", "オリジナル曲", "提供曲"],
+        selectValue: { すべて: "", オリジナル曲: true, 提供曲: false },
+        example: "すべて",
+    },
     { displayName: "ボーカル", key: "vocal", example: "初音ミク" },
     { displayName: "イラスト等", key: "illustrations", example: "ao" },
     { displayName: "動画", key: "movie", example: "瀬戸わらび" },

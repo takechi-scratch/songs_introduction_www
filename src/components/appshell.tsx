@@ -1,6 +1,6 @@
 "use client";
 
-import { AppShell, Burger, Group, Text, UnstyledButton } from "@mantine/core";
+import { AppShell, Burger, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
@@ -21,7 +21,11 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
     return (
         <AppShell
             header={{ height: 60 }}
-            navbar={{ width: 300, breakpoint: "sm", collapsed: { desktop: true, mobile: !opened } }}
+            navbar={{
+                width: 300,
+                breakpoint: "sm",
+                collapsed: { desktop: true, mobile: !opened },
+            }}
             padding="md"
         >
             <AppShell.Header>
@@ -44,11 +48,26 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
 
             <AppShell.Main>{children}</AppShell.Main>
 
-            <AppShell.Footer p="md">
+            <Flex
+                mt={40}
+                align="center"
+                gap="xs"
+                style={{
+                    backgroundColor: "#f0f0f0",
+                    padding: 8,
+                    height: 50,
+                }}
+            >
+                <Link href="/docs/terms">
+                    <Text size="xs">利用規約</Text>
+                </Link>
+                <Link href="/docs/credits">
+                    <Text size="xs">クレジット</Text>
+                </Link>
                 <Text size="xs">
                     製作: <Link href="https://x.com/takechi_scratch">takechi</Link>
                 </Text>
-            </AppShell.Footer>
+            </Flex>
         </AppShell>
     );
 }

@@ -35,8 +35,7 @@ const FadeInUp = ({ children, title }: { children: React.ReactNode; title: strin
 
 export default function HomePage() {
     const latestSongsData = useSongs("filter", { order: "publishedTimestamp" }, {});
-    // なぜか提供曲の絞り込みを作っていなかったので後で
-    // const colaborationSongsData = useSongs({ isPublishedInOriginalChannel: true });
+    const colaborationSongsData = useSongs("filter", { isPublishedInOriginalChannel: false }, {});
 
     return (
         <MyAppShell>
@@ -47,6 +46,14 @@ export default function HomePage() {
                 songs={latestSongsData.songs}
                 loading={latestSongsData.loading}
                 error={latestSongsData.error}
+            />
+            <Title order={2} mb="md">
+                他チャンネルへの提供曲
+            </Title>
+            <NewSongsCarousel
+                songs={colaborationSongsData.songs}
+                loading={colaborationSongsData.loading}
+                error={colaborationSongsData.error}
             />
             <Title order={2} mb="md">
                 「MIMIさん全曲紹介」について

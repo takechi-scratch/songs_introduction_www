@@ -4,12 +4,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import path from "path";
 
-const terms = fs.readFileSync(path.join(process.cwd(), "public", "terms.md"), "utf8");
+const credits = fs.readFileSync(path.join(process.cwd(), "public", "docs", "credits.md"), "utf8");
 
-export default function TermsPage() {
+export default function CreditsPage() {
     return (
         <MyAppShell>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{terms}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{credits}</ReactMarkdown>
         </MyAppShell>
     );
 }
