@@ -23,9 +23,9 @@ function FilterTab({
     setSearchQuery,
     refetch,
 }: {
-    searchQuery: Record<string, string | boolean>;
+    searchQuery: Record<string, string | number | boolean>;
     setSearchType: (type: "filter" | "nearest") => void;
-    setSearchQuery: (query: Record<string, string | boolean>) => void;
+    setSearchQuery: (query: Record<string, string | number | boolean>) => void;
     refetch: () => void;
 }) {
     return (
@@ -127,7 +127,7 @@ export default function Page() {
         parameters: {},
         limit: 10,
     });
-    const [searchQuery, setSearchQuery] = useState<Record<string, string | boolean>>(
+    const [searchQuery, setSearchQuery] = useState<Record<string, string | number | boolean>>(
         Object.fromEntries(FilterableContents.map((content) => [content.key, ""]))
     );
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);

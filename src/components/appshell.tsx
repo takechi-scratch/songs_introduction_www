@@ -4,6 +4,7 @@ import { AppShell, Burger, Flex, Group, Text, UnstyledButton } from "@mantine/co
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
+import Image from "next/image";
 
 function Buttons() {
     return (
@@ -64,9 +65,21 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 <Link href="/docs/credits">
                     <Text size="xs">クレジット</Text>
                 </Link>
-                <Text size="xs">
+                <Text size="xs" mr="xl">
                     製作: <Link href="https://x.com/takechi_scratch">takechi</Link>
                 </Text>
+                <Text size="xs" style={{ marginLeft: "auto" }}>
+                    動画データ取得・埋め込みにYoutube APIを使用しています。
+                </Text>
+                <Link href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
+                    <Image
+                        src="/assets/yt_logo_rgb_light.png"
+                        alt="YouTubeのロゴ"
+                        width={0}
+                        height={0}
+                        style={{ width: "auto", height: "20px", verticalAlign: "sub" }}
+                    />
+                </Link>
             </Flex>
         </AppShell>
     );

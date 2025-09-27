@@ -35,7 +35,7 @@ const FadeInUp = ({ children, title }: { children: React.ReactNode; title: strin
 
 export default function HomePage() {
     const latestSongsData = useSongs("filter", { order: "publishedTimestamp" }, {});
-    const colaborationSongsData = useSongs("filter", { isPublishedInOriginalChannel: false }, {});
+    const colaborationSongsData = useSongs("filter", { publishedType: 0 }, {});
 
     return (
         <MyAppShell>

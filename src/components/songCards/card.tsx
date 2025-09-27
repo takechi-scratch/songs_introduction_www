@@ -1,7 +1,8 @@
-import { Card, Group, HoverCard, Image, Skeleton, Text } from "@mantine/core";
+import { Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { formatDate, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
+import { IconCalendarClock } from "@tabler/icons-react";
 
 export default function SongCard({ song }: { song: Song | SongWithScore | null }) {
     if (!song) return <Skeleton height={350} />;
@@ -13,16 +14,23 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
     } else {
         const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
         hoverData = (
-            <HoverCard width={200} shadow="md">
-                <HoverCard.Target>
-                    <Text mt="xs" c="dimmed" size="sm">
-                        {formatElapsedSeconds(timeDiff)}前
-                    </Text>
-                </HoverCard.Target>
-                <HoverCard.Dropdown>
-                    <Text size="sm">{formatDate(song.publishedTimestamp)}</Text>
-                </HoverCard.Dropdown>
-            </HoverCard>
+            <>
+                {timeDiff < 0 && (
+                    <Tooltip label="仮掲載中（不正確な可能性あり）">
+                        <IconCalendarClock color="#ffa94d" />
+                    </Tooltip>
+                )}
+                <HoverCard width={200} shadow="md">
+                    <HoverCard.Target>
+                        <Text mt="xs" c="dimmed" size="sm">
+                            {timeDiff < 0 ? "公開予定" : `${formatElapsedSeconds(timeDiff)}前`}
+                        </Text>
+                    </HoverCard.Target>
+                    <HoverCard.Dropdown>
+                        <Text size="sm">{formatDate(song.publishedTimestamp)}</Text>
+                    </HoverCard.Dropdown>
+                </HoverCard>
+            </>
         );
     }
 

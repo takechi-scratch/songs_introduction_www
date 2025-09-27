@@ -3,6 +3,7 @@
 import MyAppShell from "@/components/appshell";
 import { useNearestSongs, useSong } from "@/hooks/songs";
 import {
+    Alert,
     Anchor,
     Badge,
     Blockquote,
@@ -21,6 +22,7 @@ import { DonutChart } from "@mantine/charts";
 import { formatDate, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
+import { IconAlertTriangle } from "@tabler/icons-react";
 
 import "@mantine/charts/styles.css";
 
@@ -65,9 +67,35 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
         });
     }
 
+    let publishedType = "";
+    if (song.publishedType === 1) {
+        publishedType = "オリジナル曲";
+    } else if (song.publishedType === 0) {
+        publishedType = "提供曲（他チャンネル）";
+    } else if (song.publishedType === -1) {
+        publishedType = "仮掲載（先行公開・予想など）";
+    } else {
+        publishedType = "不明";
+    }
+
     return (
         <MyAppShell>
             <Title mb="lg">曲ID: {song.id}</Title>
+            {song.publishedType === -1 && (
+                <Alert
+                    variant="light"
+                    color="orange"
+                    radius="md"
+                    mb="lg"
+                    title="この曲はまだ公開されていません"
+                    icon={<IconAlertTriangle />}
+                >
+                    <Text>
+                        データは先行情報から予想したものであり、不正確である可能性があるので注意してください。
+                    </Text>
+                    <Text>また、公開後にリンクが変更される場合があります。</Text>
+                </Alert>
+            )}
             <Flex direction="row" gap="md" style={{ height: 300 }}>
                 <ReactPlayer
                     src={`https://www.youtube.com/watch?v=${song.id}`}
@@ -106,20 +134,14 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
 
                                 <Table.Tr>
                                     <Table.Th>
-                                        <ContentName name="公開形式" isFromYoutube={true} />
-                                    </Table.Th>
-                                    <Table.Td>
-                                        {song.isPublishedInOriginalChannel
-                                            ? "オリジナル曲"
-                                            : "提供曲（他チャンネル）"}
-                                    </Table.Td>
-                                </Table.Tr>
-
-                                <Table.Tr>
-                                    <Table.Th>
                                         <ContentName name="長さ" isFromYoutube={true} />
                                     </Table.Th>
                                     <Table.Td>{formatDuration(song.durationSeconds)}</Table.Td>
+                                </Table.Tr>
+
+                                <Table.Tr>
+                                    <Table.Th>公開形式</Table.Th>
+                                    <Table.Td>{publishedType}</Table.Td>
                                 </Table.Tr>
 
                                 <Table.Tr>

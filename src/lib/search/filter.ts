@@ -3,7 +3,7 @@ type FilterableContent = {
     key: keyof import("../songs/types").Song;
     example: string;
     selectLabel?: string[];
-    selectValue?: { [key: string]: string | boolean };
+    selectValue?: { [key: string]: string | number };
 };
 
 export const FilterableContents: FilterableContent[] = [
@@ -11,9 +11,9 @@ export const FilterableContents: FilterableContent[] = [
     { displayName: "タイトル", key: "title", example: "ハナタバ" },
     {
         displayName: "公開形式",
-        key: "isPublishedInOriginalChannel",
+        key: "publishedType",
         selectLabel: ["すべて", "オリジナル曲", "提供曲"],
-        selectValue: { すべて: "", オリジナル曲: true, 提供曲: false },
+        selectValue: { すべて: "", オリジナル曲: 1, 提供曲: 0 },
         example: "すべて",
     },
     { displayName: "ボーカル", key: "vocal", example: "初音ミク" },
@@ -38,7 +38,7 @@ export const SortableKeys = {
 };
 
 export type SearchQuery = {
-    [key in (typeof FilterableContents)[number]["key"]]?: string | boolean;
+    [key in (typeof FilterableContents)[number]["key"]]?: string | number;
 } & {
     order?: string;
     asc?: boolean;

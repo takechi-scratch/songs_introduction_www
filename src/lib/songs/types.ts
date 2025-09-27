@@ -2,7 +2,7 @@ export type Song = {
     id: string;
     title: string;
     publishedTimestamp: number;
-    isPublishedInOriginalChannel: boolean;
+    publishedType: number;
     durationSeconds: number;
     thumbnailURL: string;
     vocal: string;
