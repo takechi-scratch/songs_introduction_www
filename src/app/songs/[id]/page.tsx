@@ -7,6 +7,7 @@ import {
     Anchor,
     Badge,
     Blockquote,
+    Button,
     Flex,
     Rating,
     Table,
@@ -22,7 +23,7 @@ import { DonutChart } from "@mantine/charts";
 import { formatDate, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconInfoCircle } from "@tabler/icons-react";
 
 import "@mantine/charts/styles.css";
 
@@ -96,14 +97,43 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                     <Text>また、公開後にリンクが変更される場合があります。</Text>
                 </Alert>
             )}
-            <Flex direction="row" gap="md" style={{ height: 300 }}>
-                <ReactPlayer
-                    src={`https://www.youtube.com/watch?v=${song.id}`}
-                    width={480}
-                    height={270}
-                    controls
-                    fallback={<div style={{ width: 480, height: 270 }}>Loading...</div>}
-                />
+            <Flex direction={{ base: "column", md: "row" }} gap="md">
+                <div>
+                    <ReactPlayer
+                        src={`https://www.youtube.com/watch?v=${song.id}`}
+                        width={480}
+                        height={270}
+                        controls
+                        fallback={<div style={{ width: 480, height: 270 }}>Loading...</div>}
+                    />
+                    <Flex m="md" gap="md" align="center">
+                        <Button
+                            component="a"
+                            href={`https://www.youtube.com/watch?v=${song.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="filled"
+                            color="red"
+                        >
+                            Youtubeで聴く
+                        </Button>
+                        <Button
+                            component="a"
+                            href={`https://open.spotify.com/search/${encodeURIComponent(
+                                song.title
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="filled"
+                            color="teal"
+                        >
+                            Spotifyで検索
+                        </Button>
+                        <Anchor href="/" component={Link}>
+                            ホームに戻る
+                        </Anchor>
+                    </Flex>
+                </div>
 
                 <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
                     <Tabs.List mb="md">
@@ -189,23 +219,30 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                             </Table.Tbody>
                         </Table>
 
-                        <Title order={4} mb="sm">
-                            コード進行
-                        </Title>
-                        <Flex direction="row" gap="lg" h={120}>
-                            <DonutChart
-                                data={chordData}
-                                startAngle={180}
-                                endAngle={0}
-                                valueFormatter={(value) => `${(value * 100).toFixed(0)}%`}
-                            />
-                            <Text style={{ flex: 1 }}>主なコード: {song.mainChord}</Text>
+                        <Flex direction="row" gap="lg" style={{ alignItems: "flex-start" }}>
+                            <div>
+                                <Title order={4} mb="sm">
+                                    コード進行
+                                </Title>
+                                <DonutChart
+                                    data={chordData}
+                                    startAngle={180}
+                                    endAngle={0}
+                                    valueFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                                    style={{ height: 80 }}
+                                />
+                                <Text>主なコード: {song.mainChord}</Text>
+                            </div>
+                            <div>
+                                <Title order={4} mb="sm">
+                                    ピアノの使用度
+                                </Title>
+                                <Rating value={song.pianoRate} size={30} mb="md" readOnly />
+                            </div>
                         </Flex>
-
-                        <Title order={4} mb="sm">
-                            ピアノの使用度
-                        </Title>
-                        <Rating value={song.pianoRate} size={30} readOnly />
+                        <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>
+                            データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、XのDMなどでお問い合わせください。
+                        </Alert>
                     </Tabs.Panel>
 
                     <Tabs.Panel value="others">
@@ -221,11 +258,8 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                 </Tabs>
             </Flex>
 
-            <Anchor href="/" component={Link}>
-                ホームに戻る
-            </Anchor>
-
-            <Title order={2} m="md" mt={120}>
+            {/* <Divider my="lg" /> */}
+            <Title order={2} m="md" mt="xl">
                 似ている曲
             </Title>
 

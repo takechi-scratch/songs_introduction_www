@@ -1,6 +1,6 @@
 "use client";
 
-import { AppShell, Burger, Flex, Group, Text, UnstyledButton } from "@mantine/core";
+import { AppShell, Badge, Burger, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
@@ -34,7 +34,14 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                     <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                     <Group justify="space-between" style={{ flex: 1 }}>
                         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
-                            <h3 style={{ margin: 0 }}>MIMIさん全曲紹介</h3>
+                            <h3 style={{ margin: 0 }}>
+                                MIMIさん全曲紹介
+                                {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
+                                    <Badge ml="md" color="orange">
+                                        Dev
+                                    </Badge>
+                                )}
+                            </h3>
                         </Link>
                         <Group ml="xl" gap={0} visibleFrom="sm">
                             <Buttons />

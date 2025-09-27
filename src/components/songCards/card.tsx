@@ -15,7 +15,7 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
         const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
         hoverData = (
             <>
-                {timeDiff < 0 && (
+                {song.publishedType === -1 && (
                     <Tooltip label="仮掲載中（不正確な可能性あり）">
                         <IconCalendarClock color="#ffa94d" />
                     </Tooltip>
