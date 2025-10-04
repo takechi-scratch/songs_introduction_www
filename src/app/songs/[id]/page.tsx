@@ -94,7 +94,7 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                     <Text>
                         データは先行情報から予想したものであり、不正確である可能性があるので注意してください。
                     </Text>
-                    <Text>また、公開後にリンクが変更される場合があります。</Text>
+                    <Text>また、公開後に本ページのリンクが変更される場合があります。</Text>
                 </Alert>
             )}
             <Flex direction={{ base: "column", md: "row" }} gap="md">
@@ -258,10 +258,12 @@ export default function SongPage({ params }: { params: Promise<{ id: string }> }
                 </Tabs>
             </Flex>
 
-            {/* <Divider my="lg" /> */}
-            <Title order={2} m="md" mt="xl">
-                似ている曲
-            </Title>
+            <Flex mb="md" mt="xl" gap="xl" align="end">
+                <Title order={2}>似ている曲</Title>
+                <Anchor href={`/songs/?type=nearest&targetSongID=${song.id}`} component={Link}>
+                    高度な条件で探す
+                </Anchor>
+            </Flex>
 
             <NearestSongsCarousel
                 songs={nearestSongs.songs}

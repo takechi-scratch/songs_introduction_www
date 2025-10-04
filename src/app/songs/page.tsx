@@ -4,7 +4,8 @@ import MyAppShell from "@/components/appshell";
 import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
 import { FilterableContents, SortableKeys } from "@/lib/search/filter";
-import { customParams } from "@/lib/search/nearest";
+import { customParams, specifiableParams } from "@/lib/search/nearest";
+import { Song } from "@/lib/songs/types";
 import {
     Title,
     Tabs,
@@ -14,8 +15,15 @@ import {
     Button,
     Text,
     SegmentedControl,
+    Slider,
+    Flex,
+    NumberInput,
+    Tooltip,
+    Alert,
 } from "@mantine/core";
-import { useState } from "react";
+import { IconZoomExclamation } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 
 function FilterTab({
     searchQuery,
@@ -105,7 +113,8 @@ function FilterTab({
                 onClick={() => {
                     setSearchType("filter");
                     setSearchQuery(searchQuery);
-                    refetch();
+                    // 状態更新後にrefetchを実行するためのフラグ
+                    setTimeout(() => refetch(), 0);
                 }}
             >
                 検索
@@ -114,37 +123,160 @@ function FilterTab({
     );
 }
 
-function NearestTab() {
-    return "現在準備中！";
+function SearchWarningTip({
+    warning,
+    children,
+}: {
+    warning: string | null;
+    children: React.ReactNode;
+}) {
+    if (!warning) return children;
+
+    return (
+        <Tooltip label={warning}>
+            <div>{children}</div>
+        </Tooltip>
+    );
 }
 
-export default function Page() {
-    const [searchType, setSearchType] = useState<"filter" | "nearest">("filter");
-    // 今後追加予定
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [customParams, setCustomParams] = useState<customParams>({
-        target_song_id: "some-id",
-        parameters: {},
-        limit: 10,
-    });
+function NearestTab({
+    customParams,
+    setSearchType,
+    setCustomParams,
+    refetch,
+}: {
+    customParams: customParams;
+    setSearchType: (type: "filter" | "nearest") => void;
+    setCustomParams: (params: customParams) => void;
+    refetch: () => void;
+}) {
+    return (
+        <>
+            <TextInput
+                label="基準曲の動画のID"
+                placeholder="7xht3kQO_TM"
+                value={customParams.target_song_id}
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                }}
+                mb="lg"
+                onChange={(e) =>
+                    setCustomParams({ ...customParams, target_song_id: e.target.value })
+                }
+            />
+            <Title order={3} mb="md">
+                各スコアの重要度
+            </Title>
+            {specifiableParams.map((param) => (
+                <Flex key={param.key} gap="md" mb="md" style={{ width: "60%" }}>
+                    <Text size="sm" style={{ width: 150 }}>
+                        {param.displayName}
+                    </Text>
+                    <Slider
+                        key={param.key}
+                        label={(value) => `${(value * 100).toFixed(0)}%`}
+                        min={0}
+                        max={2}
+                        step={0.0005}
+                        value={customParams.parameters?.[param.key] ?? param.default}
+                        onChange={(value) =>
+                            setCustomParams({
+                                ...customParams,
+                                parameters: {
+                                    ...customParams.parameters,
+                                    [param.key]: value,
+                                },
+                            })
+                        }
+                        marks={[{ value: param.default }]}
+                        style={{ flex: 1 }}
+                    />
+                </Flex>
+            ))}
+            {/* <NumberInput
+                label="ゲイン(a)"
+            /> */}
+            <NumberInput
+                label="結果の件数"
+                value={customParams.limit}
+                onChange={(value) =>
+                    setCustomParams({ ...customParams, limit: Number(value || 0) })
+                }
+                min={1}
+                step={1}
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                }}
+                mb="md"
+            />
+            <SegmentedControl
+                data={["昇順", "降順"]}
+                mt="sm"
+                defaultValue="降順"
+                onChange={(value) =>
+                    setCustomParams({ ...customParams, is_reversed: value === "昇順" })
+                }
+            />
+            <SearchWarningTip
+                warning={!customParams.target_song_id ? "IDを入力してください" : null}
+            >
+                <Button
+                    fullWidth
+                    data-disabled={!customParams.target_song_id}
+                    mt="md"
+                    onClick={(event) => {
+                        if (!customParams.target_song_id) {
+                            event.preventDefault();
+                            return;
+                        }
+                        setSearchType("nearest");
+                        setCustomParams(customParams);
+                        // 状態更新後にrefetchを実行するためのフラグ
+                        setTimeout(() => refetch(), 0);
+                    }}
+                >
+                    検索
+                </Button>
+            </SearchWarningTip>
+        </>
+    );
+}
+
+function MainPage() {
+    const searchParams = useSearchParams();
+    const searchTypeInParams = searchParams.get("type");
+    const targetSongIDInParams = searchParams.get("targetSongID");
+
+    const [searchType, setSearchType] = useState<"filter" | "nearest">(
+        searchTypeInParams === "nearest" && targetSongIDInParams ? "nearest" : "filter"
+    );
     const [searchQuery, setSearchQuery] = useState<Record<string, string | number | boolean>>(
         Object.fromEntries(FilterableContents.map((content) => [content.key, ""]))
     );
+    const [customParams, setCustomParams] = useState<customParams>({
+        target_song_id: searchParams.get("targetSongID") || undefined,
+        limit: 10,
+        parameters: specifiableParams.reduce((acc, content) => {
+            acc[content.key as keyof Song] = content.default;
+            return acc;
+        }, {} as customParams["parameters"]),
+    });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
-
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <MyAppShell>
             <Title order={2} mb="md">
                 曲一覧
             </Title>
-
-            <Accordion variant="separated" m="md">
+            <Accordion variant="separated" m="md" defaultValue={searchTypeInParams ? "検索" : null}>
                 <Accordion.Item key="検索" value="検索">
                     <Accordion.Control icon="🔍">検索</Accordion.Control>
                     <Accordion.Panel>
-                        <Tabs defaultValue="filter">
+                        <Tabs defaultValue={searchType}>
                             <Tabs.List grow justify="center" mb="md">
                                 <Tabs.Tab value="filter">絞り込み</Tabs.Tab>
                                 <Tabs.Tab value="nearest">似ている曲</Tabs.Tab>
@@ -158,19 +290,45 @@ export default function Page() {
                                 />
                             </Tabs.Panel>
                             <Tabs.Panel value="nearest">
-                                <NearestTab />
+                                <NearestTab
+                                    customParams={customParams}
+                                    setSearchType={setSearchType}
+                                    setCustomParams={setCustomParams}
+                                    refetch={refetch}
+                                />
                             </Tabs.Panel>
                         </Tabs>
                     </Accordion.Panel>
                 </Accordion.Item>
             </Accordion>
-
-            {!loading && (
-                <Text size="sm" ta="right" m="md">
-                    検索結果: {songs.length}曲
-                </Text>
+            {error && (
+                <Alert
+                    icon={<IconZoomExclamation />}
+                    title="エラーが発生しました"
+                    color="red"
+                    m="md"
+                >
+                    {error}
+                </Alert>
             )}
-            <CardsList songs={songs} />
+            {!error && (
+                <>
+                    {!loading && searchType === "filter" && (
+                        <Text size="sm" ta="right" m="md">
+                            検索結果: {songs.length}曲
+                        </Text>
+                    )}
+                    <CardsList songs={songs} />
+                </>
+            )}
         </MyAppShell>
+    );
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={<>loading params...</>}>
+            <MainPage />
+        </Suspense>
     );
 }

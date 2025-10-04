@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useIntersection } from "@mantine/hooks";
 import { useRef } from "react";
 import { useSongs } from "@/hooks/songs";
+import { defaultCustomParams } from "@/lib/search/nearest";
 
 const FadeInUp = ({ children, title }: { children: React.ReactNode; title: string }) => {
     // ChatGPTにより生成。内容を一部修正しています
@@ -34,8 +35,12 @@ const FadeInUp = ({ children, title }: { children: React.ReactNode; title: strin
 };
 
 export default function HomePage() {
-    const latestSongsData = useSongs("filter", { order: "publishedTimestamp" }, {});
-    const colaborationSongsData = useSongs("filter", { publishedType: 0 }, {});
+    const latestSongsData = useSongs(
+        "filter",
+        { order: "publishedTimestamp" },
+        defaultCustomParams
+    );
+    const colaborationSongsData = useSongs("filter", { publishedType: 0 }, defaultCustomParams);
 
     return (
         <MyAppShell>

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchNearestSongs, fetchSongById, fetchSongs } from "@/lib/songs/api";
+import {
+    fetchNearestSongs,
+    fetchNearestSongsAdvanced,
+    fetchSongById,
+    fetchSongs,
+} from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { SearchQuery } from "@/lib/search/filter";
 import { customParams } from "@/lib/search/nearest";
@@ -31,7 +36,7 @@ export function useSongs(
                 if (!customParams.target_song_id) {
                     throw new Error("target_song_id is required for nearest search");
                 }
-                data = await fetchNearestSongs(customParams.target_song_id, customParams.limit);
+                data = await fetchNearestSongsAdvanced(customParams);
             }
             setSongs(data);
             setError(null);
