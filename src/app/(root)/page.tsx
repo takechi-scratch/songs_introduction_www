@@ -63,9 +63,13 @@ export default function HomePage() {
             <Title order={2} mb="md">
                 「MIMIさん全曲紹介」について
             </Title>
+            <FadeInUp title="すべての曲を検索">
+                <Text>提供曲を含めた、YouTubeで聴けるほぼすべての曲が検索できます。</Text>
+            </FadeInUp>
+            <Divider my="xl" />
             <FadeInUp title="お気に入りの曲を発見">
                 <Text>
-                    知らない曲を発見するために、全曲の分析データを作成。これをもとに、「似ている曲」を提案します。
+                    全曲の分析データをもとに、「似ている曲」を提案。新たなお気に入りの曲を発見できます。
                 </Text>
             </FadeInUp>
             <Title order={2} mb="md">
@@ -74,7 +78,7 @@ export default function HomePage() {
             <FadeInUp title="さまざまな曲を発見するのが目的です">
                 <Text>
                     このサイトは、MIMIさんのさまざまな曲を知ってもらうために作成しました。
-                    それぞれの曲に優劣をつけたり、曲の感じ方を強制したりするといった意図はありません。
+                    それぞれの曲に優劣をつけたり、MIMIさんの曲のスタイルを批判したりするといった意図はありません。
                 </Text>
             </FadeInUp>
             <Divider my="xl" />
@@ -88,7 +92,7 @@ export default function HomePage() {
             <FadeInUp title="生成AIを分析に使用することはありません">
                 <Text>
                     生成AIはサイトのコーディングにのみ使用しています。
-                    分析データは全て製作者が手動で行ったものです。
+                    分析データは全て製作者が手作業で作成したものです。
                 </Text>
                 <Text>
                     また、楽曲の分析データをAIの入力として与えることもないよう注意しています。

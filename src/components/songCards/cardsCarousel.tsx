@@ -6,7 +6,7 @@ import "@mantine/carousel/styles.css";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { Text } from "@mantine/core";
 
-export default function NewSongsCarousel({
+export default function SongsCarousel({
     songs,
     loading,
     error,

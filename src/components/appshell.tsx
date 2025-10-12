@@ -72,6 +72,9 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 <Link href="/docs/credits">
                     <Text size="xs">クレジット</Text>
                 </Link>
+                <Link href="/docs/analysis/guidelines">
+                    <Text size="xs">分析ガイドライン</Text>
+                </Link>
                 <Text size="xs" mr="xl">
                     製作: <Link href="https://x.com/takechi_scratch">takechi</Link>
                 </Text>
