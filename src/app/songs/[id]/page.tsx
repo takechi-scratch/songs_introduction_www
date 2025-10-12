@@ -25,7 +25,7 @@ export const generateMetadata = async ({
         title: title,
         description: description,
         openGraph: {
-            title: title,
+            title: song.title,
             description: description,
             url: song.thumbnailURL,
             siteName: "MIMIさん全曲分析",
