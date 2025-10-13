@@ -9,7 +9,7 @@ import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/c
 
 export const metadata: Metadata = {
     title: "MIMIさん全曲紹介",
-    description: "現在作成中",
+    description: "MIMIさんの曲を全曲掲載・おすすめの曲が見つかるアプリ。",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

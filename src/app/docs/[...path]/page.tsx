@@ -1,69 +1,63 @@
-"use client";
-
 import MyAppShell from "@/components/appshell";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkBreaks from "remark-breaks";
-import { useDocsFile } from "@/hooks/docs";
-import { Code, Table } from "@mantine/core";
-import { use } from "react";
-import Link from "next/link";
-import React from "react";
+import { fetchDocsFile } from "@/lib/docs";
+import MarkdownDocs from "./markdownDocs";
+import { Metadata } from "next";
 
-// useを使えーって出るときは、引数部分をPromiseで囲む！
-export default function DocsPage({ params }: { params: Promise<{ path: string[] }> }) {
-    const path = use(params).path;
-    const { docs } = useDocsFile(path);
+export const generateMetadata = async ({
+    params,
+}: {
+    params: Promise<{ path: string[] }>;
+}): Promise<Metadata> => {
+    // ブログの詳細データを取得する関数
+    const path = (await params).path;
+    let docs = "";
+    try {
+        docs = await fetchDocsFile(path);
+    } catch {
+        return {
+            title: "エラー | MIMIさん全曲分析",
+            description: "ドキュメントの取得中にエラーが発生しました。",
+        };
+    }
 
+    const splitDocs = docs.split("\n");
+    const firstHeading = splitDocs[0].replace("# ", "").slice(0, 60);
+
+    const title = `${firstHeading} | MIMIさん全曲分析`;
+    const description = splitDocs.slice(1).join("\n").slice(0, 100);
+
+    return {
+        title: title,
+        description: description,
+        openGraph: {
+            title: firstHeading,
+            description: description,
+            siteName: "MIMIさん全曲分析",
+            locale: "ja_JP",
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: title,
+            description: description,
+        },
+    };
+};
+
+// サーバー側でファイルを取得し、クライアント側でレンダリング
+export default async function DocsPage({ params }: { params: Promise<{ path: string[] }> }) {
+    const path = (await params).path;
+
+    let docs = "";
+    let error = null;
+    try {
+        docs = await fetchDocsFile(path);
+    } catch (e) {
+        error = e instanceof Error ? e.message : String(e);
+    }
     return (
         <MyAppShell>
-            <ReactMarkdown
-                remarkPlugins={[remarkGfm, remarkBreaks]}
-                components={{
-                    a: ({ href, children, ...props }) => {
-                        if (!href || href?.startsWith("http")) {
-                            return (
-                                <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
-                                    {children}
-                                </a>
-                            );
-                        } else {
-                            return (
-                                <Link href={href} {...props}>
-                                    {children}
-                                </Link>
-                            );
-                        }
-                    },
-                    code: ({ children }) => {
-                        return <Code color="var(--mantine-color-blue-light)">{children}</Code>;
-                    },
-                    table: ({ children }) => {
-                        return (
-                            <Table striped verticalSpacing="sm">
-                                {children}
-                            </Table>
-                        );
-                    },
-                    thead: ({ children }) => {
-                        return <Table.Thead>{children}</Table.Thead>;
-                    },
-                    tbody: ({ children }) => {
-                        return <Table.Tbody>{children}</Table.Tbody>;
-                    },
-                    tr: ({ children }) => {
-                        return <Table.Tr>{children}</Table.Tr>;
-                    },
-                    th: ({ children }) => {
-                        return <Table.Th>{children}</Table.Th>;
-                    },
-                    td: ({ children }) => {
-                        return <Table.Td>{children}</Table.Td>;
-                    },
-                }}
-            >
-                {docs || "loading..."}
-            </ReactMarkdown>
+            <MarkdownDocs docs={docs} error={error} />
         </MyAppShell>
     );
 }
