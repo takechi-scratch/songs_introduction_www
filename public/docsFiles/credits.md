@@ -30,7 +30,7 @@
 - [APScheduler](https://apscheduler.readthedocs.io/en/latest/)
 
 ## その他
-- 提供曲の一覧: [花うさぎ](https://x.com/suyasuyanedoko) さんの [ポスト](https://x.com/suyasuyanedoko/status/1715827951680589880)
+- 提供曲の一覧: [花うさぎ](https://x.com/suyasuyanedoko) さんの [「MIMIさん提供曲まとめ」](https://x.com/suyasuyanedoko/status/1715827951680589880)
 （かなりの曲数を参考にさせていただきました）
 
 ## 制作

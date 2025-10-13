@@ -18,7 +18,7 @@ export const generateMetadata = async ({
     // ブログの詳細データを取得する関数
     const song = await fetchSongById((await params).id);
 
-    const title = `${song.title} | MIMIさん全曲分析`;
+    const title = `${song.title} | MIMIさん全曲紹介`;
     const description = `「${song.title}」の詳細分析ページ。似ている曲も探せます。`;
 
     return {
@@ -28,7 +28,7 @@ export const generateMetadata = async ({
             title: song.title,
             description: description,
             url: song.thumbnailURL,
-            siteName: "MIMIさん全曲分析",
+            siteName: "MIMIさん全曲紹介",
             images: [
                 {
                     url: song.thumbnailURL,
