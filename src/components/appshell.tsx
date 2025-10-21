@@ -12,6 +12,9 @@ function Buttons() {
             <UnstyledButton className={classes.control} component={Link} href="/songs">
                 曲一覧
             </UnstyledButton>
+            <UnstyledButton className={classes.control} component={Link} href="/contact">
+                お問い合わせ
+            </UnstyledButton>
         </>
     );
 }
@@ -38,7 +41,14 @@ function Footer() {
                 <Text size="xs">分析ガイドライン</Text>
             </Link>
             <Text size="xs" mr="xl">
-                製作: <Link href="https://x.com/takechi_scratch">takechi</Link>
+                製作:
+                <Link
+                    href="https://x.com/takechi_scratch"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    takechi
+                </Link>
             </Text>
             <Text size="xs" style={{ marginLeft: "auto" }}>
                 動画データ取得・埋め込みにYoutube APIを使用しています。
@@ -103,8 +113,22 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
             </AppShell.Navbar>
 
             <AppShell.Main>
-                <div style={{ padding: "var(--mantine-spacing-lg)" }}>{children}</div>
-                <Footer />
+                <Flex
+                    direction="column"
+                    style={{
+                        minHeight: "calc(100vh - 60px)", // ヘッダーの高さを引く
+                    }}
+                >
+                    <div
+                        style={{
+                            padding: "var(--mantine-spacing-lg)",
+                            flex: 1,
+                        }}
+                    >
+                        {children}
+                    </div>
+                    <Footer />
+                </Flex>
             </AppShell.Main>
         </AppShell>
     );
