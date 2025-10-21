@@ -1,5 +1,24 @@
 "use client";
 
+import Script from "next/script";
+
+// KoeLoopWidget の型定義
+declare global {
+    interface Window {
+        KoeLoopWidget: new (config: {
+            productId: string;
+            containerId: string;
+            theme: string;
+            primaryColor: string;
+            showVoting: boolean;
+            showFeedback: boolean;
+            showFAQ: boolean;
+            locale: string;
+            apiBase: string;
+        }) => void;
+    }
+}
+
 import MyAppShell from "@/components/appshell";
 import NewSongsCarousel from "@/components/songCards/cardsCarousel";
 import { Divider, Flex, Text, Title } from "@mantine/core";
@@ -60,7 +79,8 @@ export default function HomePage() {
                 loading={colaborationSongsData.loading}
                 error={colaborationSongsData.error}
             />
-            <Title order={2} mb="md">
+
+            <Title order={2} mb="md" mt="md">
                 「MIMIさん全曲紹介」について
             </Title>
             <FadeInUp title="すべての曲を検索">
@@ -98,6 +118,32 @@ export default function HomePage() {
                     また、楽曲の分析データをAIの入力として与えることもないよう注意しています。
                 </Text>
             </FadeInUp>
+
+            {/* KoeLoop Widget */}
+            <div
+                id="koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14"
+                style={{ paddingTop: "var(--mantine-spacing-xl)" }}
+            ></div>
+            <Script
+                src="https://koeloop.dev/widget.js"
+                strategy="afterInteractive"
+                onLoad={() => {
+                    // ウィジェットスクリプトが読み込まれた後にKoeLoopWidgetを初期化
+                    if (typeof window !== "undefined" && window.KoeLoopWidget) {
+                        new window.KoeLoopWidget({
+                            productId: "10300196-bddc-4e37-a315-ef77401e6f14",
+                            containerId: "koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14",
+                            theme: "light",
+                            primaryColor: "#1864ab",
+                            showVoting: true,
+                            showFeedback: true,
+                            showFAQ: false,
+                            locale: "ja",
+                            apiBase: "https://koeloop.dev",
+                        });
+                    }
+                }}
+            />
         </MyAppShell>
     );
 }

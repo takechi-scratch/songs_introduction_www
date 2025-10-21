@@ -20,7 +20,7 @@ export default function SongsCarousel({
     return (
         <Carousel
             withIndicators
-            height={500}
+            height={400}
             slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
             slideGap={{ base: 0, sm: "md" }}
             emblaOptions={{ align: "start" }}
