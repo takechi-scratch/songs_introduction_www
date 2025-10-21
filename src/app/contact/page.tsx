@@ -1,11 +1,9 @@
-"use client";
-
 import MyAppShell from "@/components/appshell";
 import { Title, Text } from "@mantine/core";
 import Link from "next/link";
 
 // useを使えーって出るときは、引数部分をPromiseで囲む！
-export default function DocsPage() {
+export default async function DocsPage() {
     const mailEntity =
         "&#116;&#97;&#107;&#101;&#99;&#104;&#105;&#46;&#115;&#99;&#114;&#97;&#116;&#99;&#104;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;";
 
