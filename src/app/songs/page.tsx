@@ -170,8 +170,9 @@ function NearestTab({
                 各スコアの重要度
             </Title>
             {specifiableParams.map((param) => (
-                <Flex key={param.key} gap="md" mb="md" style={{ width: "60%" }}>
-                    <Text size="sm" style={{ width: 150 }}>
+                <Flex key={param.key} gap="md" mb="md">
+                    {/* style={{ maxWidth: "60%", minWidth: 20 }} */}
+                    <Text size="sm" style={{ width: 120 }}>
                         {param.displayName}
                     </Text>
                     <Slider
@@ -191,7 +192,7 @@ function NearestTab({
                             })
                         }
                         marks={[{ value: param.default }]}
-                        style={{ flex: 1 }}
+                        style={{ flex: 1, maxWidth: "60%" }}
                     />
                 </Flex>
             ))}

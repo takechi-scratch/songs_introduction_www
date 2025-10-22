@@ -1,7 +1,7 @@
 "use client";
 
-import { AppShell, Badge, Burger, Flex, Group, Text, UnstyledButton } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { AppShell, Badge, Burger, em, Flex, Group, Text, UnstyledButton } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,6 +20,8 @@ function Buttons() {
 }
 
 function Footer() {
+    const isMobile = useMediaQuery(`(max-width: ${em(768)})`);
+
     return (
         <Flex
             mt={40}
@@ -28,32 +30,44 @@ function Footer() {
             style={{
                 backgroundColor: "#f0f0f0",
                 padding: 8,
-                height: 50,
+                height: isMobile ? 130 : 50,
             }}
         >
-            <Link href="/docs/terms">
-                <Text size="xs">利用規約</Text>
-            </Link>
-            <Link href="/docs/credits">
-                <Text size="xs">クレジット</Text>
-            </Link>
-            <Link href="/docs/analysis/guidelines">
-                <Text size="xs">分析ガイドライン</Text>
-            </Link>
-            <Text size="xs" mr="xl">
-                製作:
-                <Link
-                    href="https://x.com/takechi_scratch"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    takechi
+            <Flex direction={{ base: "column", sm: "row" }} flex="1" gap={{ base: 1, sm: "sm" }}>
+                <Link href="/docs/terms">
+                    <Text size="xs">利用規約</Text>
                 </Link>
-            </Text>
-            <Text size="xs" style={{ marginLeft: "auto" }}>
-                動画データ取得・埋め込みにYoutube APIを使用しています。
-            </Text>
-            <Link href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
+                <Link href="/docs/credits">
+                    <Text size="xs">クレジット</Text>
+                </Link>
+                <Link href="/docs/analysis/guidelines">
+                    <Text size="xs">分析ガイドライン</Text>
+                </Link>
+                <Text size="xs" mr="xl">
+                    製作:
+                    <Link
+                        href="https://x.com/takechi_scratch"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        takechi
+                    </Link>
+                </Text>
+                <Text
+                    size="xs"
+                    flex="1"
+                    mt={{ base: "sm", sm: 0 }}
+                    style={{ textAlign: isMobile ? "left" : "right" }}
+                >
+                    動画データ取得・埋め込みにYoutube APIを使用しています。
+                </Text>
+            </Flex>
+            <Link
+                href="https://www.youtube.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                // style={{ marginLeft: "auto" }}
+            >
                 <Image
                     src="/assets/yt_logo_rgb_light.png"
                     alt="YouTubeのロゴ"
@@ -116,7 +130,7 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 <Flex
                     direction="column"
                     style={{
-                        minHeight: "calc(100vh - 60px)", // ヘッダーの高さを引く
+                        minHeight: `calc(100vh - 60px)`, // ヘッダーの高さを引く
                     }}
                 >
                     <div

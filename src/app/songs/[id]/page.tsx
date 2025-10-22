@@ -77,15 +77,24 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 </Alert>
             )}
             <Flex direction={{ base: "column", md: "row" }} gap="md">
-                <div>
-                    <ReactPlayer
-                        src={`https://www.youtube.com/watch?v=${song.id}`}
-                        width={480}
-                        height={270}
-                        controls
-                        fallback={<div style={{ width: 480, height: 270 }}>Loading...</div>}
-                    />
-                    <Flex m="md" gap="md" align="center">
+                <div style={{ width: "100%", maxWidth: "480px" }}>
+                    <div
+                        style={{
+                            width: "100%",
+                            aspectRatio: "16/9",
+                        }}
+                    >
+                        <ReactPlayer
+                            src={`https://www.youtube.com/watch?v=${song.id}`}
+                            width="100%"
+                            height="100%"
+                            controls
+                            fallback={
+                                <div style={{ width: "100%", aspectRatio: "16/9" }}>Loading...</div>
+                            }
+                        />
+                    </div>
+                    <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
                         <Button
                             component="a"
                             href={`https://www.youtube.com/watch?v=${song.id}`}

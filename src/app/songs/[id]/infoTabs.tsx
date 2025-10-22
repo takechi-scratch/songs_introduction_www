@@ -14,9 +14,10 @@ import {
 } from "@mantine/core";
 import { formatDate, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
 import { DonutChart } from "@mantine/charts";
+import Image from "next/image";
 
 function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
     return (
@@ -37,6 +38,17 @@ function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boo
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
+}
+
+function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
+    return (
+        <Blockquote color="blue" m="md" icon={icon} style={{ maxWidth: 500 }}>
+            <Text mb="sm">{text}</Text>
+            <Text size="sm" c="gray.8">
+                — {author}
+            </Text>
+        </Blockquote>
+    );
 }
 
 export default function InfoTabs({ song }: { song: Song }) {
@@ -64,12 +76,22 @@ export default function InfoTabs({ song }: { song: Song }) {
         });
     }
 
+    const takechiIcon = (
+        <Image src="/assets/takechi.svg" alt="製作者takechiのアイコン" width={32} height={32} />
+    );
+
     return (
         <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
             <Tabs.List mb="md">
-                <Tabs.Tab value="basicInfo">概要</Tabs.Tab>
-                <Tabs.Tab value="analysis">分析情報</Tabs.Tab>
-                <Tabs.Tab value="others">その他</Tabs.Tab>
+                <Tabs.Tab value="basicInfo" color="red">
+                    概要
+                </Tabs.Tab>
+                <Tabs.Tab value="analysis" color="blue">
+                    分析情報
+                </Tabs.Tab>
+                <Tabs.Tab value="others" color="teal">
+                    その他
+                </Tabs.Tab>
             </Tabs.List>
 
             <Tabs.Panel value="basicInfo">
@@ -174,11 +196,11 @@ export default function InfoTabs({ song }: { song: Song }) {
             </Tabs.Panel>
 
             <Tabs.Panel value="others">
-                <Title order={4}>コメント</Title>
+                <Title order={4} mb="xl">
+                    コメント
+                </Title>
                 {song.comment ? (
-                    <Blockquote color="blue" m="md" w={500}>
-                        {song.comment}
-                    </Blockquote>
+                    <Comment text={song.comment} author="takechi" icon={takechiIcon} />
                 ) : (
                     <Text m="sm">なし</Text>
                 )}
