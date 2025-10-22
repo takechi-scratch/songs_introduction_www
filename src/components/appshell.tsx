@@ -9,6 +9,9 @@ import Image from "next/image";
 function Buttons() {
     return (
         <>
+            <UnstyledButton className={classes.control} component={Link} href="/">
+                トップ
+            </UnstyledButton>
             <UnstyledButton className={classes.control} component={Link} href="/songs">
                 曲一覧
             </UnstyledButton>
@@ -44,7 +47,7 @@ function Footer() {
                     <Text size="xs">分析ガイドライン</Text>
                 </Link>
                 <Text size="xs" mr="xl">
-                    製作:
+                    {"製作: "}
                     <Link
                         href="https://x.com/takechi_scratch"
                         target="_blank"
