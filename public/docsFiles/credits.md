@@ -32,6 +32,7 @@
 ## その他
 - 提供曲の一覧: [花うさぎ](https://x.com/suyasuyanedoko) さんの [「MIMIさん提供曲まとめ」](https://x.com/suyasuyanedoko/status/1715827951680589880)
 （かなりの曲数を参考にさせていただきました）
+- フィードバック・機能投票: [KoeLoop](https://koeloop.dev/ja/)
 
 ## 制作
 - takechi ( [x](https://x.com/takechi_scratch), [github](https://github.com/takechi-scratch) )
