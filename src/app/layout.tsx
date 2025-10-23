@@ -8,10 +8,37 @@ import Script from "next/script";
 import "@mantine/core/styles.css";
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
+import { AuthProvider } from "@/contexts/AuthContext";
+
+const title = "MIMIさん全曲紹介";
+const description = "MIMIさんの曲を全曲掲載・おすすめの曲が見つかるアプリ。";
+const imageUrl = "https://mimi.takechi.f5.si/assets/card.png";
 
 export const metadata: Metadata = {
-    title: "MIMIさん全曲紹介",
-    description: "MIMIさんの曲を全曲掲載・おすすめの曲が見つかるアプリ。",
+    title: title,
+    description: description,
+    openGraph: {
+        title: title,
+        description: description,
+        url: imageUrl,
+        siteName: title,
+        images: [
+            {
+                url: imageUrl,
+                width: 1280,
+                height: 720,
+                alt: title,
+            },
+        ],
+        locale: "ja_JP",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: title,
+        description: description,
+        images: [imageUrl],
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,7 +66,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 )}
             </head>
             <body>
-                <MantineProvider>{children}</MantineProvider>
+                <MantineProvider>
+                    <AuthProvider>{children}</AuthProvider>
+                </MantineProvider>
             </body>
         </html>
     );
