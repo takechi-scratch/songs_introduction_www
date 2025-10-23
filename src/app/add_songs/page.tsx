@@ -2,16 +2,7 @@
 
 import MyAppShell from "@/components/appshell";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-    Title,
-    Text,
-    Button,
-    Checkbox,
-    Group,
-    TextInput,
-    SegmentedControl,
-    Divider,
-} from "@mantine/core";
+import { Title, Text, Button, Group, TextInput, SegmentedControl, Divider } from "@mantine/core";
 import Link from "next/link";
 import { useForm } from "@mantine/form";
 
