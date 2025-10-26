@@ -44,7 +44,7 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
         >
             <Card.Section>
                 <Image
-                    src={song.thumbnailURL}
+                    src={song.thumbnailURL || null}
                     h={200}
                     alt={`${song.title}のサムネイル`}
                     fit="contain"

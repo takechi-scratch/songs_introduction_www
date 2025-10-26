@@ -59,12 +59,14 @@ export function useSongs(
     return { songs, loading, error, refetch: () => loadSongs(searchType, query, customParams) };
 }
 
-export function useSong(id: string) {
+export function useSong(id: string | null) {
     const [song, setSong] = useState<Song | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    async function loadSong(id: string) {
+    async function loadSong(id: string | null) {
+        if (!id) return;
+
         try {
             setLoading(true);
             const data = await fetchSongById(id);

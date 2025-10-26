@@ -1,6 +1,7 @@
+import { getCurrentUserRole, getCurrentUserToken } from "../auth";
 import { SearchQuery } from "../search/filter";
 import { customParams } from "../search/nearest";
-import { Song, SongWithScore } from "./types";
+import { Song, SongWithScore, UpsertSong } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -84,6 +85,33 @@ export async function fetchNearestSongsAdvanced(params: customParams): Promise<S
         return result;
     } catch (error) {
         console.error(`Failed to fetch nearest songs for ${params.target_song_id}:`, error);
+        throw error;
+    }
+}
+
+export async function upsertSong(songID: string | null, data: UpsertSong): Promise<Song> {
+    if ((await getCurrentUserRole()) === "user") {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/songs/${songID ?? data.id}/`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${await getCurrentUserToken()}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: Song = await response.json();
+        return result;
+    } catch (error) {
+        console.error(`Failed to fetch song ${data.id}:`, error);
         throw error;
     }
 }

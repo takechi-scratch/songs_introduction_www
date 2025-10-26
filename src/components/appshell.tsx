@@ -5,6 +5,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import UserMenu from "./userMenu";
 
 function Buttons() {
     return (
@@ -118,8 +119,11 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                                 </h3>
                             </Flex>
                         </Link>
-                        <Group ml="xl" gap={0} visibleFrom="sm">
+                        <Group ml="auto" gap={0} visibleFrom="sm">
                             <Buttons />
+                        </Group>
+                        <Group>
+                            <UserMenu />
                         </Group>
                     </Group>
                 </Group>
