@@ -38,6 +38,22 @@ export function getCurrentUser(): User | null {
     return auth.currentUser;
 }
 
+export async function getCurrentUserRole(): Promise<string> {
+    const user = getCurrentUser();
+    if (user === null) {
+        return "guest";
+    }
+
+    const idTokenResult = await user.getIdTokenResult();
+    if (idTokenResult?.claims.admin === true) {
+        return "admin";
+    } else if (idTokenResult?.claims.editor === true) {
+        return "editor";
+    } else {
+        return "user";
+    }
+}
+
 // IDトークンを取得する関数
 export async function getCurrentUserToken(): Promise<string | null> {
     const auth = getAuth();

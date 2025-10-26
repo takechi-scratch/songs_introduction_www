@@ -27,3 +27,23 @@ export type SongWithScore = {
 export const hasScore = (item: Song | SongWithScore): item is SongWithScore => {
     return !!(item as SongWithScore)?.score;
 };
+
+export type UpsertSong = {
+    id: string;
+    title?: string;
+    publishedTimestamp?: number;
+    publishedType?: number;
+    durationSeconds?: number;
+    thumbnailURL?: string;
+    vocal: string;
+    illustrations: string;
+    movie: string;
+    bpm: number;
+    mainKey: number;
+    chordRate6451: number;
+    chordRate4561: number;
+    mainChord: string;
+    pianoRate: number;
+    modulationTimes: number;
+    comment: string;
+};

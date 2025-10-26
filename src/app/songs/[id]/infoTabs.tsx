@@ -4,6 +4,7 @@ import {
     Alert,
     Badge,
     Blockquote,
+    Button,
     Flex,
     Rating,
     Table,
@@ -18,6 +19,8 @@ import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
 import { DonutChart } from "@mantine/charts";
 import Image from "next/image";
+import { useUserRole } from "@/hooks/auth";
+import Link from "next/link";
 
 function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
     return (
@@ -79,6 +82,8 @@ export default function InfoTabs({ song }: { song: Song }) {
     const takechiIcon = (
         <Image src="/assets/takechi.svg" alt="製作者takechiのアイコン" width={32} height={32} />
     );
+
+    const userRole = useUserRole();
 
     return (
         <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
@@ -203,6 +208,11 @@ export default function InfoTabs({ song }: { song: Song }) {
                     <Comment text={song.comment} author="takechi" icon={takechiIcon} />
                 ) : (
                     <Text m="sm">なし</Text>
+                )}
+                {userRole === "admin" && (
+                    <Button component={Link} href={`/edit_songs?id=${song.id}`} color="blue">
+                        データの編集
+                    </Button>
                 )}
             </Tabs.Panel>
         </Tabs>

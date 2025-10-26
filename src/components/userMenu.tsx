@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/auth";
 import { Menu } from "@mantine/core";
 import { IconDatabasePlus, IconLogin, IconUserFilled } from "@tabler/icons-react";
 import Image from "next/image";
@@ -6,6 +7,7 @@ import Link from "next/link";
 
 export default function UserMenu() {
     const { user } = useAuth();
+    const userRole = useUserRole();
 
     return (
         <Menu shadow="md" width={250}>
@@ -24,18 +26,18 @@ export default function UserMenu() {
             </Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item>{user?.email ?? "未ログイン"}</Menu.Item>
+                <Menu.Item>{user ? `${user.email} (${userRole})` : "未ログイン"}</Menu.Item>
                 <Menu.Divider />
                 <Menu.Label>メニュー</Menu.Label>
                 <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
                     ログイン
                 </Menu.Item>
-                {user && (
+                {user && userRole !== "user" && (
                     <>
                         <Menu.Divider />
-                        <Menu.Label>管理者用</Menu.Label>
+                        <Menu.Label>編集者用</Menu.Label>
                         <Menu.Item
-                            href="/add_songs"
+                            href="/edit_songs/"
                             component={Link}
                             leftSection={<IconDatabasePlus size={14} />}
                         >

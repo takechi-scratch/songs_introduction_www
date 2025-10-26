@@ -5,8 +5,6 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/contexts/AuthContext";
-import { IconUserFilled } from "@tabler/icons-react";
 import UserMenu from "./userMenu";
 
 function Buttons() {
