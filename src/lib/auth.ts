@@ -15,12 +15,13 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAogMtgjHngcJeI4JPbxX8T_COZ6hu1poQ",
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    // GithubのSecret scanningに引っ掛かるので環境変数に変更
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: "songs-introduction.firebaseapp.com",
     projectId: "songs-introduction",
     storageBucket: "songs-introduction.firebasestorage.app",
     messagingSenderId: "301767836051",
-    appId: "1:301767836051:web:639e136894453c82e3a866",
+    appId: "1:301767836051:web:d1117c40c30a5b48e3a866",
 };
 
 // Initialize Firebase

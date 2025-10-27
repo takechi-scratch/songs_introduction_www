@@ -3,7 +3,7 @@ import { Alert, Anchor, Button, Flex, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import { fetchNearestSongs, fetchSongById } from "@/lib/songs/api";
 import { Metadata } from "next";
 
@@ -16,7 +16,13 @@ export const generateMetadata = async ({
     params: Promise<{ id: string }>;
 }): Promise<Metadata> => {
     // ブログの詳細データを取得する関数
-    const song = await fetchSongById((await params).id);
+    let song;
+    try {
+        song = await fetchSongById((await params).id);
+    } catch (error) {
+        console.error("Error fetching song data for metadata:", error);
+        return {};
+    }
 
     const title = `${song.title} | MIMIさん全曲紹介`;
     const description = `「${song.title}」の詳細分析ページ。似ている曲も探せます。`;
@@ -51,12 +57,29 @@ export const generateMetadata = async ({
 
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;
-    const song = await fetchSongById(id);
-    const nearestSongs = await fetchNearestSongs(id);
 
-    if (!song) return <MyAppShell>Loading...</MyAppShell>;
-
-    if (!song) return <MyAppShell>曲が見つかりません</MyAppShell>;
+    let song, nearestSongs;
+    try {
+        song = await fetchSongById(id);
+        nearestSongs = await fetchNearestSongs(id);
+    } catch (error) {
+        console.error("Error fetching song data:", error);
+        return (
+            <MyAppShell>
+                <Alert
+                    variant="light"
+                    color="red"
+                    radius="md"
+                    mb="lg"
+                    title="取得エラー"
+                    icon={<IconExclamationCircle />}
+                >
+                    {error instanceof Error ? error.message : String(error)}
+                </Alert>
+                <Link href="/">ホームに戻る</Link>
+            </MyAppShell>
+        );
+    }
 
     return (
         <MyAppShell>
