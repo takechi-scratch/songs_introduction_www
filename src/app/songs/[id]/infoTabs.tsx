@@ -21,6 +21,7 @@ import { DonutChart } from "@mantine/charts";
 import Image from "next/image";
 import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
+import CreatorBadges from "@/components/creatorBadges";
 
 function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
     return (
@@ -133,17 +134,53 @@ export default function InfoTabs({ song }: { song: Song }) {
 
                         <Table.Tr>
                             <Table.Th>ボーカル</Table.Th>
-                            <Table.Td>{song.vocal || "-"}</Table.Td>
+                            <Table.Td>
+                                {song.vocal ? (
+                                    <CreatorBadges
+                                        color="orange"
+                                        searchQueryName="vocal"
+                                        creators={song.vocal
+                                            .split("/")
+                                            .map((creator) => creator.trim())}
+                                    />
+                                ) : (
+                                    "-"
+                                )}
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>イラスト等</Table.Th>
-                            <Table.Td>{song.illustrations || "-"}</Table.Td>
+                            <Table.Td>
+                                {song.illustrations ? (
+                                    <CreatorBadges
+                                        color="blue"
+                                        searchQueryName="illustrations"
+                                        creators={song.illustrations
+                                            .split("/")
+                                            .map((creator) => creator.trim())}
+                                    />
+                                ) : (
+                                    "-"
+                                )}
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>動画</Table.Th>
-                            <Table.Td>{song.movie || "-"}</Table.Td>
+                            <Table.Td>
+                                {song.movie ? (
+                                    <CreatorBadges
+                                        color="teal"
+                                        searchQueryName="movie"
+                                        creators={song.movie
+                                            .split("/")
+                                            .map((creator) => creator.trim())}
+                                    />
+                                ) : (
+                                    "-"
+                                )}
+                            </Table.Td>
                         </Table.Tr>
                     </Table.Tbody>
                 </Table>

@@ -256,7 +256,9 @@ function MainPage() {
         searchTypeInParams === "nearest" && targetSongIDInParams ? "nearest" : "filter"
     );
     const [searchQuery, setSearchQuery] = useState<Record<string, string | number | boolean>>(
-        Object.fromEntries(FilterableContents.map((content) => [content.key, ""]))
+        Object.fromEntries(
+            FilterableContents.map((content) => [content.key, searchParams.get(content.key) ?? ""])
+        )
     );
     const [customParams, setCustomParams] = useState<customParams>({
         target_song_id: searchParams.get("targetSongID") || undefined,
