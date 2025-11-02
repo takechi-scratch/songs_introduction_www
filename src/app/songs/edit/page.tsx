@@ -86,17 +86,15 @@ function AddSongsPage() {
 
     if (!user || userRole === "user") {
         return (
-            <MyAppShell>
-                <Title mb="lg">曲の追加・編集</Title>
+            <>
                 <Text mb="md">曲の追加・編集は現在編集者のみが行えます。</Text>
                 <Link href="/">トップページへ</Link>
-            </MyAppShell>
+            </>
         );
     }
 
     return (
-        <MyAppShell>
-            <Title mb="lg">曲の追加・編集</Title>
+        <>
             {id && (
                 <div
                     style={{
@@ -206,7 +204,8 @@ function AddSongsPage() {
                 </Text>
                 <Slider
                     label={(value) => `${(value * 100).toFixed(0)}%`}
-                    // defaultValue={0.5}
+                    defaultValue={beforeSong?.chordRate6451 ?? 0.5}
+                    key={form.key("chordRate6451")}
                     min={0}
                     max={1}
                     step={0.05}
@@ -219,7 +218,8 @@ function AddSongsPage() {
                 </Text>
                 <Slider
                     label={(value) => `${(value * 100).toFixed(0)}%`}
-                    // defaultValue={0.5}
+                    defaultValue={beforeSong?.chordRate4561 ?? 0.5}
+                    key={form.key("chordRate4561")}
                     min={0}
                     max={1}
                     step={0.05}
@@ -265,18 +265,24 @@ function AddSongsPage() {
                     {...form.getInputProps("comment")}
                 />
 
-                <Group justify="flex-end" mt="md">
+                <Group justify="space-between" mt="md">
+                    <Button type="button" color="gray" onClick={() => router.back()}>
+                        戻る
+                    </Button>
                     <Button type="submit">公開する</Button>
                 </Group>
             </form>
-        </MyAppShell>
+        </>
     );
 }
 
 export default function Page() {
     return (
-        <Suspense fallback={<>loading params...</>}>
-            <AddSongsPage />
-        </Suspense>
+        <MyAppShell>
+            <Title mb="lg">曲の追加・編集</Title>
+            <Suspense fallback={<>loading params...</>}>
+                <AddSongsPage />
+            </Suspense>
+        </MyAppShell>
     );
 }

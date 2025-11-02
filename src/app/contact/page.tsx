@@ -1,4 +1,5 @@
 import MyAppShell from "@/components/appshell";
+import KoeLoopWidget from "@/components/feedbackWidget";
 import { Title, Text } from "@mantine/core";
 import Link from "next/link";
 
@@ -10,10 +11,9 @@ export default async function DocsPage() {
     return (
         <MyAppShell>
             <Title mb="lg">お問い合わせ</Title>
+            <Text>現在お問い合わせフォームは準備中です。</Text>
             <Text mb="md">
-                現在お問い合わせフォームは準備中です。ご意見があれば、
-                <Link href="/">トップページ</Link>
-                のフィードバック、またはX(
+                ご意見があれば、以下のフィードバックフォーム、もしくはX(
                 <Link
                     href="https://x.com/takechi_scratch"
                     target="_blank"
@@ -32,6 +32,8 @@ export default async function DocsPage() {
                 />
                 までご連絡ください。
             </Text>
+
+            <KoeLoopWidget />
         </MyAppShell>
     );
 }
