@@ -95,24 +95,27 @@ function AddSongsPage() {
 
     return (
         <>
-            {id && (
-                <div
-                    style={{
-                        aspectRatio: "16/9",
-                        maxHeight: 200,
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                    }}
-                >
-                    <ReactPlayer
-                        src={`https://www.youtube.com/watch?v=${id}`}
-                        width="100%"
-                        height="100%"
-                        controls
-                        fallback={<div style={{ aspectRatio: "16/9" }}>Loading...</div>}
-                    />
-                </div>
-            )}
+            {
+                // TODO: ボタンクリックで動画を表示するように変更
+                id && (
+                    <div
+                        style={{
+                            aspectRatio: "16/9",
+                            maxHeight: 200,
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                        }}
+                    >
+                        <ReactPlayer
+                            src={`https://www.youtube.com/watch?v=${id}`}
+                            width="100%"
+                            height="100%"
+                            controls
+                            fallback={<div style={{ aspectRatio: "16/9" }}>Loading...</div>}
+                        />
+                    </div>
+                )
+            }
             <form
                 onSubmit={form.onSubmit(async (values) => {
                     await upsertSong(paramID, {
@@ -143,6 +146,7 @@ function AddSongsPage() {
                     mb="sm"
                 />
 
+                {/* TODO: YouTubeから自動fetchしない（タイトル・公開日時の入力もする）モード */}
                 <Text size="sm">公開形式</Text>
                 <SegmentedControl
                     defaultValue="1"

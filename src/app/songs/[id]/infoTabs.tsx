@@ -108,21 +108,30 @@ export default function InfoTabs({ song }: { song: Song }) {
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={160}>
-                                <ContentName name="タイトル" isFromYoutube={true} />
+                                <ContentName
+                                    name="タイトル"
+                                    isFromYoutube={song.publishedType !== -1}
+                                />
                             </Table.Th>
                             <Table.Td>{song.title}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>
-                                <ContentName name="公開時刻" isFromYoutube={true} />
+                                <ContentName
+                                    name="公開時刻"
+                                    isFromYoutube={song.publishedType !== -1}
+                                />
                             </Table.Th>
                             <Table.Td>{formatDate(song.publishedTimestamp)}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>
-                                <ContentName name="長さ" isFromYoutube={true} />
+                                <ContentName
+                                    name="長さ"
+                                    isFromYoutube={song.publishedType !== -1}
+                                />
                             </Table.Th>
                             <Table.Td>{formatDuration(song.durationSeconds)}</Table.Td>
                         </Table.Tr>
