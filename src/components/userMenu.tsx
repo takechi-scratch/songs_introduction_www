@@ -37,7 +37,7 @@ export default function UserMenu() {
                         <Menu.Divider />
                         <Menu.Label>編集者用</Menu.Label>
                         <Menu.Item
-                            href="/edit_songs/"
+                            href="/songs/edit/"
                             component={Link}
                             leftSection={<IconDatabasePlus size={14} />}
                         >
