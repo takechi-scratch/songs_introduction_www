@@ -271,10 +271,7 @@ function MainPage() {
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
 
     return (
-        <MyAppShell>
-            <Title order={2} mb="md">
-                曲一覧
-            </Title>
+        <>
             <Accordion variant="separated" m="md" defaultValue={searchTypeInParams ? "検索" : null}>
                 <Accordion.Item key="検索" value="検索">
                     <Accordion.Control icon="🔍">検索</Accordion.Control>
@@ -324,14 +321,19 @@ function MainPage() {
                     <CardsList songs={songs} />
                 </>
             )}
-        </MyAppShell>
+        </>
     );
 }
 
 export default function Page() {
     return (
-        <Suspense fallback={<>loading params...</>}>
-            <MainPage />
-        </Suspense>
+        <MyAppShell>
+            <Title order={2} mb="md">
+                曲一覧
+            </Title>
+            <Suspense fallback={<>loading params...</>}>
+                <MainPage />
+            </Suspense>
+        </MyAppShell>
     );
 }

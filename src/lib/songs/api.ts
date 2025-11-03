@@ -5,6 +5,21 @@ import { Song, SongWithScore, UpsertSong } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
+export function scoreCanBeCalculated(song: Song) {
+    return (
+        song.vocal !== null &&
+        song.illustrations !== null &&
+        song.movie !== null &&
+        song.bpm !== null &&
+        song.mainKey !== null &&
+        song.chordRate6451 !== null &&
+        song.chordRate4561 !== null &&
+        song.mainChord !== null &&
+        song.pianoRate !== null &&
+        song.modulationTimes !== null
+    );
+}
+
 export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
     const FilteredQuery = Object.fromEntries(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

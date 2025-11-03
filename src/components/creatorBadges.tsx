@@ -10,6 +10,10 @@ export default function CreatorBadges({
     creators: string[];
     searchQueryName: keyof SearchQuery;
 } & Omit<BadgeProps, "component" | "href" | "children">) {
+    if (creators.length === 0) {
+        return "-";
+    }
+
     return (
         <>
             {creators.map((rawCreator) => {

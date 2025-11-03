@@ -67,17 +67,29 @@ export default function InfoTabs({ song }: { song: Song }) {
         publishedType = "不明";
     }
 
-    const chordData = [
-        { name: "6451進行", value: song.chordRate6451, color: "#96c3ffff" },
-        { name: "4561進行", value: song.chordRate4561, color: "#fcab7fff" },
-    ];
+    let chordData = null;
+    if (song.chordRate6451 !== null && song.chordRate4561 !== null) {
+        chordData = [
+            { name: "6451進行", value: song.chordRate6451, color: "#96c3ffff" },
+            { name: "4561進行", value: song.chordRate4561, color: "#fcab7fff" },
+        ];
 
-    if (chordData[0].value + chordData[1].value < 1) {
-        chordData.push({
-            name: "その他",
-            value: 1 - (song.chordRate4561 + song.chordRate6451),
-            color: "gray.6",
-        });
+        if (chordData[0].value + chordData[1].value < 1) {
+            chordData.push({
+                name: "その他",
+                value: 1 - (song.chordRate4561 + song.chordRate6451),
+                color: "gray.6",
+            });
+        }
+    }
+
+    let displayedModulationTimes;
+    if (song.modulationTimes === null) {
+        displayedModulationTimes = "不明";
+    } else if (song.modulationTimes === 0) {
+        displayedModulationTimes = "なし";
+    } else {
+        displayedModulationTimes = `${song.modulationTimes}回`;
     }
 
     const takechiIcon = (
@@ -133,7 +145,11 @@ export default function InfoTabs({ song }: { song: Song }) {
                                     isFromYoutube={song.publishedType !== -1}
                                 />
                             </Table.Th>
-                            <Table.Td>{formatDuration(song.durationSeconds)}</Table.Td>
+                            <Table.Td>
+                                {song.durationSeconds
+                                    ? formatDuration(song.durationSeconds)
+                                    : "不明"}
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
@@ -144,16 +160,14 @@ export default function InfoTabs({ song }: { song: Song }) {
                         <Table.Tr>
                             <Table.Th>ボーカル</Table.Th>
                             <Table.Td>
-                                {song.vocal ? (
+                                {song.vocal !== null ? (
                                     <CreatorBadges
                                         color="orange"
                                         searchQueryName="vocal"
-                                        creators={song.vocal
-                                            .split("/")
-                                            .map((creator) => creator.trim())}
+                                        creators={song.vocal}
                                     />
                                 ) : (
-                                    "-"
+                                    "不明"
                                 )}
                             </Table.Td>
                         </Table.Tr>
@@ -161,16 +175,14 @@ export default function InfoTabs({ song }: { song: Song }) {
                         <Table.Tr>
                             <Table.Th>イラスト等</Table.Th>
                             <Table.Td>
-                                {song.illustrations ? (
+                                {song.illustrations !== null ? (
                                     <CreatorBadges
                                         color="blue"
                                         searchQueryName="illustrations"
-                                        creators={song.illustrations
-                                            .split("/")
-                                            .map((creator) => creator.trim())}
+                                        creators={song.illustrations}
                                     />
                                 ) : (
-                                    "-"
+                                    "不明"
                                 )}
                             </Table.Td>
                         </Table.Tr>
@@ -178,16 +190,14 @@ export default function InfoTabs({ song }: { song: Song }) {
                         <Table.Tr>
                             <Table.Th>動画</Table.Th>
                             <Table.Td>
-                                {song.movie ? (
+                                {song.movie !== null ? (
                                     <CreatorBadges
                                         color="teal"
                                         searchQueryName="movie"
-                                        creators={song.movie
-                                            .split("/")
-                                            .map((creator) => creator.trim())}
+                                        creators={song.movie}
                                     />
                                 ) : (
-                                    "-"
+                                    "不明"
                                 )}
                             </Table.Td>
                         </Table.Tr>
@@ -203,42 +213,52 @@ export default function InfoTabs({ song }: { song: Song }) {
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={160}>BPM</Table.Th>
-                            <Table.Td>{song.bpm}</Table.Td>
+                            <Table.Td>{song.bpm !== null ? song.bpm : "不明"}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>主なキー</Table.Th>
-                            <Table.Td>{formatOriginalKey(song.mainKey)}</Table.Td>
+                            <Table.Td>
+                                {song.mainKey !== null ? formatOriginalKey(song.mainKey) : "不明"}
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
                             <Table.Th>転調</Table.Th>
-                            <Table.Td>
-                                {song.modulationTimes !== 0 ? `${song.modulationTimes}回` : "なし"}
-                            </Table.Td>
+                            <Table.Td>{displayedModulationTimes}</Table.Td>
                         </Table.Tr>
                     </Table.Tbody>
                 </Table>
 
                 <Flex direction="row" gap="lg" style={{ alignItems: "flex-start" }}>
                     <div>
-                        <Title order={4} mb="sm">
-                            コード進行
-                        </Title>
-                        <DonutChart
-                            data={chordData}
-                            startAngle={180}
-                            endAngle={0}
-                            valueFormatter={valueFormatter}
-                            style={{ height: 80 }}
-                        />
+                        {chordData !== null ? (
+                            <>
+                                <Title order={4} mb="sm">
+                                    コード進行
+                                </Title>
+                                <DonutChart
+                                    data={chordData}
+                                    startAngle={180}
+                                    endAngle={0}
+                                    valueFormatter={valueFormatter}
+                                    style={{ height: 80 }}
+                                />
+                            </>
+                        ) : (
+                            <Text>コード進行: 不明</Text>
+                        )}
                         <Text>主なコード: {song.mainChord}</Text>
                     </div>
                     <div>
                         <Title order={4} mb="sm">
                             ピアノの使用度
                         </Title>
-                        <Rating value={song.pianoRate} size={30} mb="md" readOnly />
+                        {song.pianoRate !== null ? (
+                            <Rating value={song.pianoRate} size={30} mb="md" readOnly />
+                        ) : (
+                            <Text>不明</Text>
+                        )}
                     </div>
                 </Flex>
                 <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>

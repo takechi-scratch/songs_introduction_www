@@ -15,6 +15,8 @@ import {
     Select,
     Rating,
     Textarea,
+    TagsInput,
+    Flex,
 } from "@mantine/core";
 import Link from "next/link";
 import { useForm } from "@mantine/form";
@@ -25,6 +27,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 import { useSong } from "@/hooks/songs";
+import { UpsertSong } from "@/lib/songs/types";
 
 function AddSongsPage() {
     const searchParams = useSearchParams();
@@ -37,17 +40,17 @@ function AddSongsPage() {
     const { user } = useAuth();
     const userRole = useUserRole();
 
-    const [id, setID] = useState(paramID ?? "");
+    const [playerID, setPlayerID] = useState(paramID ?? "");
     const router = useRouter();
 
-    const form = useForm({
+    const form = useForm<Omit<UpsertSong, "publishedType"> & { publishedType: string }>({
         mode: "uncontrolled",
         initialValues: {
-            videoId: "",
+            id: "",
             publishedType: "1",
-            vocal: "",
-            illustrations: "",
-            movie: "",
+            vocal: [],
+            illustrations: [],
+            movie: [],
             bpm: 120,
             mainKey: 60,
             chordRate6451: 0.5,
@@ -65,19 +68,19 @@ function AddSongsPage() {
     useEffect(() => {
         if (beforeSong) {
             form.setValues({
-                videoId: beforeSong.id,
+                id: beforeSong.id,
                 publishedType: beforeSong.publishedType.toString(),
-                vocal: beforeSong.vocal,
-                illustrations: beforeSong.illustrations,
-                movie: beforeSong.movie,
-                bpm: beforeSong.bpm,
-                mainKey: beforeSong.mainKey,
-                chordRate6451: beforeSong.chordRate6451,
-                chordRate4561: beforeSong.chordRate4561,
-                mainChord: beforeSong.mainChord,
-                pianoRate: beforeSong.pianoRate,
-                modulationTimes: beforeSong.modulationTimes,
-                comment: beforeSong.comment,
+                vocal: beforeSong.vocal ?? [],
+                illustrations: beforeSong.illustrations ?? [],
+                movie: beforeSong.movie ?? [],
+                bpm: beforeSong.bpm ?? 120,
+                mainKey: beforeSong.mainKey ?? 60,
+                chordRate6451: beforeSong.chordRate6451 ?? 0.5,
+                chordRate4561: beforeSong.chordRate4561 ?? 0.5,
+                mainChord: beforeSong.mainChord ?? "",
+                pianoRate: beforeSong.pianoRate ?? 3,
+                modulationTimes: beforeSong.modulationTimes ?? 0,
+                comment: beforeSong.comment ?? "",
             });
         }
         // formは含める必要なし
@@ -95,31 +98,28 @@ function AddSongsPage() {
 
     return (
         <>
-            {
-                // TODO: ボタンクリックで動画を表示するように変更
-                id && (
-                    <div
-                        style={{
-                            aspectRatio: "16/9",
-                            maxHeight: 200,
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                        }}
-                    >
-                        <ReactPlayer
-                            src={`https://www.youtube.com/watch?v=${id}`}
-                            width="100%"
-                            height="100%"
-                            controls
-                            fallback={<div style={{ aspectRatio: "16/9" }}>Loading...</div>}
-                        />
-                    </div>
-                )
-            }
+            {playerID && (
+                <div
+                    style={{
+                        aspectRatio: "16/9",
+                        maxHeight: 200,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                    }}
+                >
+                    <ReactPlayer
+                        src={`https://www.youtube.com/watch?v=${playerID}`}
+                        width="100%"
+                        height="100%"
+                        controls
+                        fallback={<div style={{ aspectRatio: "16/9" }}>Loading...</div>}
+                    />
+                </div>
+            )}
             <form
                 onSubmit={form.onSubmit(async (values) => {
                     await upsertSong(paramID, {
-                        id: id,
+                        id: values.id,
                         vocal: values.vocal,
                         illustrations: values.illustrations,
                         movie: values.movie,
@@ -134,17 +134,19 @@ function AddSongsPage() {
                         comment: values.comment,
                     });
                     console.log(values);
-                    router.push(`/songs/${id}`);
+                    router.push(`/songs/${values.id}`);
                 })}
             >
-                <TextInput
-                    withAsterisk
-                    label="曲の動画ID"
-                    placeholder="id-test"
-                    value={id}
-                    onChange={(event) => setID(event.currentTarget.value)}
-                    mb="sm"
-                />
+                <Flex align="flex-end" gap="lg" mb="md">
+                    <TextInput
+                        withAsterisk
+                        label="曲の動画ID"
+                        placeholder="id-test"
+                        key={form.key("id")}
+                        {...form.getInputProps("id")}
+                    />
+                    <Button onClick={() => setPlayerID(form.values.id)}>動画を表示</Button>
+                </Flex>
 
                 {/* TODO: YouTubeから自動fetchしない（タイトル・公開日時の入力もする）モード */}
                 <Text size="sm">公開形式</Text>
@@ -160,7 +162,7 @@ function AddSongsPage() {
                     {...form.getInputProps("publishedType")}
                 />
 
-                <TextInput
+                <TagsInput
                     label="ボーカル"
                     placeholder="初音ミク"
                     key={form.key("vocal")}
@@ -168,7 +170,7 @@ function AddSongsPage() {
                     mb="sm"
                 />
 
-                <TextInput
+                <TagsInput
                     label="イラスト等"
                     placeholder="ao"
                     key={form.key("illustrations")}
@@ -176,7 +178,7 @@ function AddSongsPage() {
                     mb="sm"
                 />
 
-                <TextInput
+                <TagsInput
                     label="動画"
                     placeholder="瀬戸わらび"
                     key={form.key("movie")}

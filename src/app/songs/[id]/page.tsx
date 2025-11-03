@@ -4,11 +4,12 @@ import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
-import { fetchNearestSongs, fetchSongById } from "@/lib/songs/api";
+import { fetchNearestSongs, fetchSongById, scoreCanBeCalculated } from "@/lib/songs/api";
 import { Metadata } from "next";
 
 import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
+import { Suspense } from "react";
 
 export const generateMetadata = async ({
     params,
@@ -27,10 +28,13 @@ export const generateMetadata = async ({
     const title = `${song.title} | MIMIさん全曲紹介`;
     const description = `「${song.title}」の詳細分析ページ。似ている曲も探せます。`;
 
-    return {
+    const metadata: Metadata = {
         title: title,
         description: description,
-        openGraph: {
+    };
+
+    if (song.thumbnailURL) {
+        metadata.openGraph = {
             title: song.title,
             description: description,
             url: song.thumbnailURL,
@@ -45,14 +49,16 @@ export const generateMetadata = async ({
             ],
             locale: "ja_JP",
             type: "website",
-        },
-        twitter: {
+        };
+        metadata.twitter = {
             card: "summary_large_image",
             title: title,
             description: description,
             images: [song.thumbnailURL],
-        },
-    };
+        };
+    }
+
+    return metadata;
 };
 
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
@@ -61,7 +67,9 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
     let song, nearestSongs;
     try {
         song = await fetchSongById(id);
-        nearestSongs = await fetchNearestSongs(id);
+        if (scoreCanBeCalculated(song)) {
+            nearestSongs = await fetchNearestSongs(id);
+        }
     } catch (error) {
         console.error("Error fetching song data:", error);
         return (
@@ -107,15 +115,19 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                             aspectRatio: "16/9",
                         }}
                     >
-                        <ReactPlayer
-                            src={`https://www.youtube.com/watch?v=${song.id}`}
-                            width="100%"
-                            height="100%"
-                            controls
-                            fallback={
-                                <div style={{ width: "100%", aspectRatio: "16/9" }}>Loading...</div>
-                            }
-                        />
+                        <Suspense>
+                            <ReactPlayer
+                                src={`https://www.youtube.com/watch?v=${song.id}`}
+                                width="100%"
+                                height="100%"
+                                controls
+                                fallback={
+                                    <div style={{ width: "100%", aspectRatio: "16/9" }}>
+                                        Loading...
+                                    </div>
+                                }
+                            />
+                        </Suspense>
                     </div>
                     <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
                         <Button
@@ -150,12 +162,18 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 
             <Flex mb="md" mt="xl" gap="xl" align="end">
                 <Title order={2}>似ている曲</Title>
-                <Anchor href={`/songs/?type=nearest&targetSongID=${song.id}`} component={Link}>
-                    高度な条件で探す
-                </Anchor>
+                {nearestSongs && (
+                    <Anchor href={`/songs/?type=nearest&targetSongID=${song.id}`} component={Link}>
+                        高度な条件で探す
+                    </Anchor>
+                )}
             </Flex>
 
-            <NearestSongsCarousel songs={nearestSongs} loading={false} error={null} />
+            {nearestSongs ? (
+                <NearestSongsCarousel songs={nearestSongs} loading={false} error={null} />
+            ) : (
+                <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
+            )}
         </MyAppShell>
     );
 }
