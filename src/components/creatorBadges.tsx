@@ -25,7 +25,9 @@ export default function CreatorBadges({
                         tt="none"
                         variant="light"
                         component={Link}
-                        href={`/songs?${searchQueryName}=${encodeURIComponent(creator)}`}
+                        href={`/songs?type=filter&${searchQueryName}=${encodeURIComponent(
+                            creator
+                        )}`}
                         key={creator}
                         {...props}
                     >

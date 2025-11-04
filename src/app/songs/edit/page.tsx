@@ -136,6 +136,23 @@ function AddSongsPage() {
                     console.log(values);
                     router.push(`/songs/${values.id}`);
                 })}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        const target = e.target as HTMLElement;
+
+                        if (target.getAttribute("data-video-id-input") !== null) {
+                            // 動画ID入力欄でEnterが押された場合
+                            e.preventDefault();
+                            setPlayerID(form.values.id);
+                            return;
+                        }
+
+                        // その他のフィールド（TEXTAREA以外）でEnterが押された場合
+                        if (target.tagName !== "TEXTAREA") {
+                            e.preventDefault();
+                        }
+                    }
+                }}
             >
                 <Flex align="flex-end" gap="lg" mb="md">
                     <TextInput
@@ -144,6 +161,7 @@ function AddSongsPage() {
                         placeholder="id-test"
                         key={form.key("id")}
                         {...form.getInputProps("id")}
+                        data-video-id-input
                     />
                     <Button onClick={() => setPlayerID(form.values.id)}>動画を表示</Button>
                 </Flex>

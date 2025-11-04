@@ -3,7 +3,7 @@
 import MyAppShell from "@/components/appshell";
 import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
-import { FilterableContents, SortableKeys } from "@/lib/search/filter";
+import { FilterableContents, SearchQuery, SortableKeys } from "@/lib/search/filter";
 import { customParams, specifiableParams } from "@/lib/search/nearest";
 import { Song } from "@/lib/songs/types";
 import {
@@ -31,9 +31,9 @@ function FilterTab({
     setSearchQuery,
     refetch,
 }: {
-    searchQuery: Record<string, string | number | boolean>;
+    searchQuery: SearchQuery;
     setSearchType: (type: "filter" | "nearest") => void;
-    setSearchQuery: (query: Record<string, string | number | boolean>) => void;
+    setSearchQuery: (query: SearchQuery) => void;
     refetch: () => void;
 }) {
     return (
@@ -75,6 +75,7 @@ function FilterTab({
                                     {content.displayName}
                                 </Text>
                             }
+                            value={String(searchQuery[content.key])}
                             placeholder={content.example}
                             style={{
                                 display: "flex",
@@ -255,7 +256,7 @@ function MainPage() {
     const [searchType, setSearchType] = useState<"filter" | "nearest">(
         searchTypeInParams === "nearest" && targetSongIDInParams ? "nearest" : "filter"
     );
-    const [searchQuery, setSearchQuery] = useState<Record<string, string | number | boolean>>(
+    const [searchQuery, setSearchQuery] = useState<SearchQuery>(
         Object.fromEntries(
             FilterableContents.map((content) => [content.key, searchParams.get(content.key) ?? ""])
         )
