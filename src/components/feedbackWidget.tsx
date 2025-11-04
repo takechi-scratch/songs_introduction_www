@@ -13,6 +13,7 @@ declare global {
             showVoting: boolean;
             showFeedback: boolean;
             showFAQ: boolean;
+            showEmailField: boolean;
             locale: string;
             apiBase: string;
         }) => void;
@@ -40,6 +41,7 @@ export default function KoeLoopWidget() {
                             showVoting: true,
                             showFeedback: true,
                             showFAQ: false,
+                            showEmailField: true,
                             locale: "ja",
                             apiBase: "https://koeloop.dev",
                         });

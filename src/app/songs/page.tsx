@@ -301,17 +301,7 @@ function MainPage() {
                     </Accordion.Panel>
                 </Accordion.Item>
             </Accordion>
-            {error && (
-                <Alert
-                    icon={<IconZoomExclamation />}
-                    title="エラーが発生しました"
-                    color="red"
-                    m="md"
-                >
-                    {error}
-                </Alert>
-            )}
-            {!error && (
+            {!error ? (
                 <>
                     {!loading && searchType === "filter" && (
                         <Text size="sm" ta="right" m="md">
@@ -320,6 +310,15 @@ function MainPage() {
                     )}
                     <CardsList songs={songs} />
                 </>
+            ) : (
+                <Alert
+                    icon={<IconZoomExclamation />}
+                    title="エラーが発生しました"
+                    color="red"
+                    m="md"
+                >
+                    {error}
+                </Alert>
             )}
         </>
     );
