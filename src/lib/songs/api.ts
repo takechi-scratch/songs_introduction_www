@@ -1,6 +1,6 @@
 import { getCurrentUserRole, getCurrentUserToken } from "../auth";
 import { SearchQuery } from "../search/filter";
-import { customParams } from "../search/nearest";
+import { CustomParams } from "../search/nearest";
 import { Song, SongWithScore, UpsertSong } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -78,7 +78,7 @@ export async function fetchNearestSongs(id: string, limit: number = 10): Promise
     }
 }
 
-export async function fetchNearestSongsAdvanced(params: customParams): Promise<SongWithScore[]> {
+export async function fetchNearestSongsAdvanced(params: CustomParams): Promise<SongWithScore[]> {
     try {
         if (!params.target_song_id) {
             throw new Error("target_song_id is required");

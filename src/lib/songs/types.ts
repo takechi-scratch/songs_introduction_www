@@ -1,4 +1,4 @@
-export type Song = {
+export interface Song {
     id: string;
     title: string;
     publishedTimestamp: number;
@@ -16,19 +16,19 @@ export type Song = {
     pianoRate: number | null;
     modulationTimes: number | null;
     comment: string | null;
-};
+}
 
-export type SongWithScore = {
+export interface SongWithScore {
     id: string;
     song: Song;
     score: number;
-};
+}
 
 export const hasScore = (item: Song | SongWithScore): item is SongWithScore => {
     return !!(item as SongWithScore)?.score;
 };
 
-export type UpsertSong = {
+export interface UpsertSong {
     id: string;
     title?: string;
     publishedTimestamp?: number;
@@ -46,4 +46,4 @@ export type UpsertSong = {
     pianoRate: number;
     modulationTimes: number;
     comment: string;
-};
+}

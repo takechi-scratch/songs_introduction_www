@@ -4,7 +4,7 @@ import MyAppShell from "@/components/appshell";
 import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
 import { FilterableContents, SearchQuery, SortableKeys } from "@/lib/search/filter";
-import { customParams, specifiableParams } from "@/lib/search/nearest";
+import { CustomParams, specifiableParams } from "@/lib/search/nearest";
 import { Song } from "@/lib/songs/types";
 import {
     Title,
@@ -146,9 +146,9 @@ function NearestTab({
     setCustomParams,
     refetch,
 }: {
-    customParams: customParams;
+    customParams: CustomParams;
     setSearchType: (type: "filter" | "nearest") => void;
-    setCustomParams: (params: customParams) => void;
+    setCustomParams: (params: CustomParams) => void;
     refetch: () => void;
 }) {
     return (
@@ -261,13 +261,13 @@ function MainPage() {
             FilterableContents.map((content) => [content.key, searchParams.get(content.key) ?? ""])
         )
     );
-    const [customParams, setCustomParams] = useState<customParams>({
+    const [customParams, setCustomParams] = useState<CustomParams>({
         target_song_id: searchParams.get("targetSongID") || undefined,
         limit: 10,
         parameters: specifiableParams.reduce((acc, content) => {
             acc[content.key as keyof Song] = content.default;
             return acc;
-        }, {} as customParams["parameters"]),
+        }, {} as CustomParams["parameters"]),
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
 

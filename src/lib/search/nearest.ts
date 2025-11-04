@@ -1,12 +1,12 @@
 import { Song } from "../songs/types";
 
-type specifiableParam = {
+interface SpecifiableParam {
     displayName: string;
     key: keyof Song;
     default: number;
-};
+}
 
-export const specifiableParams: specifiableParam[] = [
+export const specifiableParams: SpecifiableParam[] = [
     { displayName: "ボーカル", key: "vocal", default: 0.8 },
     { displayName: "イラスト等", key: "illustrations", default: 1 },
     { displayName: "動画", key: "movie", default: 0.3 },
@@ -19,7 +19,7 @@ export const specifiableParams: specifiableParam[] = [
     { displayName: "転調回数", key: "modulationTimes", default: 0.4 },
 ];
 
-export type customParams = {
+export interface CustomParams {
     target_song_id?: string;
     parameters: {
         [K in (typeof specifiableParams)[number]["key"]]: number;
@@ -28,12 +28,12 @@ export type customParams = {
     };
     limit?: number;
     is_reversed?: boolean;
-};
+}
 
-export const defaultCustomParams: customParams = {
+export const defaultCustomParams: CustomParams = {
     limit: 10,
     parameters: specifiableParams.reduce((acc, content) => {
         acc[content.key as keyof Song] = content.default;
         return acc;
-    }, {} as customParams["parameters"]),
+    }, {} as CustomParams["parameters"]),
 };

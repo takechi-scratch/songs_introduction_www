@@ -9,12 +9,12 @@ import {
 } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { SearchQuery } from "@/lib/search/filter";
-import { customParams } from "@/lib/search/nearest";
+import { CustomParams } from "@/lib/search/nearest";
 
 export function useSongs(
     searchType: "filter" | "nearest" = "filter",
     query: SearchQuery = {},
-    customParams: customParams
+    customParams: CustomParams
 ) {
     const [songs, setSongs] = useState<(Song | SongWithScore | null)[]>([...Array(10).fill(null)]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export function useSongs(
     async function loadSongs(
         searchType: "filter" | "nearest",
         query: SearchQuery,
-        customParams: customParams
+        customParams: CustomParams
     ) {
         try {
             setSongs([...Array(10).fill(null)]);

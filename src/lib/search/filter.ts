@@ -1,10 +1,10 @@
-type FilterableContent = {
+interface FilterableContent {
     displayName: string;
     key: keyof import("../songs/types").Song;
     example: string;
     selectLabel?: string[];
     selectValue?: { [key: string]: string | number };
-};
+}
 
 export const FilterableContents: FilterableContent[] = [
     { displayName: "動画のID", key: "id", example: "id-test" },
