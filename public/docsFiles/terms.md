@@ -24,4 +24,3 @@ Youtube Data APIから取得したデータには、「Y」のチップがつい
 - 本サービスに関して紛争が生じた場合には、製作者の居住地を管轄する裁判所を専属的合意管轄とします。
 
 最終更新日: 2025年10月22日
-過去の変更履歴は、[Github](https://github.com/takechi-scratch/songs_introduction_www/blob/main/public/docsFiles/terms.md)からご覧いただけます。
