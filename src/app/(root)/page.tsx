@@ -2,13 +2,14 @@
 
 import MyAppShell from "@/components/appshell";
 import NewSongsCarousel from "@/components/songCards/cardsCarousel";
-import { Divider, Flex, Text, Title } from "@mantine/core";
+import { Alert, Divider, Flex, Text, Title } from "@mantine/core";
 import { motion } from "framer-motion";
 import { useIntersection } from "@mantine/hooks";
 import { useRef } from "react";
 import { useSongs } from "@/hooks/songs";
 import { defaultCustomParams } from "@/lib/search/nearest";
 import KoeLoopWidget from "@/components/feedbackWidget";
+import { IconMessagePlus } from "@tabler/icons-react";
 
 const FadeInUp = ({ children, title }: { children: React.ReactNode; title: string }) => {
     // ChatGPTにより生成。内容を一部修正しています
@@ -45,6 +46,20 @@ export default function HomePage() {
 
     return (
         <MyAppShell>
+            <Alert title="お知らせ" color="blue" mb="lg" icon={<IconMessagePlus />}>
+                <Text size="sm">
+                    現在、「機械的に分析データを作成することについてのアンケート」を実施しています。
+                </Text>
+                <Text size="sm">
+                    <a
+                        href="https://x.com/takechi_scratch/status/1986981649213759768"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        投票する(X)
+                    </a>
+                </Text>
+            </Alert>
             <Title order={2} mb="md">
                 最新の曲
             </Title>
