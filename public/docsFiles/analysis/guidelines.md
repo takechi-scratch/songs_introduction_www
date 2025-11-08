@@ -32,8 +32,7 @@ YouTube Data API を用いて取得しており、手作業で入力したデー
 - -1...先行公開などによる仮掲載（この場合、情報の正確性は保証されていません）
 
 ### vocal, illustrations, movie
-それぞれ、YouTube動画のタイトル・説明文などから解釈しています。
-2人以上いる場合は、` / `で区切っています。
+それぞれ、YouTube動画のタイトル・説明文などから解釈し、リストとして格納しています。
 ※ illustrationsは、イラスト等（illustration / Animation / Photo）の方の名前を掲載しています。
 
 ### bpm
