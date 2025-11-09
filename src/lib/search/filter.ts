@@ -40,6 +40,8 @@ export const SortableKeys = {
 export type SearchQuery = {
     [key in (typeof FilterableContents)[number]["key"]]?: string | number;
 } & {
+    publishedAfter?: number;
+    publishedBefore?: number;
     order?: string;
     asc?: boolean;
 };

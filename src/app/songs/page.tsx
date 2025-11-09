@@ -22,8 +22,20 @@ import {
     Alert,
 } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+
+// Do this once in your application root file
+import { DateInput } from "@mantine/dates";
+import dayjs from "dayjs";
+import "dayjs/locale/ja";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
+
+// Date関連のモジュールを使用する際は忘れずに追加
+import "@mantine/dates/styles.css";
+import JapaneseDateInput from "@/components/dateInput";
 
 function FilterTab({
     searchQuery,
@@ -54,8 +66,9 @@ function FilterTab({
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 10,
-                                marginBottom: 10,
                             }}
+                            mb="xs"
+                            styles={{ wrapper: { width: "100%", maxWidth: 300 } }}
                             onChange={(value) => {
                                 if (content.selectValue && value) {
                                     setSearchQuery({
@@ -81,8 +94,9 @@ function FilterTab({
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 10,
-                                marginBottom: 10,
                             }}
+                            mb="xs"
+                            styles={{ wrapper: { width: "100%", maxWidth: 300 } }}
                             onChange={(e) =>
                                 setSearchQuery({ ...searchQuery, [content.key]: e.target.value })
                             }
@@ -90,6 +104,48 @@ function FilterTab({
                     );
                 }
             })}
+
+            <Flex gap="md" mt="sm" align="center">
+                <Text size="sm" style={{ width: 100 }}>
+                    公開日時
+                </Text>
+                <Flex gap="sm" direction={{ base: "column", sm: "row" }} align="center">
+                    <JapaneseDateInput
+                        defaultValue={dayjs("2016/7/18").toDate()}
+                        maxDate={
+                            searchQuery.publishedBefore
+                                ? dayjs.unix(searchQuery.publishedBefore).toDate()
+                                : undefined
+                        }
+                        onChange={(date) =>
+                            setSearchQuery({
+                                ...searchQuery,
+                                publishedAfter: date
+                                    ? Math.floor(dayjs(date).valueOf() / 1000)
+                                    : undefined,
+                            })
+                        }
+                    />
+                    ～
+                    <JapaneseDateInput
+                        defaultValue={dayjs().toDate()}
+                        minDate={
+                            searchQuery.publishedAfter
+                                ? dayjs.unix(searchQuery.publishedAfter).toDate()
+                                : undefined
+                        }
+                        onChange={(date) =>
+                            setSearchQuery({
+                                ...searchQuery,
+                                publishedBefore: date
+                                    ? Math.floor(dayjs(date).valueOf() / 1000) + 86400
+                                    : undefined,
+                            })
+                        }
+                    />
+                </Flex>
+            </Flex>
+
             <Select
                 data={Object.keys(SortableKeys)}
                 label="並び替え"
@@ -199,7 +255,36 @@ function NearestTab({
             ))}
             {/* <NumberInput
                 label="ゲイン(a)"
-            /> */}
+                /> */}
+
+            <Flex gap="md" mb="lg">
+                <Button
+                    onClick={() => {
+                        setCustomParams({
+                            ...customParams,
+                            parameters: specifiableParams.reduce((acc, content) => {
+                                acc[content.key] = content.default;
+                                return acc;
+                            }, {} as CustomParams["parameters"]),
+                        });
+                    }}
+                >
+                    デフォルト値
+                </Button>
+                <Button
+                    onClick={() => {
+                        setCustomParams({
+                            ...customParams,
+                            parameters: specifiableParams.reduce((acc, content) => {
+                                acc[content.key] = 0;
+                                return acc;
+                            }, {} as CustomParams["parameters"]),
+                        });
+                    }}
+                >
+                    すべて0
+                </Button>
+            </Flex>
             <NumberInput
                 label="結果の件数"
                 value={customParams.limit}
@@ -271,6 +356,8 @@ function MainPage() {
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
 
+    const router = useRouter();
+
     return (
         <>
             <Accordion variant="separated" m="md" defaultValue={searchTypeInParams ? "検索" : null}>
@@ -310,6 +397,20 @@ function MainPage() {
                         </Text>
                     )}
                     <CardsList songs={songs} />
+                    {songs !== null && songs.length > 0 && (
+                        <Button
+                            mt="xl"
+                            fullWidth
+                            color="pink"
+                            variant="light"
+                            onClick={() => {
+                                const choice = songs[Math.floor(Math.random() * songs.length)];
+                                router.replace("/songs/" + choice?.id);
+                            }}
+                        >
+                            検索結果からランダムに1曲選ぶ
+                        </Button>
+                    )}
                 </>
             ) : (
                 <Alert
