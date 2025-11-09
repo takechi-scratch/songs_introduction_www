@@ -26,7 +26,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
 // Do this once in your application root file
-import { DateInput } from "@mantine/dates";
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
 import customParseFormat from "dayjs/plugin/customParseFormat";
