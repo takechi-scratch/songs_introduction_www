@@ -1,6 +1,8 @@
 "use client";
 
+import { Skeleton } from "@mantine/core";
 import Script from "next/script";
+import { useState } from "react";
 
 // KoeLoopWidget の型定義
 declare global {
@@ -21,12 +23,19 @@ declare global {
 }
 
 export default function KoeLoopWidget() {
+    const [isLoading, setIsLoading] = useState(true);
+
     return (
         <>
-            <div
-                id="koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14"
-                style={{ paddingTop: "var(--mantine-spacing-xl)" }}
-            ></div>
+            <Skeleton
+                visible={isLoading}
+                height={isLoading ? 600 : undefined}
+                mt="md"
+                mb="xl"
+                radius="lg"
+            >
+                <div id="koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14"></div>
+            </Skeleton>
             <Script
                 src="https://koeloop.dev/widget.js"
                 strategy="afterInteractive"
@@ -45,6 +54,7 @@ export default function KoeLoopWidget() {
                             locale: "ja",
                             apiBase: "https://koeloop.dev",
                         });
+                        setIsLoading(false);
                     }
                 }}
             />

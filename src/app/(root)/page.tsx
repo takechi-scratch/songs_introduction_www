@@ -2,39 +2,12 @@
 
 import MyAppShell from "@/components/appshell";
 import NewSongsCarousel from "@/components/songCards/cardsCarousel";
-import { Alert, Divider, Flex, Text, Title } from "@mantine/core";
-import { motion } from "framer-motion";
-import { useIntersection } from "@mantine/hooks";
-import { useRef } from "react";
+import { Alert, Divider, Text, Title } from "@mantine/core";
 import { useSongs } from "@/hooks/songs";
 import { defaultCustomParams } from "@/lib/search/nearest";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { IconMessagePlus } from "@tabler/icons-react";
-
-const FadeInUp = ({ children, title }: { children: React.ReactNode; title: string }) => {
-    // ChatGPTにより生成。内容を一部修正しています
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { ref } = useIntersection({
-        root: containerRef.current,
-        threshold: 0.2,
-    });
-
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mb-16"
-            style={{ height: 200 }}
-        >
-            <Flex align="center" direction="column" justify="center" style={{ height: "100%" }}>
-                <Title order={2}>{title}</Title>
-                {children}
-            </Flex>
-        </motion.div>
-    );
-};
+import { FadeInUp } from "@/components/animatedContents";
 
 export default function HomePage() {
     const latestSongsData = useSongs(
