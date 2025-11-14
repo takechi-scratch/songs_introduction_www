@@ -35,6 +35,7 @@ export const SortableKeys = {
     "4561進行の割合": "chordRate4561",
     ピアノの使用度: "pianoRate",
     転調回数: "modulationTimes",
+    ランダム: "random",
 };
 
 export type SearchQuery = {

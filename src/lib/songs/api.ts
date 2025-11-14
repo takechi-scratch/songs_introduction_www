@@ -1,6 +1,7 @@
 import { getCurrentUserRole, getCurrentUserToken } from "../auth";
 import { SearchQuery } from "../search/filter";
 import { CustomParams } from "../search/nearest";
+import { shuffleArray } from "../utils";
 import { Song, SongWithScore, UpsertSong } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -26,6 +27,12 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
         Object.entries(query).filter(([_, value]) => value !== "")
     );
 
+    let isRandom = false;
+    if (FilteredQuery.order === "random") {
+        isRandom = true;
+        delete FilteredQuery.order;
+    }
+
     try {
         const response = await fetch(
             `${API_BASE_URL}/search/filter/?` +
@@ -37,6 +44,11 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
         }
 
         const result: Song[] = await response.json();
+
+        if (isRandom) {
+            shuffleArray(result);
+        }
+
         return result;
     } catch (error) {
         console.error("Failed to fetch songs:", error);

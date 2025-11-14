@@ -10,7 +10,7 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
     let hoverData;
     if (hasScore(song)) {
         hoverData = <Text size="sm">類似度: {(song.score * 100).toFixed(2)}%</Text>;
-        song = song.song as Song;
+        song = song.song;
     } else {
         const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
         hoverData = (
