@@ -2,59 +2,12 @@
 
 import MyAppShell from "@/components/appshell";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-    getCurrentUserToken,
-    loginWithEmailAndPassword,
-    loginWithProvider,
-    logout,
-} from "@/lib/auth";
-import { Title, TextInput, PasswordInput, Button, Alert, Text } from "@mantine/core";
+import { getCurrentUserToken, loginWithProvider, logout } from "@/lib/auth/firebase";
+import { Title, Button, Alert, Text } from "@mantine/core";
 import { GoogleAuthProvider } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { IconAlertTriangle } from "@tabler/icons-react";
-
-// 将来的には表示させる
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function LoginWithEmailForm() {
-    const router = useRouter();
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    return (
-        <>
-            <TextInput
-                label="メールアドレス"
-                placeholder="あなたのメールアドレス"
-                required
-                onChange={(e) => setEmail(e.currentTarget.value)}
-            />
-            <PasswordInput
-                label="パスワード"
-                placeholder="あなたのパスワード"
-                required
-                onChange={(e) => {
-                    setPassword(e.currentTarget.value);
-                }}
-            />
-            <Button
-                mb="md"
-                type="submit"
-                loading={loading}
-                onClick={async () => {
-                    setLoading(true);
-                    await loginWithEmailAndPassword(email, password);
-                    console.log("ログイン成功");
-                    router.push("/");
-                }}
-            >
-                ログイン
-            </Button>
-        </>
-    );
-}
 
 // useを使えーって出るときは、引数部分をPromiseで囲む！
 export default function LoginPage() {
@@ -85,7 +38,6 @@ export default function LoginPage() {
                     width={200}
                     height={50}
                     onClick={async () => {
-                        // setLoading(true);
                         await loginWithProvider(googleProvider);
                         console.log("ログイン成功");
                         router.push("/");

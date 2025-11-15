@@ -1,17 +1,15 @@
 import {
     getAuth,
-    signInWithEmailAndPassword,
     onAuthStateChanged,
     User,
     signInWithPopup,
     AuthProvider,
     signInWithRedirect,
+    GoogleAuthProvider,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -65,17 +63,11 @@ export async function getCurrentUserToken(): Promise<string | null> {
     return null;
 }
 
-// ログイン関数（Promiseを返すように修正）
-export function loginWithEmailAndPassword(email: string, password: string): Promise<User> {
-    const auth = getAuth();
-    return signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            return userCredential.user;
-        })
-        .catch((error) => {
-            console.error("Error signing in, code:", error.code, "message:", error.message);
-            throw error;
-        });
+// Youtube Data APIのアクセストークンも確保する
+export async function loginWithGoogle(): Promise<User> {
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.addScope("https://www.googleapis.com/auth/youtube");
+    return await loginWithProvider(googleProvider);
 }
 
 export async function loginWithProvider(provider: AuthProvider): Promise<User> {

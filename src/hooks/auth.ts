@@ -1,6 +1,6 @@
 "use client";
 
-import { getCurrentUserRole } from "@/lib/auth";
+import { getCurrentUserRole } from "@/lib/auth/firebase";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 

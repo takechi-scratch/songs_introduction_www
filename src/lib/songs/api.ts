@@ -1,4 +1,4 @@
-import { getCurrentUserRole, getCurrentUserToken } from "../auth";
+import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
 import { SearchQuery } from "../search/filter";
 import { CustomParams } from "../search/nearest";
 import { shuffleArray } from "../utils";

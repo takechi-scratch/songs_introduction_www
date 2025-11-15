@@ -24,6 +24,7 @@ import {
 import { IconZoomExclamation } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { useUserRole } from "@/hooks/auth";
 
 // Do this once in your application root file
 import dayjs from "dayjs";
@@ -35,6 +36,7 @@ dayjs.extend(customParseFormat);
 // Date関連のモジュールを使用する際は忘れずに追加
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
+import { createPlaylist } from "@/lib/youtubeDataAPI";
 
 function FilterTab({
     searchQuery,
@@ -355,6 +357,7 @@ function MainPage() {
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
 
+    const userRole = useUserRole();
     const router = useRouter();
 
     return (
@@ -408,6 +411,23 @@ function MainPage() {
                             }}
                         >
                             検索結果からランダムに1曲選ぶ
+                        </Button>
+                    )}
+                    {userRole === "admin" && (
+                        <Button
+                            mt="xl"
+                            fullWidth
+                            color="red"
+                            variant="light"
+                            onClick={() => {
+                                const playlist = createPlaylist(
+                                    songs.filter((song) => song !== null),
+                                    "MIMIさん全曲紹介 - 検索結果から作成",
+                                    "検索結果から作成されたプレイリスト"
+                                );
+                            }}
+                        >
+                            検索結果からプレイリストを作成
                         </Button>
                     )}
                 </>
