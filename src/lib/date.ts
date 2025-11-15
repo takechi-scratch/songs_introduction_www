@@ -1,4 +1,4 @@
-export const formatDate = (timestamp: number) => {
+export const formatDateTime = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
     return new Intl.DateTimeFormat("ja-JP", {
         year: "numeric",
@@ -9,6 +9,15 @@ export const formatDate = (timestamp: number) => {
         second: "2-digit",
         timeZone: "Asia/Tokyo",
         timeZoneName: "short",
+    }).format(date);
+};
+
+export const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return new Intl.DateTimeFormat("ja-JP", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
     }).format(date);
 };
 

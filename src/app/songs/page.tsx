@@ -36,7 +36,44 @@ dayjs.extend(customParseFormat);
 // Date関連のモジュールを使用する際は忘れずに追加
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
-import { createPlaylist } from "@/lib/youtubeDataAPI";
+import { createPlaylist } from "@/lib/youtube";
+import { formatDate } from "@/lib/date";
+import { fetchSongById } from "@/lib/songs/api";
+
+async function createPlaylistMetaData(
+    songCount: number,
+    searchType: "filter" | "nearest",
+    searchQuery: SearchQuery,
+    customParams: CustomParams
+): Promise<{ title: string; description: string }> {
+    let title = "";
+    let description = "";
+
+    if (searchType === "filter") {
+        title = `MIMIさん曲まとめ - ${formatDate(Date.now() / 1000)}`;
+
+        description += `「MIMIさん全曲紹介」の検索結果（全${songCount}曲）から自動で作成しました。\n\n`;
+        description += "【絞り込み条件】\n";
+        Object.entries(searchQuery).forEach(([key, value]) => {
+            if (key === "order" || key === "asc") return;
+
+            if (value) {
+                description += `- ${
+                    FilterableContents.find((content) => content.key === key)?.displayName || key
+                }: ${value}\n`;
+            }
+        });
+    } else if (searchType === "nearest") {
+        const targetSong = await fetchSongById(customParams.target_song_id || "");
+
+        title = `「${targetSong?.title}」が好きな人におすすめの曲 - ${formatDate(
+            Date.now() / 1000
+        )}`;
+        description += `「MIMIさん全曲紹介」で、「${targetSong?.title}」に似ている曲を${songCount}曲集めました。\n※似ている曲の選出にはカスタムパラメータが使用されています。`;
+    }
+
+    return { title, description };
+}
 
 function FilterTab({
     searchQuery,
@@ -357,6 +394,7 @@ function MainPage() {
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
 
+    const [loadingPlaylist, setLoadingPlaylist] = useState(false);
     const userRole = useUserRole();
     const router = useRouter();
 
@@ -413,18 +451,29 @@ function MainPage() {
                             検索結果からランダムに1曲選ぶ
                         </Button>
                     )}
-                    {userRole === "admin" && (
+                    {userRole === "admin" && songs !== null && songs.length > 0 && (
                         <Button
                             mt="xl"
                             fullWidth
                             color="red"
                             variant="light"
+                            loading={loadingPlaylist}
                             onClick={() => {
-                                const playlist = createPlaylist(
-                                    songs.filter((song) => song !== null),
-                                    "MIMIさん全曲紹介 - 検索結果から作成",
-                                    "検索結果から作成されたプレイリスト"
-                                );
+                                setLoadingPlaylist(true);
+                                const validSongs = songs.filter((song) => song !== null);
+                                createPlaylistMetaData(
+                                    validSongs.length,
+                                    searchType,
+                                    searchQuery,
+                                    customParams
+                                ).then(({ title, description }) => {
+                                    createPlaylist(validSongs, title, description).then(
+                                        (result) => {
+                                            window.open(result.playlistUrl, "_blank");
+                                            setLoadingPlaylist(false);
+                                        }
+                                    );
+                                });
                             }}
                         >
                             検索結果からプレイリストを作成

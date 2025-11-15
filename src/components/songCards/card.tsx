@@ -1,6 +1,6 @@
 import { Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
-import { formatDate, formatElapsedSeconds } from "@/lib/date";
+import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
 import { IconCalendarClock } from "@tabler/icons-react";
 
@@ -27,7 +27,7 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
                         </Text>
                     </HoverCard.Target>
                     <HoverCard.Dropdown>
-                        <Text size="sm">{formatDate(song.publishedTimestamp)}</Text>
+                        <Text size="sm">{formatDateTime(song.publishedTimestamp)}</Text>
                     </HoverCard.Dropdown>
                 </HoverCard>
             </>

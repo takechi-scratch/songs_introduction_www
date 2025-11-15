@@ -13,7 +13,7 @@ import {
     Title,
     Tooltip,
 } from "@mantine/core";
-import { formatDate, formatDuration } from "@/lib/date";
+import { formatDateTime, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
 import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
@@ -135,7 +135,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                     isFromYoutube={song.publishedType !== -1}
                                 />
                             </Table.Th>
-                            <Table.Td>{formatDate(song.publishedTimestamp)}</Table.Td>
+                            <Table.Td>{formatDateTime(song.publishedTimestamp)}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>

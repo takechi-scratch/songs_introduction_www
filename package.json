@@ -24,7 +24,6 @@
         "embla-carousel": "^8.5.2",
         "embla-carousel-react": "^8.5.2",
         "firebase": "^12.4.0",
-        "googleapis": "^166.0.0",
         "motion": "^12.23.12",
         "next": "15.4.6",
         "react": "19.1.0",
