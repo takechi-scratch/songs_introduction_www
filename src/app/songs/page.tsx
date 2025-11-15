@@ -5,7 +5,7 @@ import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
 import { FilterableContents, SearchQuery, SortableKeys } from "@/lib/search/filter";
 import { CustomParams, specifiableParams } from "@/lib/search/nearest";
-import { Song } from "@/lib/songs/types";
+import { hasScore, Song } from "@/lib/songs/types";
 import {
     Title,
     Tabs,
@@ -21,7 +21,7 @@ import {
     Tooltip,
     Alert,
 } from "@mantine/core";
-import { IconZoomExclamation } from "@tabler/icons-react";
+import { IconCheck, IconZoomExclamation } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useUserRole } from "@/hooks/auth";
@@ -39,6 +39,7 @@ import JapaneseDateInput from "@/components/dateInput";
 import { createPlaylist } from "@/lib/youtube";
 import { formatDate } from "@/lib/date";
 import { fetchSongById } from "@/lib/songs/api";
+import { notifications } from "@mantine/notifications";
 
 async function createPlaylistMetaData(
     songCount: number,
@@ -460,7 +461,21 @@ function MainPage() {
                             loading={loadingPlaylist}
                             onClick={() => {
                                 setLoadingPlaylist(true);
-                                const validSongs = songs.filter((song) => song !== null);
+                                const id = notifications.show({
+                                    loading: true,
+                                    title: "再生リストを作成中...",
+                                    message:
+                                        "作成完了まで数秒～数十秒かかります。しばらくお待ちください。",
+                                    autoClose: false,
+                                    withCloseButton: false,
+                                });
+
+                                const validSongs = songs
+                                    .filter((song) => song !== null)
+                                    .filter((song) => {
+                                        if (hasScore(song)) return song.song.publishedType !== -1;
+                                        return song.publishedType !== -1;
+                                    });
                                 createPlaylistMetaData(
                                     validSongs.length,
                                     searchType,
@@ -469,14 +484,34 @@ function MainPage() {
                                 ).then(({ title, description }) => {
                                     createPlaylist(validSongs, title, description).then(
                                         (result) => {
-                                            window.open(result.playlistUrl, "_blank");
                                             setLoadingPlaylist(false);
+                                            notifications.update({
+                                                id,
+                                                color: "teal",
+                                                title: "再生リストが作成されました！",
+                                                message: (
+                                                    <Text size="sm">
+                                                        リンクは
+                                                        <a
+                                                            href={result.playlistUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            こちら
+                                                        </a>
+                                                        。
+                                                    </Text>
+                                                ),
+                                                icon: <IconCheck size={18} />,
+                                                loading: false,
+                                                withCloseButton: true,
+                                            });
                                         }
                                     );
                                 });
                             }}
                         >
-                            検索結果からプレイリストを作成
+                            検索結果から再生リストを作成
                         </Button>
                     )}
                 </>

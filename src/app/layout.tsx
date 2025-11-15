@@ -6,8 +6,11 @@ import Script from "next/script";
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const title = "MIMIさん全曲紹介";
@@ -67,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <MantineProvider>
+                    <Notifications />
                     <AuthProvider>{children}</AuthProvider>
                 </MantineProvider>
             </body>
