@@ -1,6 +1,6 @@
 # MIMIさん全曲紹介 フロントエンド
 
-## 仕様技術
+## 技術スタック
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [YouTube Data API v3](https://developers.google.com/youtube/v3)
