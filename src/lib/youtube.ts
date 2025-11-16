@@ -3,6 +3,13 @@ import { getCurrentUser, getCurrentUserRole, getCurrentUserToken } from "./auth/
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
+export interface CreatePlaylistResult {
+    playlistId?: string;
+    playlistUrl?: string;
+    status?: number;
+    message?: string;
+}
+
 export async function createPlaylist(
     songs: (Song | SongWithScore | string)[],
     playlistTitle: string,
@@ -32,13 +39,25 @@ export async function createPlaylist(
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.status === 503) {
+                return {
+                    status: 503,
+                    message:
+                        "再生リストは現在作成できません。（APIの割り当てがなくなった可能性があります。）しばらくしてから再度お試しください。",
+                };
+            } else if (response.status === 429) {
+                return {
+                    status: 429,
+                    message:
+                        "再生リストの作成上限に到達しました。しばらくしてから再度お試しください。",
+                };
+            }
+            console.error(`Failed to create playlist: ${response.status} ${response.statusText}`);
+            return { status: response.status, message: "サーバー側でエラーが発生しました。" };
         }
 
-        const result: {
-            playlistId: string;
-            playlistUrl: string;
-        } = await response.json();
+        const result: CreatePlaylistResult = await response.json();
+        result.status = 200;
         return result;
     } catch (error) {
         console.error(`Failed to create playlist:`, error);

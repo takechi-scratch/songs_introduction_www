@@ -21,7 +21,7 @@ import {
     Tooltip,
     Alert,
 } from "@mantine/core";
-import { IconCheck, IconZoomExclamation } from "@tabler/icons-react";
+import { IconCheck, IconPlaylistX, IconZoomExclamation } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useUserRole } from "@/hooks/auth";
@@ -36,7 +36,7 @@ dayjs.extend(customParseFormat);
 // Date関連のモジュールを使用する際は忘れずに追加
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
-import { createPlaylist } from "@/lib/youtube";
+import { createPlaylist, CreatePlaylistResult } from "@/lib/youtube";
 import { formatDate } from "@/lib/date";
 import { fetchSongById } from "@/lib/songs/api";
 import { notifications } from "@mantine/notifications";
@@ -372,6 +372,39 @@ function NearestTab({
     );
 }
 
+function createPlaylistFallback(result: CreatePlaylistResult, notificationID: string) {
+    if (result.status !== 200) {
+        notifications.update({
+            id: notificationID,
+            color: "red",
+            title: "再生リストの作成に失敗しました",
+            message: result.message,
+            icon: <IconPlaylistX size={18} />,
+            loading: false,
+            withCloseButton: true,
+            autoClose: 5000,
+        });
+    } else {
+        notifications.update({
+            id: notificationID,
+            color: "teal",
+            title: "再生リストが作成されました！",
+            message: (
+                <Text size="sm">
+                    リンクは
+                    <a href={result.playlistUrl} target="_blank" rel="noopener noreferrer">
+                        こちら
+                    </a>
+                    。
+                </Text>
+            ),
+            icon: <IconCheck size={18} />,
+            loading: false,
+            withCloseButton: true,
+        });
+    }
+}
+
 function MainPage() {
     const searchParams = useSearchParams();
     const searchTypeInParams = searchParams.get("type");
@@ -481,33 +514,15 @@ function MainPage() {
                                     searchType,
                                     searchQuery,
                                     customParams
-                                ).then(({ title, description }) => {
-                                    createPlaylist(validSongs, title, description).then(
-                                        (result) => {
-                                            setLoadingPlaylist(false);
-                                            notifications.update({
-                                                id,
-                                                color: "teal",
-                                                title: "再生リストが作成されました！",
-                                                message: (
-                                                    <Text size="sm">
-                                                        リンクは
-                                                        <a
-                                                            href={result.playlistUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            こちら
-                                                        </a>
-                                                        。
-                                                    </Text>
-                                                ),
-                                                icon: <IconCheck size={18} />,
-                                                loading: false,
-                                                withCloseButton: true,
-                                            });
-                                        }
-                                    );
+                                ).then((metadata) => {
+                                    createPlaylist(
+                                        validSongs,
+                                        metadata.title,
+                                        metadata.description
+                                    ).then((result) => {
+                                        setLoadingPlaylist(false);
+                                        createPlaylistFallback(result, id);
+                                    });
                                 });
                             }}
                         >
