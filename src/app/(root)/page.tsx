@@ -2,12 +2,12 @@
 
 import MyAppShell from "@/components/appshell";
 import NewSongsCarousel from "@/components/songCards/cardsCarousel";
-import { Alert, Divider, Text, Title } from "@mantine/core";
+import { Divider, Text, Title } from "@mantine/core";
 import { useSongs } from "@/hooks/songs";
 import { defaultCustomParams } from "@/lib/search/nearest";
 import KoeLoopWidget from "@/components/feedbackWidget";
-import { IconMessagePlus } from "@tabler/icons-react";
 import { FadeInUp } from "@/components/animatedContents";
+import { PinnedAnnouncements } from "@/components/announcements/manager";
 
 export default function HomePage() {
     const latestSongsData = useSongs(
@@ -19,20 +19,7 @@ export default function HomePage() {
 
     return (
         <MyAppShell>
-            <Alert title="お知らせ" color="blue" mb="lg" icon={<IconMessagePlus />}>
-                <Text size="sm">
-                    現在、「機械的に分析データを作成することについてのアンケート」を実施しています。
-                </Text>
-                <Text size="sm">
-                    <a
-                        href="https://x.com/takechi_scratch/status/1986981649213759768"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        投票する(X)
-                    </a>
-                </Text>
-            </Alert>
+            <PinnedAnnouncements />
             <Title order={2} mb="md">
                 最新の曲
             </Title>

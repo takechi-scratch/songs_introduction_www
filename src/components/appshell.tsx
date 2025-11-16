@@ -6,6 +6,7 @@ import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
+import { noticeActiveAnnouncements } from "./announcements/manager";
 
 function Buttons() {
     return (
@@ -86,6 +87,8 @@ function Footer() {
 
 export default function MyAppShell({ children }: { children: React.ReactNode }) {
     const [opened, { toggle }] = useDisclosure();
+
+    noticeActiveAnnouncements();
 
     return (
         <AppShell
