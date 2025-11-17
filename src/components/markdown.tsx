@@ -7,7 +7,13 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
-export default function MantineMarkdown({ docs }: { docs: string }) {
+export default function MantineMarkdown({
+    docs,
+    textSize,
+}: {
+    docs: string;
+    textSize?: "sm" | "xs" | "md" | "lg" | "xl";
+}) {
     return (
         <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkBreaks]}
@@ -54,7 +60,7 @@ export default function MantineMarkdown({ docs }: { docs: string }) {
                 },
                 p: ({ children }) => {
                     return (
-                        <Text size="sm" mb="xs">
+                        <Text size={textSize ?? "md"} mb="xs">
                             {children}
                         </Text>
                     );

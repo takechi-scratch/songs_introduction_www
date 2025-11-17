@@ -3,10 +3,17 @@ import { getCurrentUser, getCurrentUserRole, getCurrentUserToken } from "./auth/
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
+interface YoutubePlaylist {
+    id: string;
+    title: string;
+    description: string;
+    createdAt: string;
+    videoIDs: string[];
+}
+
 export interface CreatePlaylistResult {
-    playlistId?: string;
-    playlistUrl?: string;
-    status?: number;
+    playlist?: YoutubePlaylist;
+    status: number;
     message?: string;
 }
 
@@ -14,7 +21,7 @@ export async function createPlaylist(
     songs: (Song | SongWithScore | string)[],
     playlistTitle: string,
     playlistDescription: string
-) {
+): Promise<CreatePlaylistResult> {
     const user = getCurrentUser();
     if (!user || user.providerData[0]?.providerId !== "google.com") {
         throw new Error("User not authenticated");
@@ -56,9 +63,8 @@ export async function createPlaylist(
             return { status: response.status, message: "サーバー側でエラーが発生しました。" };
         }
 
-        const result: CreatePlaylistResult = await response.json();
-        result.status = 200;
-        return result;
+        const playlist: YoutubePlaylist = await response.json();
+        return { playlist, status: 200 };
     } catch (error) {
         console.error(`Failed to create playlist:`, error);
         throw error;

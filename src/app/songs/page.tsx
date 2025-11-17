@@ -385,18 +385,35 @@ function createPlaylistFallback(result: CreatePlaylistResult, notificationID: st
             autoClose: 5000,
         });
     } else {
+        const isCached =
+            !result.playlist || Date.now() - new Date(result.playlist.createdAt).getTime() > 300;
+        if (isCached) {
+            console.log("Using cached playlist data.");
+        }
+
         notifications.update({
             id: notificationID,
             color: "teal",
             title: "再生リストが作成されました！",
             message: (
-                <Text size="sm">
-                    リンクは
-                    <a href={result.playlistUrl} target="_blank" rel="noopener noreferrer">
-                        こちら
-                    </a>
-                    。
-                </Text>
+                <>
+                    <Text size="sm">
+                        リンクは
+                        <a
+                            href={`https://www.youtube.com/playlist?list=${result.playlist?.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            こちら
+                        </a>
+                        。
+                    </Text>
+                    {isCached && process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
+                        <Text size="xs" c="gray">
+                            キャッシュされた結果を表示しています。
+                        </Text>
+                    )}
+                </>
             ),
             icon: <IconCheck size={18} />,
             loading: false,
