@@ -22,6 +22,7 @@ import Image from "next/image";
 import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
+import MantineMarkdown from "@/components/markdown";
 
 function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
     return (
@@ -47,8 +48,8 @@ function valueFormatter(value: number) {
 function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
     return (
         <Blockquote color="blue" m="md" icon={icon} style={{ maxWidth: 500 }}>
-            <Text mb="sm">{text}</Text>
-            <Text size="sm" c="gray.8">
+            <MantineMarkdown text={text} />
+            <Text size="sm" c="gray.8" mt="sm">
                 — {author}
             </Text>
         </Blockquote>

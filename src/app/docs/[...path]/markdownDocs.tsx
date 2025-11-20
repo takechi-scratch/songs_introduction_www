@@ -18,5 +18,5 @@ export default function MarkdownDocs({ docs, error }: { docs: string; error: str
         );
     }
 
-    return <MantineMarkdown docs={docs} />;
+    return <MantineMarkdown text={docs} />;
 }

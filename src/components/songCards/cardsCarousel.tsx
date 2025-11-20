@@ -1,22 +1,11 @@
 "use client";
 
-import SongCards from "@/components/songCards/card";
+import SongCard from "@/components/songCards/card";
 import { Carousel } from "@mantine/carousel";
 import "@mantine/carousel/styles.css";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { Text } from "@mantine/core";
 
-export default function SongsCarousel({
-    songs,
-    loading,
-    error,
-}: {
-    songs: (Song | SongWithScore | null)[];
-    loading: boolean;
-    error: string | null;
-}) {
-    if (!loading && error) return <Text>Error: {error}</Text>;
-
+export default function SongsCarousel({ songs }: { songs: (Song | SongWithScore | null)[] }) {
     return (
         <Carousel
             withIndicators
@@ -27,7 +16,7 @@ export default function SongsCarousel({
         >
             {songs.map((song) => (
                 <Carousel.Slide key={song ? song.id : Math.random()}>
-                    <SongCards song={song} />
+                    <SongCard song={song} />
                 </Carousel.Slide>
             ))}
         </Carousel>

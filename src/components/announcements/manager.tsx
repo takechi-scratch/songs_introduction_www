@@ -34,7 +34,7 @@ export function noticeActiveAnnouncements() {
         ) {
             showNotification({
                 title: announcement.title,
-                message: <MantineMarkdown docs={announcement.content} textSize="sm" />,
+                message: <MantineMarkdown text={announcement.content} textSize="sm" />,
                 ...(announcement.notificationProps ?? {}),
             });
             shownAnnouncements.push(announcement.id);
@@ -68,7 +68,7 @@ export function PinnedAnnouncements() {
                     mb="md"
                     {...announcement.alertProps}
                 >
-                    <MantineMarkdown docs={announcement.content} textSize="sm" />
+                    <MantineMarkdown text={announcement.content} textSize="sm" />
                 </Alert>
             ))}
         </>

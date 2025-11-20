@@ -170,7 +170,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </Flex>
 
             {nearestSongs ? (
-                <NearestSongsCarousel songs={nearestSongs} loading={false} error={null} />
+                <NearestSongsCarousel songs={nearestSongs} />
             ) : (
                 <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
             )}

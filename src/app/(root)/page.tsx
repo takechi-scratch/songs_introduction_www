@@ -1,21 +1,14 @@
-"use client";
-
 import MyAppShell from "@/components/appshell";
 import NewSongsCarousel from "@/components/songCards/cardsCarousel";
 import { Divider, Text, Title } from "@mantine/core";
-import { useSongs } from "@/hooks/songs";
-import { defaultCustomParams } from "@/lib/search/nearest";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
+import { fetchSongs } from "@/lib/songs/api";
 
-export default function HomePage() {
-    const latestSongsData = useSongs(
-        "filter",
-        { order: "publishedTimestamp" },
-        defaultCustomParams
-    );
-    const colaborationSongsData = useSongs("filter", { publishedType: 0 }, defaultCustomParams);
+export default async function HomePage() {
+    const latestSongsData = await fetchSongs({ order: "publishedTimestamp" });
+    const colaborationSongsData = await fetchSongs({ publishedType: 0 });
 
     return (
         <MyAppShell>
@@ -23,19 +16,11 @@ export default function HomePage() {
             <Title order={2} mb="md">
                 最新の曲
             </Title>
-            <NewSongsCarousel
-                songs={latestSongsData.songs}
-                loading={latestSongsData.loading}
-                error={latestSongsData.error}
-            />
+            <NewSongsCarousel songs={latestSongsData} />
             <Title order={2} mb="md">
                 他チャンネルへの提供曲
             </Title>
-            <NewSongsCarousel
-                songs={colaborationSongsData.songs}
-                loading={colaborationSongsData.loading}
-                error={colaborationSongsData.error}
-            />
+            <NewSongsCarousel songs={colaborationSongsData} />
 
             <Title order={2} mt="lg">
                 フィードバック・機能投票

@@ -8,10 +8,10 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
 export default function MantineMarkdown({
-    docs,
+    text,
     textSize,
 }: {
-    docs: string;
+    text: string;
     textSize?: "sm" | "xs" | "md" | "lg" | "xl";
 }) {
     return (
@@ -67,7 +67,7 @@ export default function MantineMarkdown({
                 },
             }}
         >
-            {docs}
+            {text}
         </ReactMarkdown>
     );
 }
