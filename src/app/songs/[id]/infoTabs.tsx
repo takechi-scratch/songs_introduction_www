@@ -1,18 +1,6 @@
 "use client";
 
-import {
-    Alert,
-    Badge,
-    Blockquote,
-    Button,
-    Flex,
-    Rating,
-    Table,
-    Tabs,
-    Text,
-    Title,
-    Tooltip,
-} from "@mantine/core";
+import { Alert, Blockquote, Button, Flex, Rating, Table, Tabs, Text, Title } from "@mantine/core";
 import { formatDateTime, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
 import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
@@ -23,23 +11,6 @@ import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
 import MantineMarkdown from "@/components/markdown";
-
-function ContentName({ name, isFromYoutube }: { name: string; isFromYoutube: boolean }) {
-    return (
-        <Flex align="center">
-            <Text size="sm" style={{ width: 100 }}>
-                {name}
-            </Text>
-            {isFromYoutube && (
-                <Tooltip label="YouTube Data APIを用いて取得">
-                    <Badge color="red" size="sm">
-                        Y
-                    </Badge>
-                </Tooltip>
-            )}
-        </Flex>
-    );
-}
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
@@ -114,47 +85,41 @@ export default function InfoTabs({ song }: { song: Song }) {
             </Tabs.List>
 
             <Tabs.Panel value="basicInfo">
-                <Title order={4} mb="sm">
-                    一覧
-                </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder>
+                <Flex mb="sm" gap="sm" align="center">
+                    <Title order={4}>動画データ</Title>
+                    <Text size="sm" c="gray.8">
+                        （YouTube Data APIより取得）
+                    </Text>
+                </Flex>
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={160}>
-                                <ContentName
-                                    name="タイトル"
-                                    isFromYoutube={song.publishedType !== -1}
-                                />
-                            </Table.Th>
+                            <Table.Th w={160}>タイトル</Table.Th>
                             <Table.Td>{song.title}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
-                            <Table.Th>
-                                <ContentName
-                                    name="公開時刻"
-                                    isFromYoutube={song.publishedType !== -1}
-                                />
-                            </Table.Th>
+                            <Table.Th>公開時刻</Table.Th>
                             <Table.Td>{formatDateTime(song.publishedTimestamp)}</Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
-                            <Table.Th>
-                                <ContentName
-                                    name="長さ"
-                                    isFromYoutube={song.publishedType !== -1}
-                                />
-                            </Table.Th>
+                            <Table.Th>長さ</Table.Th>
                             <Table.Td>
                                 {song.durationSeconds
                                     ? formatDuration(song.durationSeconds)
                                     : "不明"}
                             </Table.Td>
                         </Table.Tr>
-
+                    </Table.Tbody>
+                </Table>
+                <Title order={4} mb="sm">
+                    曲に関するデータ
+                </Title>
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                    <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th>公開形式</Table.Th>
+                            <Table.Th w={160}>公開形式</Table.Th>
                             <Table.Td>{publishedType}</Table.Td>
                         </Table.Tr>
 

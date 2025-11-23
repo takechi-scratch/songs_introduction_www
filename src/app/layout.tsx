@@ -10,6 +10,7 @@ import "@mantine/notifications/styles.css";
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -70,8 +71,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <MantineProvider>
-                    <Notifications />
-                    <AuthProvider>{children}</AuthProvider>
+                    <ModalsProvider>
+                        <Notifications />
+                        <AuthProvider>{children}</AuthProvider>
+                    </ModalsProvider>
                 </MantineProvider>
             </body>
         </html>

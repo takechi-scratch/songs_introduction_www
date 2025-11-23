@@ -5,7 +5,7 @@ import CardsList from "@/components/songCards/cardsList";
 import { useSongs } from "@/hooks/songs";
 import { FilterableContents, SearchQuery, SortableKeys } from "@/lib/search/filter";
 import { CustomParams, specifiableParams } from "@/lib/search/nearest";
-import { hasScore, Song } from "@/lib/songs/types";
+import { Song, SongWithScore } from "@/lib/songs/types";
 import {
     Title,
     Tabs,
@@ -21,7 +21,7 @@ import {
     Tooltip,
     Alert,
 } from "@mantine/core";
-import { IconCheck, IconPlaylistX, IconZoomExclamation } from "@tabler/icons-react";
+import { IconZoomExclamation } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useUserRole } from "@/hooks/auth";
@@ -36,45 +36,7 @@ dayjs.extend(customParseFormat);
 // Date関連のモジュールを使用する際は忘れずに追加
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
-import { createPlaylist, CreatePlaylistResult } from "@/lib/youtube";
-import { formatDate } from "@/lib/date";
-import { fetchSongById } from "@/lib/songs/api";
-import { notifications } from "@mantine/notifications";
-
-async function createPlaylistMetaData(
-    songCount: number,
-    searchType: "filter" | "nearest",
-    searchQuery: SearchQuery,
-    customParams: CustomParams
-): Promise<{ title: string; description: string }> {
-    let title = "";
-    let description = "";
-
-    if (searchType === "filter") {
-        title = `MIMIさん曲まとめ - ${formatDate(Date.now() / 1000)}`;
-
-        description += `「MIMIさん全曲紹介」の検索結果（全${songCount}曲）から自動で作成しました。\n\n`;
-        description += "【絞り込み条件】\n";
-        Object.entries(searchQuery).forEach(([key, value]) => {
-            if (key === "order" || key === "asc") return;
-
-            if (value) {
-                description += `- ${
-                    FilterableContents.find((content) => content.key === key)?.displayName || key
-                }: ${value}\n`;
-            }
-        });
-    } else if (searchType === "nearest") {
-        const targetSong = await fetchSongById(customParams.target_song_id || "");
-
-        title = `「${targetSong?.title}」が好きな人におすすめの曲 - ${formatDate(
-            Date.now() / 1000
-        )}`;
-        description += `「MIMIさん全曲紹介」で、「${targetSong?.title}」に似ている曲を${songCount}曲集めました。\n※似ている曲の選出にはカスタムパラメータが使用されています。`;
-    }
-
-    return { title, description };
-}
+import { confirmModal, playlistHandler } from "./playlistHandler";
 
 function FilterTab({
     searchQuery,
@@ -209,8 +171,7 @@ function FilterTab({
                 onClick={() => {
                     setSearchType("filter");
                     setSearchQuery(searchQuery);
-                    // 状態更新後にrefetchを実行するためのフラグ
-                    setTimeout(() => refetch(), 0);
+                    refetch();
                 }}
             >
                 検索
@@ -251,7 +212,7 @@ function NearestTab({
             <TextInput
                 label="基準曲の動画のID"
                 placeholder="7xht3kQO_TM"
-                value={customParams.target_song_id}
+                defaultValue={customParams.target_song_id}
                 style={{
                     display: "flex",
                     alignItems: "center",
@@ -361,8 +322,7 @@ function NearestTab({
                         }
                         setSearchType("nearest");
                         setCustomParams(customParams);
-                        // 状態更新後にrefetchを実行するためのフラグ
-                        setTimeout(() => refetch(), 0);
+                        refetch();
                     }}
                 >
                     検索
@@ -372,54 +332,45 @@ function NearestTab({
     );
 }
 
-function createPlaylistFallback(result: CreatePlaylistResult, notificationID: string) {
-    if (result.status !== 200) {
-        notifications.update({
-            id: notificationID,
-            color: "red",
-            title: "再生リストの作成に失敗しました",
-            message: result.message,
-            icon: <IconPlaylistX size={18} />,
-            loading: false,
-            withCloseButton: true,
-            autoClose: 5000,
-        });
-    } else {
-        const isCached =
-            !result.playlist || Date.now() - new Date(result.playlist.createdAt).getTime() > 300;
-        if (isCached) {
-            console.log("Using cached playlist data.");
-        }
+function ActionButtons({
+    songs,
+    playlistHandler,
+}: {
+    songs: (Song | SongWithScore | null)[];
+    playlistHandler: (setLoadingPlaylist: React.Dispatch<React.SetStateAction<boolean>>) => void;
+}) {
+    const userRole = useUserRole();
+    const router = useRouter();
+    const [loadingPlaylist, setLoadingPlaylist] = useState(false);
 
-        notifications.update({
-            id: notificationID,
-            color: "teal",
-            title: "再生リストが作成されました！",
-            message: (
-                <>
-                    <Text size="sm">
-                        リンクは
-                        <a
-                            href={`https://www.youtube.com/playlist?list=${result.playlist?.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            こちら
-                        </a>
-                        。
-                    </Text>
-                    {isCached && process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
-                        <Text size="xs" c="gray">
-                            キャッシュされた結果を表示しています。
-                        </Text>
-                    )}
-                </>
-            ),
-            icon: <IconCheck size={18} />,
-            loading: false,
-            withCloseButton: true,
-        });
-    }
+    return (
+        <Flex justify="center" m="md" gap="lg">
+            <Button
+                fullWidth
+                color="cyan"
+                variant="light"
+                onClick={() => {
+                    const choice = songs[Math.floor(Math.random() * songs.length)];
+                    router.replace("/songs/" + choice?.id);
+                }}
+            >
+                検索結果からランダムに1曲選ぶ
+            </Button>
+            {userRole === "admin" && (
+                <Button
+                    fullWidth
+                    color="red"
+                    variant="light"
+                    loading={loadingPlaylist}
+                    onClick={() =>
+                        confirmModal(() => playlistHandler(setLoadingPlaylist), songs.length > 30)
+                    }
+                >
+                    検索結果から再生リストを作成
+                </Button>
+            )}
+        </Flex>
+    );
 }
 
 function MainPage() {
@@ -444,10 +395,6 @@ function MainPage() {
         }, {} as CustomParams["parameters"]),
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
-
-    const [loadingPlaylist, setLoadingPlaylist] = useState(false);
-    const userRole = useUserRole();
-    const router = useRouter();
 
     return (
         <>
@@ -482,70 +429,26 @@ function MainPage() {
             </Accordion>
             {!error ? (
                 <>
+                    {songs !== null && songs.length > 0 && (
+                        <ActionButtons
+                            songs={songs}
+                            playlistHandler={(setLoadingPlaylist) =>
+                                playlistHandler(
+                                    songs,
+                                    searchType,
+                                    searchQuery,
+                                    customParams,
+                                    setLoadingPlaylist
+                                )
+                            }
+                        />
+                    )}
                     {!loading && searchType === "filter" && (
                         <Text size="sm" ta="right" m="md">
                             検索結果: {songs.length}曲
                         </Text>
                     )}
                     <CardsList songs={songs} />
-                    {songs !== null && songs.length > 0 && (
-                        <Button
-                            mt="xl"
-                            fullWidth
-                            color="pink"
-                            variant="light"
-                            onClick={() => {
-                                const choice = songs[Math.floor(Math.random() * songs.length)];
-                                router.replace("/songs/" + choice?.id);
-                            }}
-                        >
-                            検索結果からランダムに1曲選ぶ
-                        </Button>
-                    )}
-                    {userRole === "admin" && songs !== null && songs.length > 0 && (
-                        <Button
-                            mt="xl"
-                            fullWidth
-                            color="red"
-                            variant="light"
-                            loading={loadingPlaylist}
-                            onClick={() => {
-                                setLoadingPlaylist(true);
-                                const id = notifications.show({
-                                    loading: true,
-                                    title: "再生リストを作成中...",
-                                    message:
-                                        "作成完了まで数秒～数十秒かかります。しばらくお待ちください。",
-                                    autoClose: false,
-                                    withCloseButton: false,
-                                });
-
-                                const validSongs = songs
-                                    .filter((song) => song !== null)
-                                    .filter((song) => {
-                                        if (hasScore(song)) return song.song.publishedType !== -1;
-                                        return song.publishedType !== -1;
-                                    });
-                                createPlaylistMetaData(
-                                    validSongs.length,
-                                    searchType,
-                                    searchQuery,
-                                    customParams
-                                ).then((metadata) => {
-                                    createPlaylist(
-                                        validSongs,
-                                        metadata.title,
-                                        metadata.description
-                                    ).then((result) => {
-                                        setLoadingPlaylist(false);
-                                        createPlaylistFallback(result, id);
-                                    });
-                                });
-                            }}
-                        >
-                            検索結果から再生リストを作成
-                        </Button>
-                    )}
                 </>
             ) : (
                 <Alert

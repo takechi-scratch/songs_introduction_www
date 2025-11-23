@@ -1,26 +1,30 @@
 import MyAppShell from "@/components/appshell";
-import NewSongsCarousel from "@/components/songCards/cardsCarousel";
 import { Divider, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { fetchSongs } from "@/lib/songs/api";
+import { Song } from "@/lib/songs/types";
+import SongsSection from "./songsSection";
 
 export default async function HomePage() {
-    const latestSongsData = await fetchSongs({ order: "publishedTimestamp" });
-    const colaborationSongsData = await fetchSongs({ publishedType: 0 });
+    let latestSongsData: Song[] | undefined;
+    let colaborationSongsData: Song[] | undefined;
+
+    try {
+        latestSongsData = await fetchSongs({ order: "publishedTimestamp" });
+        colaborationSongsData = await fetchSongs({ publishedType: 0 });
+    } catch (error) {
+        console.error("Error fetching songs data:", error);
+    }
 
     return (
         <MyAppShell>
             <PinnedAnnouncements />
-            <Title order={2} mb="md">
-                最新の曲
-            </Title>
-            <NewSongsCarousel songs={latestSongsData} />
-            <Title order={2} mb="md">
-                他チャンネルへの提供曲
-            </Title>
-            <NewSongsCarousel songs={colaborationSongsData} />
+            <SongsSection
+                latestSongsData={latestSongsData}
+                colaborationSongsData={colaborationSongsData}
+            />
 
             <Title order={2} mt="lg">
                 フィードバック・機能投票

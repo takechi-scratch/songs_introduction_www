@@ -79,10 +79,4 @@ YouTube Data API を用いて取得しており、手作業で入力したデー
 
 
 ## 分析データ
-以下のAPIから、すべての曲の分析データが確認できます。
-
-https://mimi-api.takechi.f5.si/search/filter/
-
-また、以下のスプレッドシートで一覧が見られます。（今後更新を終了する予定のため、データに差異がある場合があります）
-
-https://docs.google.com/spreadsheets/d/1WQVNgdtO9N5BcAd1IdTCw08xxKXYQ9mV-PhoKbDILbM/edit
+サイト内でデータを確認できるほか、[スプレッドシート](https://docs.google.com/spreadsheets/d/1bjRMn7tLKXn1FWhj7Khzpy60J4ba2wbKZ82iLerU-tA/) に曲一覧を掲載しています。
