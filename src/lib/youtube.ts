@@ -23,7 +23,7 @@ export async function createPlaylist(
     playlistDescription: string
 ): Promise<CreatePlaylistResult> {
     const user = getCurrentUser();
-    if (!user || user.providerData[0]?.providerId !== "google.com") {
+    if (!user) {
         throw new Error("User not authenticated");
     }
 

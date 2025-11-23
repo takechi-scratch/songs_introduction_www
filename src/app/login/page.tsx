@@ -3,13 +3,13 @@
 import MyAppShell from "@/components/appshell";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCurrentUserToken, loginWithProvider, logout } from "@/lib/auth/firebase";
-import { Title, Button, Alert, Text } from "@mantine/core";
+import { Title, Button, Alert, Text, Anchor } from "@mantine/core";
 import { GoogleAuthProvider } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IconAlertTriangle } from "@tabler/icons-react";
+import Link from "next/link";
 
-// useを使えーって出るときは、引数部分をPromiseで囲む！
 export default function LoginPage() {
     const router = useRouter();
     const { user } = useAuth();
@@ -32,18 +32,23 @@ export default function LoginPage() {
             </Alert>
 
             {!user ? (
-                <Image
-                    src="/assets/auth/google.svg"
-                    alt="Googleでログインのボタン"
-                    width={200}
-                    height={50}
-                    onClick={async () => {
-                        await loginWithProvider(googleProvider);
-                        console.log("ログイン成功");
-                        router.push("/");
-                    }}
-                    style={{ margin: 12 }}
-                />
+                <>
+                    <Image
+                        src="/assets/auth/google.svg"
+                        alt="Googleでログインのボタン"
+                        width={200}
+                        height={50}
+                        onClick={async () => {
+                            await loginWithProvider(googleProvider);
+                            console.log("ログイン成功");
+                            router.push("/");
+                        }}
+                        style={{ margin: 12 }}
+                    />
+                    <Anchor component={Link} href="/login/examining">
+                        <Text size="sm">監査用アカウントでログイン</Text>
+                    </Anchor>
+                </>
             ) : (
                 <>
                     <Text>ID: {user.email}</Text>

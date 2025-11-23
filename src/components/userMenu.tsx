@@ -9,21 +9,26 @@ export default function UserMenu() {
     const { user } = useAuth();
     const userRole = useUserRole();
 
+    let userImage;
+    if (user === null) {
+        userImage = <IconUserFilled color="#868e96" width={32} height={32} />;
+    } else if (user?.photoURL === null) {
+        userImage = <IconUserFilled color="#1c79d6" width={32} height={32} />;
+    } else {
+        userImage = (
+            <Image
+                src={user.photoURL}
+                alt={"ユーザーアイコン"}
+                width={32}
+                height={32}
+                style={{ borderRadius: "50%" }}
+            />
+        );
+    }
+
     return (
         <Menu shadow="md" width={250}>
-            <Menu.Target>
-                {user?.photoURL ? (
-                    <Image
-                        src={user?.photoURL}
-                        alt={"ユーザーアイコン"}
-                        width={32}
-                        height={32}
-                        style={{ borderRadius: "50%" }}
-                    />
-                ) : (
-                    <IconUserFilled color="#868e96" width={32} height={32} />
-                )}
-            </Menu.Target>
+            <Menu.Target>{userImage}</Menu.Target>
 
             <Menu.Dropdown>
                 <Menu.Item>{user ? `${user.email} (${userRole})` : "未ログイン"}</Menu.Item>

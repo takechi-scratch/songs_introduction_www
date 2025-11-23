@@ -5,7 +5,7 @@ import {
     signInWithPopup,
     AuthProvider,
     signInWithRedirect,
-    GoogleAuthProvider,
+    signInWithEmailAndPassword,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need
@@ -63,11 +63,16 @@ export async function getCurrentUserToken(): Promise<string | null> {
     return null;
 }
 
-// Youtube Data APIのアクセストークンも確保する
-export async function loginWithGoogle(): Promise<User> {
-    const googleProvider = new GoogleAuthProvider();
-    googleProvider.addScope("https://www.googleapis.com/auth/youtube");
-    return await loginWithProvider(googleProvider);
+export function loginWithEmailAndPassword(email: string, password: string): Promise<User> {
+    const auth = getAuth();
+    return signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            return userCredential.user;
+        })
+        .catch((error) => {
+            console.error("Error signing in, code:", error.code, "message:", error.message);
+            throw error;
+        });
 }
 
 export async function loginWithProvider(provider: AuthProvider): Promise<User> {
