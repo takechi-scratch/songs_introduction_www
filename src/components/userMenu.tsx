@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
 import { Menu } from "@mantine/core";
-import { IconDatabasePlus, IconLogin, IconUserFilled } from "@tabler/icons-react";
+import { IconDatabasePlus, IconLogin, IconUserFilled, IconUserCheck } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default function UserMenu() {
     if (user === null) {
         userImage = <IconUserFilled color="#868e96" width={32} height={32} />;
     } else if (user?.photoURL === null) {
-        userImage = <IconUserFilled color="#1c79d6" width={32} height={32} />;
+        userImage = <IconUserCheck color="#1c79d6" width={32} height={32} />;
     } else {
         userImage = (
             <Image
