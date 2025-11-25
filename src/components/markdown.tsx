@@ -1,6 +1,6 @@
 "use client";
 
-import { Code, Table, Text } from "@mantine/core";
+import { Code, Divider, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
@@ -63,6 +63,16 @@ export default function MantineMarkdown({
                         <Text size={textSize ?? "md"} mb="xs">
                             {children}
                         </Text>
+                    );
+                },
+                h2: ({ children }) => {
+                    return (
+                        <>
+                            <Title order={2} mt="xl">
+                                {children}
+                            </Title>
+                            <Divider my="xs" mb="xl" />
+                        </>
                     );
                 },
             }}

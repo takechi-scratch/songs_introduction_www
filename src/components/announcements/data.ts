@@ -23,6 +23,14 @@ export const data: Announcement[] = [
         onlyInDev: true,
     },
     {
+        id: "guide_001",
+        title: "ようこそ！",
+        content:
+            "ぜひいろいろな機能を試してみてください！\n[利用規約](/docs/terms/)の確認もお願いします。",
+        expiresDate: 4102412400,
+        pinnedToTop: false,
+    },
+    {
         id: "survey_001",
         title: "お知らせ",
         content:

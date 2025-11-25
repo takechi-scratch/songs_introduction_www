@@ -49,6 +49,7 @@ function Footer() {
                     <Text size="xs">分析ガイドライン</Text>
                 </Link>
                 <Text size="xs" mr="xl">
+                    {/* 空白を残すため */}
                     {"製作: "}
                     <Link
                         href="https://x.com/takechi_scratch"
