@@ -138,7 +138,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                             variant="filled"
                             color="red"
                         >
-                            Youtubeで聴く
+                            YouTubeで聴く
                         </Button>
                         <Button
                             component="a"

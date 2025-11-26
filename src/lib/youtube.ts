@@ -3,7 +3,7 @@ import { getCurrentUser, getCurrentUserRole, getCurrentUserToken } from "./auth/
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
-interface YoutubePlaylist {
+interface YouTubePlaylist {
     id: string;
     title: string;
     description: string;
@@ -12,7 +12,7 @@ interface YoutubePlaylist {
 }
 
 export interface CreatePlaylistResult {
-    playlist?: YoutubePlaylist;
+    playlist?: YouTubePlaylist;
     status: number;
     message?: string;
 }
@@ -63,7 +63,7 @@ export async function createPlaylist(
             return { status: response.status, message: "サーバー側でエラーが発生しました。" };
         }
 
-        const playlist: YoutubePlaylist = await response.json();
+        const playlist: YouTubePlaylist = await response.json();
         return { playlist, status: 200 };
     } catch (error) {
         console.error(`Failed to create playlist:`, error);

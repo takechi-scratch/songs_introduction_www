@@ -65,7 +65,7 @@ function Footer() {
                     mt={{ base: "sm", sm: 0 }}
                     style={{ textAlign: isMobile ? "left" : "right" }}
                 >
-                    動画データ取得・埋め込みにYoutube APIを使用しています。
+                    動画データ取得・埋め込みにYouTube APIを使用しています。
                 </Text>
             </Flex>
             <Link
