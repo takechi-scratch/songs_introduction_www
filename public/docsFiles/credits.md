@@ -10,7 +10,7 @@
 ### ライブラリ
 - [Mantine](https://mantine.dev/)
 - [Motion](https://motion.dev/)
-- [tabler Icons](https://tabler.io/icons/)
+- [Tabler Icons](https://tabler.io/icons/)
 - [react-markdown](https://github.com/remarkjs/react-markdown)
 - [ReactPlayer](https://github.com/CookPete/react-player)
 
@@ -33,6 +33,7 @@
 - 提供曲の一覧: [花うさぎ](https://x.com/suyasuyanedoko) さんの [「MIMIさん提供曲まとめ」](https://x.com/suyasuyanedoko/status/1715827951680589880)
 （かなりの曲数を参考にさせていただきました）
 - フィードバック・機能投票: [KoeLoop](https://koeloop.dev/ja/)
+- 利用規約などのテンプレート: [Webサイトの利用規約](https://kiyaku.jp/)
 
 ## 制作
 - takechi ( [x](https://x.com/takechi_scratch), [github](https://github.com/takechi-scratch) )

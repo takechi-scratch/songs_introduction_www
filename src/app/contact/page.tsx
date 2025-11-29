@@ -1,6 +1,7 @@
 import MyAppShell from "@/components/appshell";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { Title, Text } from "@mantine/core";
+import { List, ListItem } from "@mantine/core";
 import Link from "next/link";
 
 // useを使えーって出るときは、引数部分をPromiseで囲む！
@@ -12,7 +13,7 @@ export default async function DocsPage() {
         <MyAppShell>
             <Title mb="lg">お問い合わせ</Title>
             <Text>現在お問い合わせフォームは準備中です。</Text>
-            <Text mb="md">
+            <Text mb="lg">
                 ご意見があれば、以下のフィードバックフォーム、もしくはX(
                 <Link
                     href="https://x.com/takechi_scratch"
@@ -23,8 +24,8 @@ export default async function DocsPage() {
                 </Link>
                 )のDMまでお願いします。
             </Text>
-            <Text>
-                ※権利者の方からの削除依頼などについては、公式のメールアドレスを使用して
+            <Text mb="sm">
+                ※お問い合わせ内容が以下にあてはまる場合は、
                 <span
                     dangerouslySetInnerHTML={{
                         __html: `<a href="mailto:${mailEntity}">${mailEntity}</a>`,
@@ -32,6 +33,15 @@ export default async function DocsPage() {
                 />
                 までご連絡ください。
             </Text>
+            <List mb="lg">
+                <ListItem>
+                    権利者の方からの削除依頼（公式のメールアドレスを使用してご連絡ください）
+                </ListItem>
+                <ListItem>
+                    <Link href="/docs/terms/privacy/">プライバシーポリシー</Link>
+                    に基づく、個人情報の開示・訂正・削除の請求
+                </ListItem>
+            </List>
 
             <KoeLoopWidget />
         </MyAppShell>

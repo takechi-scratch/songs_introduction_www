@@ -10,20 +10,36 @@ import {
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAnalytics, Analytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
     // GithubのSecret scanningに引っ掛かるので環境変数に変更
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: "songs-introduction.firebaseapp.com",
-    projectId: "songs-introduction",
-    storageBucket: "songs-introduction.firebasestorage.app",
-    messagingSenderId: "301767836051",
-    appId: "1:301767836051:web:d1117c40c30a5b48e3a866",
+    authDomain: "mimi-introduction.firebaseapp.com",
+    projectId: "mimi-introduction",
+    storageBucket: "mimi-introduction.firebasestorage.app",
+    messagingSenderId: "395968367788",
+    appId: "1:395968367788:web:1239df9d323ff3e86c2309",
+    measurementId: "G-3Q3RVCGY7W",
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+// Initialize Analytics (client-side only)
+let analytics: Analytics | null = null;
+if (typeof window !== "undefined") {
+    isSupported().then((supported) => {
+        if (supported) {
+            analytics = getAnalytics(app);
+        }
+    });
+}
+
+export function getFirebaseAnalytics(): Analytics | null {
+    return analytics;
+}
 
 // 認証状態を監視する関数
 export function onAuthStateChange(callback: (user: User | null) => void) {

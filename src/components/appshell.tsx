@@ -40,7 +40,7 @@ function Footer() {
         >
             <Flex direction={{ base: "column", sm: "row" }} flex="1" gap={{ base: 1, sm: "sm" }}>
                 <Link href="/docs/terms">
-                    <Text size="xs">利用規約</Text>
+                    <Text size="xs">規約など</Text>
                 </Link>
                 <Link href="/docs/credits">
                     <Text size="xs">クレジット</Text>
