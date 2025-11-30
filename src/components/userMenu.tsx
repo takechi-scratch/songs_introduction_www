@@ -3,7 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
 import { logout } from "@/lib/auth/firebase";
-import { Menu, UnstyledButton } from "@mantine/core";
+import { Menu } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
     IconDatabasePlus,

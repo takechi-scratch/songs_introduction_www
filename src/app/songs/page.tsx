@@ -22,7 +22,7 @@ import {
     Alert,
 } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useUserRole } from "@/hooks/auth";
 
