@@ -1,7 +1,17 @@
+"use client";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
-import { Menu } from "@mantine/core";
-import { IconDatabasePlus, IconLogin, IconUserFilled, IconUserCheck } from "@tabler/icons-react";
+import { logout } from "@/lib/auth/firebase";
+import { Menu, UnstyledButton } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import {
+    IconDatabasePlus,
+    IconLogin,
+    IconUserFilled,
+    IconUserCheck,
+    IconLogout,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,11 +42,7 @@ export default function UserMenu() {
 
             <Menu.Dropdown>
                 <Menu.Item>{user ? `${user.email} (${userRole})` : "未ログイン"}</Menu.Item>
-                <Menu.Divider />
-                <Menu.Label>メニュー</Menu.Label>
-                <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
-                    ログイン
-                </Menu.Item>
+
                 {user && userRole !== "user" && (
                     <>
                         <Menu.Divider />
@@ -49,6 +55,29 @@ export default function UserMenu() {
                             曲を追加
                         </Menu.Item>
                     </>
+                )}
+
+                <Menu.Divider />
+                <Menu.Label>メニュー</Menu.Label>
+                {user ? (
+                    <Menu.Item
+                        color="red"
+                        // component={UnstyledButton}
+                        leftSection={<IconLogout size={14} />}
+                        onClick={async () => {
+                            await logout();
+                            notifications.show({
+                                title: "ログアウトしました",
+                                message: "またのご利用をお待ちしております。",
+                            });
+                        }}
+                    >
+                        ログアウト
+                    </Menu.Item>
+                ) : (
+                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                        ログイン
+                    </Menu.Item>
                 )}
             </Menu.Dropdown>
         </Menu>

@@ -18,7 +18,7 @@ export default function LoginPage() {
         <MyAppShell>
             <Title mb="md">ログイン（監査用アカウント）</Title>
             <Alert variant="light" color="red" radius="md" mb="lg" icon={<IconAlertTriangle />}>
-                一般ユーザーは使用しないでください。また、アカウントの作成はできません。
+                一般ユーザーは、ここでアカウントを作成することはできません。製作者からの通知があったユーザーのみ使用してください。
             </Alert>
 
             <TextInput

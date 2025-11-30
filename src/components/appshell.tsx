@@ -79,6 +79,8 @@ function Footer() {
                     alt="YouTubeのロゴ"
                     width={0}
                     height={0}
+                    // ブランドガイドラインより、高さは最低20px
+                    // https://www.youtube.com/intl/ALL_jp//howyoutubeworks/resources/brand-resources/
                     style={{ width: "auto", height: "20px", verticalAlign: "sub" }}
                 />
             </Link>

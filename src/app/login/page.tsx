@@ -5,10 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getCurrentUserToken, loginWithProvider, logout } from "@/lib/auth/firebase";
 import { Title, Button, Alert, Text, Anchor } from "@mantine/core";
 import { GoogleAuthProvider } from "firebase/auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconUserFilled } from "@tabler/icons-react";
 import Link from "next/link";
+import GoogleSignInButton from "@/components/signIn/google";
+import { notifications } from "@mantine/notifications";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -27,25 +28,28 @@ export default function LoginPage() {
         <MyAppShell>
             <Title mb="lg">ログイン</Title>
 
-            <Alert variant="light" color="orange" radius="md" mb="lg" icon={<IconAlertTriangle />}>
-                ログイン機能は現在管理者向けに作成されており、利用できる機能はありません。
+            <Alert variant="light" radius="md" mb="lg" icon={<IconUserFilled />}>
+                ログインすると、再生リストの作成やコメントなどができるようになります。（現在開発中）
             </Alert>
 
             {!user ? (
                 <>
-                    <Image
-                        src="/assets/auth/google.svg"
-                        alt="Googleでログインのボタン"
-                        width={200}
-                        height={50}
+                    <GoogleSignInButton
+                        style={{ marginBottom: 12 }}
                         onClick={async () => {
-                            await loginWithProvider(googleProvider);
+                            const user = await loginWithProvider(googleProvider);
                             console.log("ログイン成功");
+                            notifications.show({
+                                title: "ログインしました",
+                                color: "green",
+                                message: `ようこそ、${
+                                    user.displayName ? user.displayName : user.email
+                                }さん！`,
+                            });
                             router.push("/");
                         }}
-                        style={{ margin: 12 }}
                     />
-                    <Anchor component={Link} href="/login/examining">
+                    <Anchor component={Link} href="/login/examining" mt="md">
                         <Text size="sm">監査用アカウントでログイン</Text>
                     </Anchor>
                 </>

@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
+// import { Noto_Sans_JP } from "next/font/google";
+
+// 将来的に移行予定
+// Noto_Sans_JP();
 
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
+import { ColorSchemeScript, MantineProvider, mantineHtmlProps, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
@@ -43,6 +47,10 @@ export const metadata: Metadata = {
     },
 };
 
+const theme = createTheme({
+    // fontFamily: "Noto Sans JP, Arial, sans-serif",
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ja" {...mantineHtmlProps}>
@@ -50,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ColorSchemeScript />
             </head>
             <body>
-                <MantineProvider>
+                <MantineProvider theme={theme}>
                     <ModalsProvider>
                         <Notifications />
                         <AuthProvider>{children}</AuthProvider>
