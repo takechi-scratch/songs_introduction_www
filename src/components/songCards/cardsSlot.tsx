@@ -97,6 +97,7 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", loop: true }}
                 getEmblaApi={setEmbla}
+                withControls={false}
             >
                 {songsInCarousel.map((song, index) => (
                     <Carousel.Slide key={song ? song.id : Math.random()}>
