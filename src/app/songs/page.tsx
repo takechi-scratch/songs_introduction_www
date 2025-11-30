@@ -344,7 +344,12 @@ function ActionButtons({
     const [loadingPlaylist, setLoadingPlaylist] = useState(false);
 
     return (
-        <Flex justify="center" m="md" gap="lg">
+        <Flex
+            direction={{ base: "column", sm: "row" }}
+            justify="center"
+            m="md"
+            gap={{ base: "sm", sm: "lg" }}
+        >
             <Button
                 fullWidth
                 color="cyan"
