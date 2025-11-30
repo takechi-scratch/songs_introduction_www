@@ -4,7 +4,13 @@ import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
 import { IconCalendarClock } from "@tabler/icons-react";
 
-export default function SongCard({ song }: { song: Song | SongWithScore | null }) {
+export default function SongCard({
+    song,
+    isHighLighted,
+}: {
+    song: Song | SongWithScore | null;
+    isHighLighted?: boolean;
+}) {
     if (!song) return <Skeleton height={350} />;
 
     let hoverData;
@@ -39,7 +45,7 @@ export default function SongCard({ song }: { song: Song | SongWithScore | null }
             shadow="sm"
             padding="xl"
             component={Link}
-            style={{ height: 350 }}
+            style={{ height: 350, border: isHighLighted ? "4px solid #fd7e14" : undefined }}
             href={`/songs/${song.id}/`}
         >
             <Card.Section>

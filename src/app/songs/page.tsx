@@ -37,6 +37,7 @@ dayjs.extend(customParseFormat);
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
 import { confirmModal, playlistHandler } from "./playlistHandler";
+import SongsSlot from "@/components/songCards/cardsSlot";
 
 function FilterTab({
     searchQuery,
@@ -335,12 +336,15 @@ function NearestTab({
 function ActionButtons({
     songs,
     playlistHandler,
+    slotsActive,
+    setSlotsActive,
 }: {
     songs: (Song | SongWithScore | null)[];
     playlistHandler: (setLoadingPlaylist: React.Dispatch<React.SetStateAction<boolean>>) => void;
+    slotsActive: boolean;
+    setSlotsActive: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const userRole = useUserRole();
-    const router = useRouter();
     const [loadingPlaylist, setLoadingPlaylist] = useState(false);
 
     return (
@@ -355,11 +359,10 @@ function ActionButtons({
                 color="cyan"
                 variant="light"
                 onClick={() => {
-                    const choice = songs[Math.floor(Math.random() * songs.length)];
-                    router.replace("/songs/" + choice?.id);
+                    setSlotsActive(() => !slotsActive);
                 }}
             >
-                検索結果からランダムに1曲選ぶ
+                {slotsActive ? "ルーレットを閉じる" : "検索結果でルーレットを回す"}
             </Button>
             {userRole === "admin" && (
                 <Button
@@ -400,6 +403,7 @@ function MainPage() {
         }, {} as CustomParams["parameters"]),
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
+    const [slotsActive, setSlotsActive] = useState(false);
 
     return (
         <>
@@ -446,6 +450,8 @@ function MainPage() {
                                     setLoadingPlaylist
                                 )
                             }
+                            slotsActive={slotsActive}
+                            setSlotsActive={setSlotsActive}
                         />
                     )}
                     {!loading && searchType === "filter" && (
@@ -453,7 +459,7 @@ function MainPage() {
                             検索結果: {songs.length}曲
                         </Text>
                     )}
-                    <CardsList songs={songs} />
+                    {slotsActive ? <SongsSlot songs={songs} /> : <CardsList songs={songs} />}
                 </>
             ) : (
                 <Alert

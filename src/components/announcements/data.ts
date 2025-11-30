@@ -8,7 +8,7 @@ interface Announcement {
     expiresDate: number;
     pinnedToTop: boolean;
     onlyInDev?: boolean;
-    notificationProps?: NotificationData;
+    notificationProps?: Omit<NotificationData, "title" | "message">;
     alertProps?: AlertProps;
     // TODO: アイコンを文字列で指定できるようにする
 }
@@ -29,6 +29,20 @@ export const data: Announcement[] = [
             "ぜひいろいろな機能を試してみてください！\n[利用規約](/docs/terms/)の確認もお願いします。",
         expiresDate: 4102412400,
         pinnedToTop: false,
+    },
+    {
+        id: "feature_001",
+        title: "ルーレット機能追加！",
+        content:
+            "[曲一覧](/songs/)の検索結果から、ランダムに曲を選べます。\nぜひ試してみてください！",
+        expiresDate: 1764774000,
+        pinnedToTop: true,
+        notificationProps: {
+            color: "cyan",
+        },
+        alertProps: {
+            color: "cyan",
+        },
     },
     {
         id: "survey_001",

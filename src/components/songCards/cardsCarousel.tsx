@@ -10,7 +10,6 @@ export default function SongsCarousel({ songs }: { songs: (Song | SongWithScore 
     return (
         <>
             <Carousel
-                withIndicators
                 height={380}
                 slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
                 slideGap={{ base: 0, sm: "md" }}
