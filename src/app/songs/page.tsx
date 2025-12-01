@@ -396,7 +396,7 @@ function MainPage() {
     );
     const [customParams, setCustomParams] = useState<CustomParams>({
         target_song_id: searchParams.get("targetSongID") || undefined,
-        limit: 10,
+        limit: 30,
         parameters: specifiableParams.reduce((acc, content) => {
             acc[content.key as keyof Song] = content.default;
             return acc;

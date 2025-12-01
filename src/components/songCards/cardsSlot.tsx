@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { EmblaCarouselType } from "embla-carousel";
 import { shuffleArray } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { IconArrowBadgeDownFilled } from "@tabler/icons-react";
 
 type RollingStatus = "beforeRolling" | "stop" | "rolling" | "slowingDown";
 
@@ -91,6 +92,11 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
 
     return (
         <>
+            <IconArrowBadgeDownFilled
+                size={48}
+                color="#fd7e14"
+                style={{ display: "block", margin: "0 auto" }}
+            />
             <Carousel
                 height={380}
                 slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
@@ -140,6 +146,8 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                 defaultChecked
                 label="自動で当たった曲へ移動する"
                 onChange={(event) => setAutoTransition(event.currentTarget.checked)}
+                disabled={rollingStatus !== "beforeRolling"}
+                mb="md"
             />
 
             {songs.filter((song) => song && hasScore(song)).length > 0 && (
