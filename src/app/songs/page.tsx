@@ -364,7 +364,7 @@ function ActionButtons({
             >
                 {slotsActive ? "ルーレットを閉じる" : "検索結果でルーレットを回す"}
             </Button>
-            {userRole === "admin" && (
+            {userRole !== "guest" && (
                 <Button
                     fullWidth
                     color="red"
