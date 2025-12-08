@@ -51,7 +51,7 @@ const theme = createTheme({
     // fontFamily: "Noto Sans JP, Arial, sans-serif",
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ja" {...mantineHtmlProps}>
             <head>
@@ -68,3 +68,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </html>
     );
 }
+
+export default RootLayout;

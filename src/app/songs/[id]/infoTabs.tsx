@@ -94,7 +94,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={160}>タイトル</Table.Th>
+                            <Table.Th w={140}>タイトル</Table.Th>
                             <Table.Td>{song.title}</Table.Td>
                         </Table.Tr>
 
@@ -119,7 +119,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={160}>公開形式</Table.Th>
+                            <Table.Th w={140}>公開形式</Table.Th>
                             <Table.Td>{publishedType}</Table.Td>
                         </Table.Tr>
 
@@ -178,7 +178,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={160}>BPM</Table.Th>
+                            <Table.Th w={140}>BPM</Table.Th>
                             <Table.Td>{song.bpm !== null ? song.bpm : "不明"}</Table.Td>
                         </Table.Tr>
 

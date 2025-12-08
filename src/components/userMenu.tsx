@@ -11,6 +11,7 @@ import {
     IconUserFilled,
     IconUserCheck,
     IconLogout,
+    IconUserCog,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +54,13 @@ export default function UserMenu() {
                             leftSection={<IconDatabasePlus size={14} />}
                         >
                             曲を追加
+                        </Menu.Item>
+                        <Menu.Item
+                            href="/admin/service-account/"
+                            component={Link}
+                            leftSection={<IconUserCog size={14} />}
+                        >
+                            専用アカウントの管理
                         </Menu.Item>
                     </>
                 )}
