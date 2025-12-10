@@ -1,19 +1,97 @@
 "use client";
 
-import { AppShell, Badge, Burger, em, Flex, Group, Text, UnstyledButton } from "@mantine/core";
+import {
+    AppShell,
+    Badge,
+    Burger,
+    em,
+    Flex,
+    Group,
+    Input,
+    MantineStyleProp,
+    Text,
+    UnstyledButton,
+} from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./MobileNavbar.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
 import { noticeActiveAnnouncements } from "./announcements/manager";
+import { IconSearch } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { showNotification } from "@mantine/notifications";
+
+type QuickSearchResult =
+    | {
+          type: "song";
+          id: string;
+      }
+    | {
+          type: "search";
+          query: string;
+      }
+    | null;
+
+function handleSearchInput(input: string): QuickSearchResult {
+    // YouTubeのURLから動画IDを抽出、なければ検索キーワードとして返す
+    try {
+        const url = new URL(input);
+        if (url.hostname === "youtu.be") {
+            return { type: "song", id: url.pathname.slice(1) };
+        } else if (url.hostname === "www.youtube.com" || url.hostname === "youtube.com") {
+            if (url.pathname.startsWith("/shorts/")) {
+                return { type: "song", id: url.pathname.slice(8) };
+            }
+            return { type: "song", id: url.searchParams.get("v") || "" };
+        }
+    } catch {
+        if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
+            return { type: "song", id: input };
+        } else {
+            return { type: "search", query: input };
+        }
+    }
+    return null;
+}
+
+function QuickSearch({ style }: { style?: MantineStyleProp }) {
+    const router = useRouter();
+
+    return (
+        <Input
+            placeholder="動画のURL"
+            leftSection={<IconSearch size={16} />}
+            style={{ minWidth: 150, maxWidth: 300, ...style }}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    const songID = handleSearchInput(e.currentTarget.value);
+                    if (songID === null) {
+                        showNotification({
+                            title: "URLを解釈できませんでした",
+                            message: "YouTubeの動画URL、または動画IDを入力してください。",
+                            color: "red",
+                        });
+                        return;
+                    }
+                    if (songID.type === "song") {
+                        router.push(`/songs/${songID.id}`);
+                    } else {
+                        router.push(`/songs?type=search&title=${encodeURIComponent(songID.query)}`);
+                    }
+                }
+            }}
+            ml="sm"
+        />
+    );
+}
 
 function Buttons() {
     return (
         <>
-            <UnstyledButton className={classes.control} component={Link} href="/">
+            {/* <UnstyledButton className={classes.control} component={Link} href="/">
                 トップ
-            </UnstyledButton>
+            </UnstyledButton> */}
             <UnstyledButton className={classes.control} component={Link} href="/songs">
                 曲一覧
             </UnstyledButton>
@@ -115,19 +193,27 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                                     height={40}
                                     style={{ marginRight: 8 }}
                                 />
-                                <h3 style={{ margin: 0 }}>
+                                <Text size="lg" fw={700} style={{ margin: 0 }}>
                                     MIMIさん全曲紹介
-                                    {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
-                                        <Badge ml="md" color="orange">
-                                            Dev
-                                        </Badge>
-                                    )}
-                                </h3>
+                                </Text>
+                                {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
+                                    <Badge ml="sm" color="orange">
+                                        DEV
+                                    </Badge>
+                                )}
                             </Flex>
                         </Link>
-                        <Group ml="auto" gap={0} visibleFrom="sm">
+                        <Flex
+                            justify="flex-end"
+                            align="center"
+                            ml="auto"
+                            gap={0}
+                            visibleFrom="sm"
+                            style={{ flex: 1 }}
+                        >
                             <Buttons />
-                        </Group>
+                            <QuickSearch style={{ flex: 1 }} />
+                        </Flex>
                         <Group>
                             <UserMenu />
                         </Group>
@@ -137,6 +223,7 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
 
             <AppShell.Navbar py="md" px={4}>
                 <Buttons />
+                <QuickSearch />
             </AppShell.Navbar>
 
             <AppShell.Main>
