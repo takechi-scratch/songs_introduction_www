@@ -2,10 +2,11 @@
 
 import AdminOnlyComponent from "@/components/adminOnly";
 import MyAppShell from "@/components/appshell";
-import { Button, Title } from "@mantine/core";
+import { Button, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { getCurrentUserToken } from "@/lib/auth/firebase";
 
 export default function ServiceAccountPage() {
     const searchParams = useSearchParams();
@@ -40,7 +41,6 @@ export default function ServiceAccountPage() {
 
     const handleStartAuth = async () => {
         try {
-            const { getCurrentUserToken } = await import("@/lib/auth/firebase");
             const token = await getCurrentUserToken();
 
             if (!token) {
@@ -52,13 +52,22 @@ export default function ServiceAccountPage() {
                 return;
             }
 
-            // FirebaseトークンをhttpOnly cookieに保存
-            document.cookie = `firebase_auth_token=${token}; path=/; max-age=300; SameSite=Lax${
-                process.env.NODE_ENV === "production" ? "; Secure" : ""
-            }`;
+            // POSTでトークンを送信し、サーバー側でCookieにセット
+            const response = await fetch("/api/service-account/", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
-            // GETリクエストでリダイレクト
-            window.location.href = `/api/service-account/`;
+            const data: { authUrl?: string; error?: string } = await response.json();
+
+            if (data.authUrl) {
+                window.location.href = data.authUrl;
+            } else {
+                window.location.href = `/admin/service-account?status=${data.error || "error"}`;
+            }
         } catch (error) {
             console.error("Error getting token:", error);
             showNotification({
@@ -73,9 +82,12 @@ export default function ServiceAccountPage() {
         <MyAppShell>
             <AdminOnlyComponent>
                 <Title mb="xl">専用チャンネル用アカウントの管理</Title>
-                <Button color="orange" onClick={handleStartAuth}>
+                <Button color="orange" onClick={handleStartAuth} mb="md">
                     認証・トークンを更新
                 </Button>
+                <Text mb="md" c="dimmed" size="sm">
+                    ※2分以内に認証を完了させてください。
+                </Text>
             </AdminOnlyComponent>
         </MyAppShell>
     );

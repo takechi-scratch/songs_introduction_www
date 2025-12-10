@@ -1,30 +1,32 @@
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-export async function GET() {
-    const cookieStore = await cookies();
-    const firebaseToken = cookieStore.get("firebase_auth_token")?.value;
+export async function GET(req: Request) {
+    const firebaseToken = req.headers.get("Authorization")?.replace("Bearer ", "");
 
     if (!firebaseToken) {
-        return NextResponse.redirect(
-            `${
-                process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-            }/admin/service-account?status=unauthorized`
-        );
+        return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
     // CSRF対策用のランダムなstate生成
     const csrfState = crypto.randomUUID();
 
     // stateをcookieに保存（検証用）
-    const response = NextResponse.redirect(generateAuthUrl(csrfState));
+    const response = NextResponse.json({ authUrl: generateAuthUrl(csrfState) });
 
     response.cookies.set("oauth_state", csrfState, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: 600, // 10分
+        maxAge: 120, // 2分
+        path: "/",
+    });
+
+    response.cookies.set("firebase_auth_token", firebaseToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 120, // 2分
         path: "/",
     });
 

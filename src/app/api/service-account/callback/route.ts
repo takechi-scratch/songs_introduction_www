@@ -1,4 +1,3 @@
-// app/api/auth/youtube/callback/route.ts
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -11,6 +10,10 @@ export async function GET(req: Request) {
     const cookieStore = await cookies();
     const savedState = cookieStore.get("oauth_state")?.value;
     const firebaseToken = cookieStore.get("firebase_auth_token")?.value;
+
+    if (!code) {
+        return NextResponse.redirect(new URL("/admin/service-account/?status=error", req.url));
+    }
 
     // CSRF対策: stateを検証
     if (!state || !savedState || state !== savedState) {
@@ -34,7 +37,7 @@ export async function GET(req: Request) {
         }/api/service-account/callback/`
     );
 
-    const { tokens } = await oauth2Client.getToken(code!);
+    const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
     // バックエンドAPIにYouTubeトークンとチャンネル情報を送信
@@ -43,7 +46,7 @@ export async function GET(req: Request) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${firebaseToken}`, // cookieからFirebaseトークンを取得して使用
+            Authorization: `Bearer ${firebaseToken}`,
         },
         body: JSON.stringify({
             token: tokens.refresh_token,

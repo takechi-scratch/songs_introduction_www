@@ -14,11 +14,14 @@
 | サービス名 | [Firebase Authentication](https://firebase.google.com/products/auth?hl=ja) |
 | 収集する情報 | **名前**・**メールアドレス** （個人情報を含みます） |
 | 情報の送信先 | Google LLC及びその関係会社 |
-| Cookieの利用 | なし |
+| Cookieの利用 | なし（管理者専用機能では利用する場合あり） |
 | 利用目的 | 「Googleでサインイン」を使用した[ログイン](/login/)機能の提供のため |
 
 - 非公開のユーザーデータにアクセスすることはありません。つまり、本サービスがユーザーに代わってGoogleアカウントで操作をすることはありません。
 - [Googleのセキュリティ設定ページ](https://myaccount.google.com/connections?filters=3,4)で、Googleアカウントへのアクセス権を削除することができます。
+
+### 専用チャンネル用アカウントの管理（管理者専用機能）
+- YouTubeのデータ操作が可能なスコープで認証する際、Cookieを使用してログイン情報を管理します。
 
 ## YouTube APIの利用について
 | 項目 | 詳細 |
