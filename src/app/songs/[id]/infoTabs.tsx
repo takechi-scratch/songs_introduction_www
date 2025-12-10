@@ -5,7 +5,6 @@ import {
     Badge,
     Blockquote,
     Button,
-    Container,
     Flex,
     Rating,
     Table,
@@ -26,30 +25,6 @@ import MantineMarkdown from "@/components/markdown";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
-}
-
-function CustomTooltip({ active, payload }: any) {
-    if (active && payload && payload.length) {
-        return (
-            <div
-                style={{
-                    backgroundColor: "white",
-                    padding: "8px 12px",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-            >
-                <Text size="sm" fw={500}>
-                    {payload[0].name}
-                </Text>
-                <Text size="sm" c="dimmed">
-                    {valueFormatter(payload[0].value)}
-                </Text>
-            </div>
-        );
-    }
-    return null;
 }
 
 function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
