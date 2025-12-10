@@ -1,6 +1,18 @@
 "use client";
 
-import { Alert, Blockquote, Button, Flex, Rating, Table, Tabs, Text, Title } from "@mantine/core";
+import {
+    Alert,
+    Badge,
+    Blockquote,
+    Button,
+    Container,
+    Flex,
+    Rating,
+    Table,
+    Tabs,
+    Text,
+    Title,
+} from "@mantine/core";
 import { formatDateTime, formatDuration } from "@/lib/date";
 import { formatOriginalKey } from "@/lib/musicValues";
 import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
@@ -14,6 +26,30 @@ import MantineMarkdown from "@/components/markdown";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
+}
+
+function CustomTooltip({ active, payload }: any) {
+    if (active && payload && payload.length) {
+        return (
+            <div
+                style={{
+                    backgroundColor: "white",
+                    padding: "8px 12px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+            >
+                <Text size="sm" fw={500}>
+                    {payload[0].name}
+                </Text>
+                <Text size="sm" c="dimmed">
+                    {valueFormatter(payload[0].value)}
+                </Text>
+            </div>
+        );
+    }
+    return null;
 }
 
 function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
@@ -53,6 +89,13 @@ export default function InfoTabs({ song }: { song: Song }) {
                 color: "gray.6",
             });
         }
+    }
+
+    let mainChordColor = "gray";
+    if (song.mainChord?.startsWith("6")) {
+        mainChordColor = "blue";
+    } else if (song.mainChord?.startsWith("4")) {
+        mainChordColor = "orange";
     }
 
     let displayedModulationTimes;
@@ -190,31 +233,45 @@ export default function InfoTabs({ song }: { song: Song }) {
                         </Table.Tr>
 
                         <Table.Tr>
+                            <Table.Th>主なコード</Table.Th>
+                            <Table.Td>
+                                <Badge variant="light" color={mainChordColor}>
+                                    {song.mainChord}
+                                </Badge>
+                            </Table.Td>
+                        </Table.Tr>
+
+                        <Table.Tr>
                             <Table.Th>転調</Table.Th>
                             <Table.Td>{displayedModulationTimes}</Table.Td>
                         </Table.Tr>
                     </Table.Tbody>
                 </Table>
 
-                <Flex direction="row" gap="lg" style={{ alignItems: "flex-start" }}>
+                <Flex direction="row" gap="xl" style={{ alignItems: "flex-start" }} mb="md">
+                    {/* Divで囲んだところは縦方向の並びになる */}
                     <div>
                         {chordData !== null ? (
                             <>
                                 <Title order={4} mb="sm">
                                     コード進行
                                 </Title>
-                                <DonutChart
-                                    data={chordData}
-                                    startAngle={180}
-                                    endAngle={0}
-                                    valueFormatter={valueFormatter}
-                                    style={{ height: 80 }}
-                                />
+                                <div style={{ height: 80 }}>
+                                    <DonutChart
+                                        data={chordData}
+                                        startAngle={180}
+                                        endAngle={0}
+                                        valueFormatter={valueFormatter}
+                                        tooltipProps={{
+                                            allowEscapeViewBox: { x: true, y: true },
+                                            wrapperStyle: { zIndex: 1000 },
+                                        }}
+                                    />
+                                </div>
                             </>
                         ) : (
                             <Text>コード進行: 不明</Text>
                         )}
-                        <Text>主なコード: {song.mainChord}</Text>
                     </div>
                     <div>
                         <Title order={4} mb="sm">

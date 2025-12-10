@@ -20,6 +20,7 @@ import {
     NumberInput,
     Tooltip,
     Alert,
+    Group,
 } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
 import { useSearchParams } from "next/navigation";
@@ -107,7 +108,7 @@ function FilterTab({
                 }
             })}
 
-            <Flex gap="md" mt="sm" align="center">
+            <Group gap="md" mt="sm" align="center">
                 <Text size="sm" style={{ width: 100 }}>
                     公開日時
                 </Text>
@@ -146,7 +147,7 @@ function FilterTab({
                         }
                     />
                 </Flex>
-            </Flex>
+            </Group>
 
             <Select
                 data={Object.keys(SortableKeys)}
@@ -228,7 +229,7 @@ function NearestTab({
                 各スコアの重要度
             </Title>
             {specifiableParams.map((param) => (
-                <Flex key={param.key} gap="md" mb="md">
+                <Group key={param.key} gap="md" mb="md">
                     {/* style={{ maxWidth: "60%", minWidth: 20 }} */}
                     <Text size="sm" style={{ width: 120 }}>
                         {param.displayName}
@@ -252,13 +253,13 @@ function NearestTab({
                         marks={[{ value: param.default }]}
                         style={{ flex: 1, maxWidth: "60%" }}
                     />
-                </Flex>
+                </Group>
             ))}
             {/* <NumberInput
                 label="ゲイン(a)"
                 /> */}
 
-            <Flex gap="md" mb="lg">
+            <Group mb="lg">
                 <Button
                     onClick={() => {
                         setCustomParams({
@@ -285,7 +286,7 @@ function NearestTab({
                 >
                     すべて0
                 </Button>
-            </Flex>
+            </Group>
             <NumberInput
                 label="結果の件数"
                 value={customParams.limit}
