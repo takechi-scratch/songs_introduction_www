@@ -5,10 +5,10 @@ import MyAppShell from "@/components/appshell";
 import { Button, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { getCurrentUserToken } from "@/lib/auth/firebase";
 
-export default function ServiceAccountPage() {
+function ServiceAccountPage() {
     const searchParams = useSearchParams();
 
     useEffect(() => {
@@ -79,15 +79,25 @@ export default function ServiceAccountPage() {
     };
 
     return (
+        <>
+            <Title mb="xl">専用チャンネル用アカウントの管理</Title>
+            <Button color="orange" onClick={handleStartAuth} mb="md">
+                認証・トークンを更新
+            </Button>
+            <Text mb="md" c="dimmed" size="sm">
+                ※2分以内に認証を完了させてください。
+            </Text>
+        </>
+    );
+}
+
+export default function LoadingPage() {
+    return (
         <MyAppShell>
             <AdminOnlyComponent>
-                <Title mb="xl">専用チャンネル用アカウントの管理</Title>
-                <Button color="orange" onClick={handleStartAuth} mb="md">
-                    認証・トークンを更新
-                </Button>
-                <Text mb="md" c="dimmed" size="sm">
-                    ※2分以内に認証を完了させてください。
-                </Text>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <ServiceAccountPage />
+                </Suspense>
             </AdminOnlyComponent>
         </MyAppShell>
     );
