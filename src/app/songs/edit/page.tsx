@@ -154,6 +154,11 @@ function AddSongsPage() {
                     }
                 }}
             >
+                {beforeSong && (
+                    <Text size="sm" mb="xs">
+                        更新前の動画ID: {beforeSong.id}
+                    </Text>
+                )}
                 <Flex align="flex-end" gap="lg" mb="md">
                     <TextInput
                         withAsterisk

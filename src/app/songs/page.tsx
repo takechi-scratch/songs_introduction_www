@@ -365,19 +365,20 @@ function ActionButtons({
             >
                 {slotsActive ? "ルーレットを閉じる" : "検索結果でルーレットを回す"}
             </Button>
-            {userRole === "admin" && (
+            <SearchWarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
                 <Button
                     fullWidth
                     color="red"
                     variant="light"
                     loading={loadingPlaylist}
+                    disabled={userRole === "guest"}
                     onClick={() =>
                         confirmModal(() => playlistHandler(setLoadingPlaylist), songs.length > 30)
                     }
                 >
                     検索結果から再生リストを作成
                 </Button>
-            )}
+            </SearchWarningTip>
         </Flex>
     );
 }

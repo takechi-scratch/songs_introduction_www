@@ -6,7 +6,7 @@ import { getCurrentUserToken, loginWithProvider, logout } from "@/lib/auth/fireb
 import { Title, Button, Alert, Text, Anchor } from "@mantine/core";
 import { GoogleAuthProvider } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { IconUserFilled } from "@tabler/icons-react";
+import { IconInfoCircle, IconUserFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import GoogleSignInButton from "@/components/signIn/google";
 import { notifications } from "@mantine/notifications";
@@ -28,8 +28,16 @@ export default function LoginPage() {
         <MyAppShell>
             <Title mb="lg">ログイン</Title>
 
-            <Alert variant="light" radius="md" mb="lg" icon={<IconUserFilled />}>
-                ログインすると、再生リストの作成やコメントなどができるようになります。（現在開発中）
+            <Alert radius="md" mb="lg" icon={<IconUserFilled />}>
+                ログインすると、再生リストの作成・コメント（現在開発中）などができるようになります。
+            </Alert>
+
+            <Alert color="orange" radius="md" mb="lg" icon={<IconInfoCircle />}>
+                ログインする前に、必ず
+                <Link href="/docs/terms/">
+                    利用規約・プライバシーポリシー・ユーザーデータポリシー
+                </Link>
+                をご確認ください。
             </Alert>
 
             {!user ? (
@@ -49,7 +57,7 @@ export default function LoginPage() {
                             router.push("/");
                         }}
                     />
-                    <Anchor component={Link} href="/login/examining" mt="md">
+                    <Anchor component={Link} href="/login/examining" mt="lg">
                         <Text size="sm">監査用アカウントでログイン</Text>
                     </Anchor>
                 </>

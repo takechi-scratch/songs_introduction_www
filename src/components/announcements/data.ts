@@ -45,6 +45,20 @@ export const data: Announcement[] = [
         },
     },
     {
+        id: "feature_002",
+        title: "再生リストの作成機能が使えるようになりました！",
+        content:
+            "[曲一覧](/songs/)で、検索結果や似ている曲の一覧から、YouTubeの再生リストを作れます！\nぜひ試してみてください！（利用には[ログイン](/login)が必要です）",
+        expiresDate: 1766145600,
+        pinnedToTop: true,
+        notificationProps: {
+            color: "pink",
+        },
+        alertProps: {
+            color: "pink",
+        },
+    },
+    {
         id: "survey_001",
         title: "お知らせ",
         content:

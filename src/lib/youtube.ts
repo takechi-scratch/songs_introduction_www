@@ -1,5 +1,5 @@
 import { Song, SongWithScore } from "./songs/types";
-import { getCurrentUser, getCurrentUserRole, getCurrentUserToken } from "./auth/firebase";
+import { getCurrentUser, getCurrentUserToken } from "./auth/firebase";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -25,10 +25,6 @@ export async function createPlaylist(
     const user = getCurrentUser();
     if (!user) {
         throw new Error("User not authenticated");
-    }
-
-    if ((await getCurrentUserRole()) !== "admin") {
-        throw new Error("Unauthorized");
     }
 
     try {
