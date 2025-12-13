@@ -1,4 +1,3 @@
-import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
@@ -29,16 +28,30 @@ export async function GET(req: Request) {
         );
     }
 
-    const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID!,
-        process.env.GOOGLE_CLIENT_SECRET!,
-        `${
-            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-        }/api/service-account/callback/`
-    );
+    // OAuth2トークンを取得
+    const redirectUri = `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    }/api/service-account/callback/`;
 
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+            code: code,
+            client_id: process.env.GOOGLE_CLIENT_ID!,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+            redirect_uri: redirectUri,
+            grant_type: "authorization_code",
+        }),
+    });
+
+    if (!tokenResponse.ok) {
+        return NextResponse.redirect(new URL("/admin/service-account/?status=error", req.url));
+    }
+
+    const tokens: { refresh_token?: string; access_token: string } = await tokenResponse.json();
 
     // バックエンドAPIにYouTubeトークンとチャンネル情報を送信
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";

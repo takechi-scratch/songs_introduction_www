@@ -1,4 +1,3 @@
-import { google } from "googleapis";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -34,18 +33,19 @@ export async function GET(req: Request) {
 }
 
 function generateAuthUrl(state: string): string {
-    const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID!,
-        process.env.GOOGLE_CLIENT_SECRET!,
-        `${
-            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-        }/api/service-account/callback/`
-    );
+    const redirectUri = `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    }/api/service-account/callback/`;
 
-    return oauth2Client.generateAuthUrl({
+    const params = new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: "https://www.googleapis.com/auth/youtube.force-ssl",
         access_type: "offline",
         prompt: "consent",
-        scope: ["https://www.googleapis.com/auth/youtube.force-ssl"],
         state: state,
     });
+
+    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }
