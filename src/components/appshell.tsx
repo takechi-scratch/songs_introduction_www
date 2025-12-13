@@ -43,7 +43,22 @@ function handleSearchInput(input: string): QuickSearchResult {
             if (url.pathname.startsWith("/shorts/")) {
                 return { type: "song", id: url.pathname.slice(8) };
             }
-            return { type: "song", id: url.searchParams.get("v") || "" };
+
+            const id = url.searchParams.get("v");
+            if (id === null) {
+                return null;
+            }
+
+            return { type: "song", id: id };
+        } else if (
+            url.hostname === window.location.hostname &&
+            url.pathname.startsWith("/songs/")
+        ) {
+            const id = url.pathname.split("/")[2];
+            if (!id) {
+                return null;
+            }
+            return { type: "song", id: id };
         }
     } catch {
         if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
@@ -60,7 +75,7 @@ function QuickSearch({ style }: { style?: MantineStyleProp }) {
 
     return (
         <Input
-            placeholder="動画のURL"
+            placeholder="URL・動画ID・タイトルで検索"
             leftSection={<IconSearch size={16} />}
             style={{ minWidth: 150, maxWidth: 300, ...style }}
             onKeyDown={(e) => {
