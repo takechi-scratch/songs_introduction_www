@@ -1,11 +1,13 @@
 import MyAppShell from "@/components/appshell";
-import { Divider, Text, Title } from "@mantine/core";
+import { Button, Center, Divider, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { fetchSongs } from "@/lib/songs/api";
 import { Song } from "@/lib/songs/types";
 import SongsSection from "./songsSection";
+import Link from "next/link";
+import { IconPlaylist } from "@tabler/icons-react";
 
 export default async function HomePage() {
     let latestSongsData: Song[] | undefined;
@@ -25,6 +27,21 @@ export default async function HomePage() {
                 latestSongsData={latestSongsData}
                 colaborationSongsData={colaborationSongsData}
             />
+
+            <Center>
+                <Button
+                    mt="md"
+                    mb="xl"
+                    href="/songs/"
+                    color="orange.7"
+                    size="xl"
+                    radius="lg"
+                    component={Link}
+                >
+                    <IconPlaylist size={20} style={{ marginRight: 8 }} />
+                    すべての曲を見る
+                </Button>
+            </Center>
 
             <Title order={2} mt="lg">
                 フィードバック・機能投票
