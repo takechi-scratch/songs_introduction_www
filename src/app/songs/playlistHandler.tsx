@@ -8,6 +8,7 @@ import { List, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconPlaylistX, IconCheck } from "@tabler/icons-react";
+import Link from "next/link";
 
 export function confirmModal(playlistHandler: () => void, isMany: boolean = false) {
     modals.openConfirmModal({
@@ -18,7 +19,11 @@ export function confirmModal(playlistHandler: () => void, isMany: boolean = fals
                     <List.Item>曲数が多いため、操作に時間がかかる場合があります。</List.Item>
                 )}
                 <List.Item>
-                    作成した再生リストは、「MIMIさん全曲紹介」のチャンネルで公開されます。
+                    作成した再生リストは、
+                    <Link href="https://www.youtube.com/@songs-introduction">
+                        「MIMIさん全曲紹介」のチャンネル
+                    </Link>
+                    で公開されます。
                 </List.Item>
             </List>
         ),
