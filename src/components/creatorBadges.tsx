@@ -30,6 +30,7 @@ export default function CreatorBadges({
                         )}`}
                         key={creator}
                         {...props}
+                        style={{ cursor: "pointer" }}
                     >
                         {creator}
                     </Badge>
