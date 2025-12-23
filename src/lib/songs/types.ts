@@ -47,6 +47,7 @@ export interface UpsertSong {
     mainChord: string;
     pianoRate: number;
     modulationTimes: number;
-    lyricsVector: number[];
+    lyricsVector?: number[];
+    lyricsOfficiallyReleased: boolean;
     comment: string;
 }

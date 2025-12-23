@@ -58,6 +58,7 @@ function AddSongsPage() {
             mainChord: "",
             pianoRate: 3,
             modulationTimes: 0,
+            lyricsOfficiallyReleased: false,
             comment: "",
         },
 
@@ -131,6 +132,7 @@ function AddSongsPage() {
                         mainChord: values.mainChord,
                         pianoRate: values.pianoRate,
                         modulationTimes: values.modulationTimes,
+                        lyricsOfficiallyReleased: values.lyricsOfficiallyReleased,
                         comment: values.comment,
                     });
                     console.log(values);
