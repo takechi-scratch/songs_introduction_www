@@ -59,6 +59,14 @@ export const data: Announcement[] = [
         },
     },
     {
+        id: "feature_003",
+        title: "歌詞の分析機能を追加しました！",
+        content:
+            "歌詞の類似度を「似ている曲」の算出に利用しています。\nもし似ている曲の提案に問題や不満点があれば、ぜひフィードバックをお寄せください！",
+        expiresDate: 1766826000,
+        pinnedToTop: false,
+    },
+    {
         id: "survey_001",
         title: "お知らせ",
         content:
