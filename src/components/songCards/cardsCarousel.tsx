@@ -6,7 +6,13 @@ import "@mantine/carousel/styles.css";
 import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { Text } from "@mantine/core";
 
-export default function SongsCarousel({ songs }: { songs: (Song | SongWithScore | null)[] }) {
+export default function SongsCarousel({
+    songs,
+    displayNotice = true,
+}: {
+    songs: (Song | SongWithScore | null)[];
+    displayNotice?: boolean;
+}) {
     return (
         <>
             <Carousel
@@ -21,7 +27,7 @@ export default function SongsCarousel({ songs }: { songs: (Song | SongWithScore 
                     </Carousel.Slide>
                 ))}
             </Carousel>
-            {songs.filter((song) => song && hasScore(song)).length > 0 && (
+            {songs.filter((song) => song && hasScore(song)).length > 0 && displayNotice && (
                 <Text size="sm" c="gray.8" mb="md">
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>

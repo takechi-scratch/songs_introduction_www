@@ -17,6 +17,7 @@ export const specifiableParams: SpecifiableParam[] = [
     { displayName: "主なキー", key: "mainKey", default: 0.6 },
     { displayName: "主なコード", key: "mainChord", default: 0.6 },
     { displayName: "転調回数", key: "modulationTimes", default: 0.4 },
+    { displayName: "歌詞の類似度", key: "lyricsVector", default: 0.8 },
 ];
 
 export interface CustomParams {

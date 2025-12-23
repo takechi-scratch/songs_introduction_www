@@ -15,6 +15,8 @@ export interface Song {
     mainChord: string | null;
     pianoRate: number | null;
     modulationTimes: number | null;
+    lyricsVector: number[] | null;
+    lyricsOfficiallyReleased: boolean;
     comment: string | null;
 }
 
@@ -45,5 +47,6 @@ export interface UpsertSong {
     mainChord: string;
     pianoRate: number;
     modulationTimes: number;
+    lyricsVector: number[];
     comment: string;
 }

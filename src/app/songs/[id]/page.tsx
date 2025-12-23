@@ -4,12 +4,19 @@ import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
-import { fetchNearestSongs, fetchSongById, scoreCanBeCalculated } from "@/lib/songs/api";
+import {
+    fetchNearestSongs,
+    fetchNearestSongsAdvanced,
+    fetchSongById,
+    scoreCanBeCalculated,
+} from "@/lib/songs/api";
 import { Metadata } from "next";
 
 import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
+import { defaultCustomParams } from "@/lib/search/nearest";
+import { hasLyrics } from "@/lib/musicValues";
 
 export const generateMetadata = async ({
     params,
@@ -64,11 +71,22 @@ export const generateMetadata = async ({
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;
 
-    let song, nearestSongs;
+    let song, nearestSongs, nearestLyricsSongs;
     try {
         song = await fetchSongById(id);
         if (scoreCanBeCalculated(song)) {
             nearestSongs = await fetchNearestSongs(id);
+
+            if (hasLyrics(song)) {
+                const lyricsParams = { ...defaultCustomParams, target_song_id: id };
+                for (const key of Object.keys(
+                    lyricsParams.parameters
+                ) as (keyof typeof lyricsParams.parameters)[]) {
+                    lyricsParams.parameters[key] = 0.0;
+                }
+                lyricsParams.parameters.lyricsVector = 1.0;
+                nearestLyricsSongs = await fetchNearestSongsAdvanced(lyricsParams);
+            }
         }
     } catch (error) {
         console.error("Error fetching song data:", error);
@@ -170,9 +188,18 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </Flex>
 
             {nearestSongs ? (
-                <NearestSongsCarousel songs={nearestSongs} />
+                <NearestSongsCarousel songs={nearestSongs} displayNotice={!nearestLyricsSongs} />
             ) : (
                 <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
+            )}
+
+            {nearestLyricsSongs && (
+                <>
+                    <Title mt="xl" order={2}>
+                        歌詞が似ている曲
+                    </Title>
+                    <NearestSongsCarousel songs={nearestLyricsSongs} />
+                </>
             )}
         </MyAppShell>
     );

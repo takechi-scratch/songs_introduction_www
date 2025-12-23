@@ -4,8 +4,12 @@ import {
     Alert,
     Badge,
     Blockquote,
+    Box,
     Button,
+    Collapse,
     Flex,
+    Grid,
+    HoverCard,
     Rating,
     Table,
     Tabs,
@@ -13,8 +17,14 @@ import {
     Title,
 } from "@mantine/core";
 import { formatDateTime, formatDuration } from "@/lib/date";
-import { formatOriginalKey } from "@/lib/musicValues";
-import { IconInfoCircle, ReactNode } from "@tabler/icons-react";
+import { formatOriginalKey, hasLyrics } from "@/lib/musicValues";
+import {
+    IconCopyright,
+    IconHelpHexagon,
+    IconInfoCircle,
+    IconRosetteDiscountCheckFilled,
+    ReactNode,
+} from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
 import { DonutChart } from "@mantine/charts";
 import Image from "next/image";
@@ -22,6 +32,7 @@ import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
 import MantineMarkdown from "@/components/markdown";
+import { useDisclosure } from "@mantine/hooks";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
@@ -88,6 +99,17 @@ export default function InfoTabs({ song }: { song: Song }) {
 
     const userRole = useUserRole();
 
+    let lyricsStatus: "あり" | "なし" | "不明";
+    if (song.lyricsVector === null) {
+        lyricsStatus = "不明";
+    } else if (hasLyrics(song)) {
+        lyricsStatus = "あり";
+    } else {
+        lyricsStatus = "なし";
+    }
+
+    const [openLyricsDetail, { toggle: toggleOpenLyricsDetail }] = useDisclosure(false);
+
     return (
         <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
             <Tabs.List mb="md">
@@ -96,6 +118,9 @@ export default function InfoTabs({ song }: { song: Song }) {
                 </Tabs.Tab>
                 <Tabs.Tab value="analysis" color="blue">
                     分析情報
+                </Tabs.Tab>
+                <Tabs.Tab value="lyrics" color="cyan">
+                    歌詞
                 </Tabs.Tab>
                 <Tabs.Tab value="others" color="teal">
                     その他
@@ -267,6 +292,86 @@ export default function InfoTabs({ song }: { song: Song }) {
                 </Flex>
                 <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>
                     データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、XのDMなどでお問い合わせください。
+                </Alert>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="lyrics">
+                <Flex mb="md" gap="sm" align="center">
+                    <Title order={4}>{"歌詞"}</Title>
+                    <Text>{lyricsStatus}</Text>
+                    {lyricsStatus === "あり" &&
+                        (song.lyricsOfficiallyReleased ? (
+                            <HoverCard width={280} shadow="md">
+                                <HoverCard.Target>
+                                    <IconRosetteDiscountCheckFilled size={24} color="teal" />
+                                </HoverCard.Target>
+                                <HoverCard.Dropdown>
+                                    <Text size="sm">
+                                        公式（概要欄、動画の正確な文字起こしなど）のソースから収集した歌詞データを使用しています。
+                                    </Text>
+                                </HoverCard.Dropdown>
+                            </HoverCard>
+                        ) : (
+                            <HoverCard width={280} shadow="md">
+                                <HoverCard.Target>
+                                    <IconHelpHexagon size={24} color="orange" />
+                                </HoverCard.Target>
+                                <HoverCard.Dropdown>
+                                    <Text size="sm">
+                                        非公式（コメントなど）のソースから収集した歌詞データを使用しています。
+                                    </Text>
+                                </HoverCard.Dropdown>
+                            </HoverCard>
+                        ))}
+                </Flex>
+
+                {lyricsStatus !== "なし" && (
+                    <Button
+                        component={Link}
+                        href={`https://www.google.com/search?q=${encodeURIComponent(
+                            `${song.title} 歌詞`
+                        )}`}
+                        target="_blank"
+                        mb="md"
+                    >
+                        Googleで歌詞を検索
+                    </Button>
+                )}
+
+                {lyricsStatus === "あり" && (
+                    <Box maw="100%">
+                        <Button
+                            variant="outline"
+                            color="gray"
+                            onClick={toggleOpenLyricsDetail}
+                            mb="md"
+                        >
+                            {openLyricsDetail ? "歌詞ベクトル情報を隠す" : "歌詞ベクトル情報を表示"}
+                        </Button>
+
+                        {openLyricsDetail && (
+                            <Collapse in={openLyricsDetail} transitionDuration={1000}>
+                                <Grid mb="md" gutter="md">
+                                    {song.lyricsVector?.map((value, index) => (
+                                        <Grid.Col key={index} span={{ base: 4, sm: 3, lg: 1.5 }}>
+                                            <Box pt="sm" pb="sm" bg="gray.0">
+                                                <Text size="sm" c="gray.7" ta="center">
+                                                    {index}
+                                                </Text>
+                                                <Text size="md" fw="bold" ta="center">
+                                                    {value.toFixed(5)}
+                                                </Text>
+                                            </Box>
+                                        </Grid.Col>
+                                    ))}
+                                </Grid>
+                            </Collapse>
+                        )}
+                    </Box>
+                )}
+
+                <Alert color="cyan" radius="md" icon={<IconCopyright />}>
+                    著作権保護のため、歌詞本文は掲載していません。
                 </Alert>
             </Tabs.Panel>
 
