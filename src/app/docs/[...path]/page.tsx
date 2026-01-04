@@ -12,7 +12,7 @@ export default function DocsPage({ params }: { params: Promise<{ path: string[] 
     const path = use(params).path;
     const { docs } = useDocsFile(path);
 
-    const githubRepositoryURL = process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL;
+    const GitHubRepositoryURL = process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL;
 
     return (
         <MyAppShell>
@@ -32,10 +32,10 @@ export default function DocsPage({ params }: { params: Promise<{ path: string[] 
                 component="a"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`${githubRepositoryURL}/blob/main/public/docsFiles/${path.join("/")}.md`}
+                href={`${GitHubRepositoryURL}/blob/main/public/docsFiles/${path.join("/")}.md`}
                 mt="md"
             >
-                Githubで変更履歴を確認・修正を提案
+                GitHubで変更履歴を確認・修正を提案
             </Button>
         </MyAppShell>
     );

@@ -36,4 +36,10 @@
 - 利用規約などのテンプレート: [Webサイトの利用規約](https://kiyaku.jp/)
 
 ## 制作
-- takechi ( [x](https://x.com/takechi_scratch), [github](https://github.com/takechi-scratch) )
+- takechi ( [X](https://x.com/takechi_scratch), [GitHub](https://github.com/takechi-scratch) )
+
+### GitHubリポジトリ
+- フロントエンド: https://github.com/takechi-scratch/songs_introduction_www
+- バックエンド: https://github.com/takechi-scratch/songs_introduction_backend
+- 歌詞分析: 公開準備中
+- 歌詞検索アプリ: 公開準備中（著作権保護のため、歌詞のテキストデータは非公開）

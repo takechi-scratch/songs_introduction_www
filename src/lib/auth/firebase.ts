@@ -14,7 +14,7 @@ import { getAnalytics, Analytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    // GithubのSecret scanningに引っ掛かるので環境変数に変更
+    // GitHubのSecret scanningに引っ掛かるので環境変数に変更
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: "mimi-introduction.firebaseapp.com",
     projectId: "mimi-introduction",
