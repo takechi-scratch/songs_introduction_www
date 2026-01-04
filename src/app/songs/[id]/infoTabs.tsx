@@ -291,7 +291,8 @@ export default function InfoTabs({ song }: { song: Song }) {
                     </div>
                 </Flex>
                 <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>
-                    データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、XのDMなどでお問い合わせください。
+                    データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、
+                    <Link href="/contact">お問い合わせ</Link>ください。
                 </Alert>
             </Tabs.Panel>
 
@@ -307,7 +308,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                 </HoverCard.Target>
                                 <HoverCard.Dropdown>
                                     <Text size="sm">
-                                        公式（概要欄、動画の正確な文字起こしなど）のソースから収集した歌詞データを使用しています。
+                                        公式（概要欄、MV内の歌詞の正確な文字起こしなど）のソースから収集した歌詞データを使用しています。
                                     </Text>
                                 </HoverCard.Dropdown>
                             </HoverCard>
