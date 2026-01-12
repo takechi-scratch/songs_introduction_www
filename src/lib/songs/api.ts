@@ -3,6 +3,7 @@ import { SearchQuery } from "../search/filter";
 import { CustomParams } from "../search/nearest";
 import { shuffleArray } from "../utils";
 import { Song, SongWithScore, UpsertSong } from "./types";
+import { refreshSongPage } from "./refresh";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -36,7 +37,8 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
     try {
         const response = await fetch(
             `${API_BASE_URL}/search/filter/?` +
-                new URLSearchParams(FilteredQuery as Record<string, string>)
+                new URLSearchParams(FilteredQuery as Record<string, string>),
+            { next: { revalidate: 3600 } }
         );
 
         if (!response.ok) {
@@ -58,7 +60,9 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
 
 export async function fetchSongById(id: string): Promise<Song> {
     try {
-        const response = await fetch(`${API_BASE_URL}/songs/${id}/`);
+        const response = await fetch(`${API_BASE_URL}/songs/${id}/`, {
+            next: { revalidate: 3600 },
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -75,7 +79,8 @@ export async function fetchSongById(id: string): Promise<Song> {
 export async function fetchNearestSongs(id: string, limit: number = 10): Promise<SongWithScore[]> {
     try {
         const response = await fetch(
-            `${API_BASE_URL}/search/nearest/?target_song_id=${id}&limit=${limit}`
+            `${API_BASE_URL}/search/nearest/?target_song_id=${id}&limit=${limit}`,
+            { next: { revalidate: 3600 } }
         );
 
         if (!response.ok) {
@@ -102,6 +107,7 @@ export async function fetchNearestSongsAdvanced(params: CustomParams): Promise<S
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(params),
+            next: { revalidate: 3600 },
         });
 
         if (!response.ok) {
@@ -136,6 +142,7 @@ export async function upsertSong(songID: string | null, data: UpsertSong): Promi
         }
 
         const result: Song = await response.json();
+        refreshSongPage(result.id);
         return result;
     } catch (error) {
         console.error(`Failed to fetch song ${data.id}:`, error);
