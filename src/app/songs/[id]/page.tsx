@@ -75,18 +75,26 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
     try {
         song = await fetchSongById(id);
         if (scoreCanBeCalculated(song)) {
-            nearestSongs = await fetchNearestSongs(id);
+            // 歌詞ベクトルのパラメータを事前準備
+            const lyricsParams = hasLyrics(song)
+                ? (() => {
+                      const params = { ...defaultCustomParams, target_song_id: id };
+                      for (const key of Object.keys(
+                          params.parameters
+                      ) as (keyof typeof params.parameters)[]) {
+                          params.parameters[key] = 0.0;
+                      }
+                      params.parameters.lyricsVector = 1.0;
+                      return params;
+                  })()
+                : null;
 
-            if (hasLyrics(song)) {
-                const lyricsParams = { ...defaultCustomParams, target_song_id: id };
-                for (const key of Object.keys(
-                    lyricsParams.parameters
-                ) as (keyof typeof lyricsParams.parameters)[]) {
-                    lyricsParams.parameters[key] = 0.0;
-                }
-                lyricsParams.parameters.lyricsVector = 1.0;
-                nearestLyricsSongs = await fetchNearestSongsAdvanced(lyricsParams);
-            }
+            // 並列実行で待機時間を短縮
+            const promises = [
+                fetchNearestSongs(id),
+                lyricsParams ? fetchNearestSongsAdvanced(lyricsParams) : Promise.resolve(undefined),
+            ];
+            [nearestSongs, nearestLyricsSongs] = await Promise.all(promises);
         }
     } catch (error) {
         console.error("Error fetching song data:", error);

@@ -14,8 +14,11 @@ export default async function HomePage() {
     let colaborationSongsData: Song[] | undefined;
 
     try {
-        latestSongsData = await fetchSongs({ order: "publishedTimestamp" });
-        colaborationSongsData = await fetchSongs({ publishedType: 0 });
+        // 並列実行で待機時間を短縮
+        [latestSongsData, colaborationSongsData] = await Promise.all([
+            fetchSongs({ order: "publishedTimestamp" }),
+            fetchSongs({ publishedType: 0 }),
+        ]);
     } catch (error) {
         console.error("Error fetching songs data:", error);
     }
