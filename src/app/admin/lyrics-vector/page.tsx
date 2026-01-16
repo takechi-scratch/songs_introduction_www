@@ -4,7 +4,7 @@ import AdminOnlyComponent from "@/components/adminOnly";
 import MyAppShell from "@/components/appshell";
 import { upsertLyricsVector } from "@/lib/songs/api";
 import { UpsertLyricsVec } from "@/lib/songs/types";
-import { Alert, Anchor, Button, JsonInput, TextInput, Title } from "@mantine/core";
+import { Alert, Anchor, Button, TextInput, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import Link from "next/link";
