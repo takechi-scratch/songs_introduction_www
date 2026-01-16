@@ -12,6 +12,7 @@ import {
     IconUserCheck,
     IconLogout,
     IconUserCog,
+    IconFileMusic,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,6 +55,20 @@ export default function UserMenu() {
                             leftSection={<IconDatabasePlus size={14} />}
                         >
                             曲を追加
+                        </Menu.Item>
+                    </>
+                )}
+
+                {user && userRole === "admin" && (
+                    <>
+                        <Menu.Divider />
+                        <Menu.Label>管理者用</Menu.Label>
+                        <Menu.Item
+                            href="/admin/lyrics-vector/"
+                            component={Link}
+                            leftSection={<IconFileMusic size={14} />}
+                        >
+                            歌詞ベクトル情報の更新
                         </Menu.Item>
                         <Menu.Item
                             href="/admin/service-account/"

@@ -2,8 +2,8 @@ import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
 import { SearchQuery } from "../search/filter";
 import { CustomParams } from "../search/nearest";
 import { shuffleArray } from "../utils";
-import { Song, SongWithScore, UpsertSong } from "./types";
-import { refreshSongPage } from "./refresh";
+import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
+import { refreshHomePage, refreshSongPage } from "./refresh";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -143,9 +143,37 @@ export async function upsertSong(songID: string | null, data: UpsertSong): Promi
 
         const result: Song = await response.json();
         refreshSongPage(result.id);
+        refreshHomePage();
         return result;
     } catch (error) {
         console.error(`Failed to fetch song ${data.id}:`, error);
+        throw error;
+    }
+}
+
+export async function upsertLyricsVector(data: UpsertLyricsVec[]): Promise<void> {
+    if ((await getCurrentUserRole()) !== "admin") {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/lyrics-vector/`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${await getCurrentUserToken()}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 並列でrevalidationを実行
+        await Promise.all([...data.map((item) => refreshSongPage(item.id)), refreshHomePage()]);
+    } catch (error) {
+        console.error(`Failed to upsert lyrics vectors:`, error);
         throw error;
     }
 }

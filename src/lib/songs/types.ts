@@ -51,3 +51,9 @@ export interface UpsertSong {
     lyricsOfficiallyReleased: boolean;
     comment: string;
 }
+
+export interface UpsertLyricsVec {
+    id: string;
+    lyricsVector: number[];
+    lyricsOfficiallyReleased: boolean;
+}
