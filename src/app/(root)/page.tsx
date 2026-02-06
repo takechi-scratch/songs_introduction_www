@@ -31,10 +31,9 @@ export default async function HomePage() {
                 colaborationSongsData={colaborationSongsData}
             />
 
-            <Center>
+            <Center mt="md" mb="xl">
                 <Button
-                    mt="md"
-                    mb="xl"
+                    // mr="xl"
                     href="/songs/"
                     color="orange.7"
                     size="xl"
@@ -44,6 +43,10 @@ export default async function HomePage() {
                     <IconPlaylist size={20} style={{ marginRight: 8 }} />
                     すべての曲を見る
                 </Button>
+                {/* <Button href="/recommend" color="green" size="xl" radius="lg" component={Link}>
+                    <IconMusicHeart size={20} style={{ marginRight: 8 }} />
+                    おすすめの曲診断（今後一般公開）
+                </Button> */}
             </Center>
 
             <Title order={2} mt="lg">

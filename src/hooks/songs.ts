@@ -16,6 +16,7 @@ export function useSongs(
     query: SearchQuery = {},
     customParams: CustomParams
 ) {
+    // TODO: 返す型を適切に絞り込む
     const [songs, setSongs] = useState<(Song | SongWithScore | null)[]>([...Array(10).fill(null)]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
