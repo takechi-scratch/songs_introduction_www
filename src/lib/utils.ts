@@ -4,3 +4,10 @@ export function shuffleArray(array: unknown[]): void {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+export function estimateComparisons(n: number): number {
+    if (n <= 1) return 0;
+    let s = 0;
+    for (let k = 1; k <= n; k++) s += Math.log2(k);
+    return Math.ceil(s);
+}
