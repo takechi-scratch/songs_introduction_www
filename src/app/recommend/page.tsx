@@ -14,6 +14,7 @@ import {
     Flex,
     Paper,
     Radio,
+    SegmentedControl,
     Stack,
     Text,
     TextInput,
@@ -33,6 +34,11 @@ const songsPeriod = {
     "2025年～（サイエンス・恋しくなったら手を叩こうなど）": 1734168615,
 };
 
+interface TestSettings {
+    name: string;
+    limit: number;
+}
+
 function Start({ startCallback }: { startCallback?: () => void }) {
     return (
         <Flex direction="column" gap="lg" align="center">
@@ -48,14 +54,14 @@ function Prepare({
     searchQuery,
     setSearchQuery,
     proceedCallback,
-    name,
-    setName,
+    settings,
+    setSettings,
 }: {
     searchQuery: SearchQuery;
     setSearchQuery: (query: SearchQuery) => void;
     proceedCallback?: () => void;
-    name: string;
-    setName: (name: string) => void;
+    settings: TestSettings;
+    setSettings: (settings: TestSettings) => void;
 }) {
     return (
         <Flex direction="column" gap="lg" align="center">
@@ -64,9 +70,27 @@ function Prepare({
                 <TextInput
                     label="ニックネーム（結果を共有するときに公開されます）"
                     placeholder="ゲスト"
-                    value={name}
-                    onChange={(e) => setName(e.currentTarget.value)}
+                    value={settings.name}
+                    onChange={(e) => setSettings({ ...settings, name: e.currentTarget.value })}
                 />
+
+                <Stack gap={0}>
+                    <Text size="sm">診断の詳細度</Text>
+                    <Text size="xs" c="dimmed" mb="xs">
+                        右に行くほど正確に診断できますが、時間がかかります。
+                    </Text>
+                    <SegmentedControl
+                        data={[
+                            { label: "お手軽", value: "5" },
+                            { label: "通常", value: "10" },
+                            { label: "しっかり", value: "20" },
+                        ]}
+                        defaultValue="10"
+                        value={String(settings.limit)}
+                        onChange={(value) => setSettings({ ...settings, limit: Number(value) })}
+                    />
+                </Stack>
+
                 <Radio.Group
                     name="startFrom"
                     label="MIMIさんの楽曲で、知っているのはいつ頃からですか？"
@@ -86,12 +110,12 @@ function Prepare({
                 </Radio.Group>
                 <Divider />
                 <Checkbox
-                    label="オリジナル曲のみを質問の対象とする"
-                    checked={searchQuery.publishedType === 1}
+                    label="提供曲も質問に含める"
+                    checked={searchQuery.publishedType !== 1}
                     onChange={(e) =>
                         setSearchQuery({
                             ...searchQuery,
-                            publishedType: e.currentTarget.checked ? 1 : undefined,
+                            publishedType: e.currentTarget.checked ? undefined : 1,
                         })
                     }
                 />
@@ -116,6 +140,7 @@ function Choice({
     const [currentPair, setCurrentPair] = useState<[Song, Song] | null>(null);
 
     const sortedSongs = useMemo(() => {
+        console.log("Current comparisons:", comparisons);
         if (songs.length === 0) return [];
 
         try {
@@ -212,11 +237,12 @@ function Choice({
 }
 
 export default function RecommendPage() {
-    const [name, setName] = useState<string>("ゲスト");
+    const [settings, setSettings] = useState<TestSettings>({ name: "ゲスト", limit: 10 });
     const [status, setStatus] = useState<status>("start");
     const [searchQuery, setSearchQuery] = useState<SearchQuery>({
         order: "random",
         publishedAfter: Math.min(...Object.values(songsPeriod)),
+        publishedType: 1,
     });
 
     const { songs: fetchedSongs, refetch: refetchSongs } = useSongs(
@@ -226,8 +252,8 @@ export default function RecommendPage() {
     );
     const sampleSongs = useMemo(() => {
         const filteredSongs = fetchedSongs.filter((song) => song !== null && !hasScore(song));
-        return filteredSongs.slice(0, 5) as Song[];
-    }, [fetchedSongs]);
+        return filteredSongs.slice(0, settings.limit) as Song[];
+    }, [fetchedSongs, settings.limit]);
 
     const router = useRouter();
 
@@ -236,7 +262,7 @@ export default function RecommendPage() {
     function navigateToResults(sortedSongIDs: string[]) {
         router.push(
             `/recommend/result?name=${encodeURIComponent(
-                name
+                settings.name
             )}&timestamp=${Date.now()}&preferenceRanking=${sortedSongIDs.join(",")}`
         );
     }
@@ -258,8 +284,8 @@ export default function RecommendPage() {
                             refetchSongs();
                             setStatus("choice");
                         }}
-                        name={name}
-                        setName={setName}
+                        settings={settings}
+                        setSettings={setSettings}
                     />
                 )}
                 {status === "choice" && (

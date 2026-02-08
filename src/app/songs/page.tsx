@@ -18,13 +18,12 @@ import {
     Slider,
     Flex,
     NumberInput,
-    Tooltip,
     Alert,
     Group,
 } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useUserRole } from "@/hooks/auth";
 
 // Do this once in your application root file
@@ -37,8 +36,11 @@ dayjs.extend(customParseFormat);
 // Date関連のモジュールを使用する際は忘れずに追加
 import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
-import { confirmModal, playlistHandler } from "./playlistHandler";
+import { confirmModal, fallbackNotifications } from "@/components/playlistHandler";
 import SongsSlot from "@/components/songCards/cardsSlot";
+import { usePlaylistManager } from "@/hooks/playlist";
+import { notifications } from "@mantine/notifications";
+import WarningTip from "@/components/warningTip";
 
 function FilterTab({
     searchQuery,
@@ -182,22 +184,6 @@ function FilterTab({
     );
 }
 
-function SearchWarningTip({
-    warning,
-    children,
-}: {
-    warning: string | null;
-    children: React.ReactNode;
-}) {
-    if (!warning) return children;
-
-    return (
-        <Tooltip label={warning}>
-            <div>{children}</div>
-        </Tooltip>
-    );
-}
-
 function NearestTab({
     customParams,
     setSearchType,
@@ -264,10 +250,13 @@ function NearestTab({
                     onClick={() => {
                         setCustomParams({
                             ...customParams,
-                            parameters: specifiableParams.reduce((acc, content) => {
-                                acc[content.key] = content.default;
-                                return acc;
-                            }, {} as CustomParams["parameters"]),
+                            parameters: specifiableParams.reduce(
+                                (acc, content) => {
+                                    acc[content.key] = content.default;
+                                    return acc;
+                                },
+                                {} as CustomParams["parameters"]
+                            ),
                         });
                     }}
                 >
@@ -277,10 +266,13 @@ function NearestTab({
                     onClick={() => {
                         setCustomParams({
                             ...customParams,
-                            parameters: specifiableParams.reduce((acc, content) => {
-                                acc[content.key] = 0;
-                                return acc;
-                            }, {} as CustomParams["parameters"]),
+                            parameters: specifiableParams.reduce(
+                                (acc, content) => {
+                                    acc[content.key] = 0;
+                                    return acc;
+                                },
+                                {} as CustomParams["parameters"]
+                            ),
                         });
                     }}
                 >
@@ -310,9 +302,7 @@ function NearestTab({
                     setCustomParams({ ...customParams, is_reversed: value === "昇順" })
                 }
             />
-            <SearchWarningTip
-                warning={!customParams.target_song_id ? "IDを入力してください" : null}
-            >
+            <WarningTip warning={!customParams.target_song_id ? "IDを入力してください" : null}>
                 <Button
                     fullWidth
                     data-disabled={!customParams.target_song_id}
@@ -329,24 +319,46 @@ function NearestTab({
                 >
                     検索
                 </Button>
-            </SearchWarningTip>
+            </WarningTip>
         </>
     );
 }
 
 function ActionButtons({
     songs,
-    playlistHandler,
     slotsActive,
     setSlotsActive,
+    searchType,
+    searchQuery,
+    customParams,
 }: {
     songs: (Song | SongWithScore | null)[];
-    playlistHandler: (setLoadingPlaylist: React.Dispatch<React.SetStateAction<boolean>>) => void;
     slotsActive: boolean;
     setSlotsActive: React.Dispatch<React.SetStateAction<boolean>>;
+    searchType: "filter" | "nearest";
+    searchQuery: SearchQuery;
+    customParams: CustomParams;
 }) {
     const userRole = useUserRole();
-    const [loadingPlaylist, setLoadingPlaylist] = useState(false);
+
+    const notificationID = useRef<string | null>(null);
+    const { loadingPlaylist, validSongs, createFromSearchQuery } = usePlaylistManager(
+        songs,
+        async () => await confirmModal(validSongs.length > 30),
+        () => {
+            const id = notifications.show({
+                loading: true,
+                title: "再生リストを作成中...",
+                message: "作成完了まで数秒～数十秒かかります。しばらくお待ちください。",
+                autoClose: false,
+                withCloseButton: false,
+            });
+            notificationID.current = id;
+        },
+        (result) => {
+            if (notificationID.current) fallbackNotifications(result, notificationID.current);
+        }
+    );
 
     return (
         <Flex
@@ -365,20 +377,18 @@ function ActionButtons({
             >
                 {slotsActive ? "ルーレットを閉じる" : "検索結果でルーレットを回す"}
             </Button>
-            <SearchWarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
+            <WarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
                 <Button
                     fullWidth
                     color="red"
                     variant="light"
                     loading={loadingPlaylist}
                     disabled={userRole === "guest"}
-                    onClick={() =>
-                        confirmModal(() => playlistHandler(setLoadingPlaylist), songs.length > 30)
-                    }
+                    onClick={() => createFromSearchQuery(searchType, searchQuery, customParams)}
                 >
                     検索結果から再生リストを作成
                 </Button>
-            </SearchWarningTip>
+            </WarningTip>
         </Flex>
     );
 }
@@ -399,10 +409,13 @@ function MainPage() {
     const [customParams, setCustomParams] = useState<CustomParams>({
         target_song_id: searchParams.get("targetSongID") || undefined,
         limit: 30,
-        parameters: specifiableParams.reduce((acc, content) => {
-            acc[content.key as keyof Song] = content.default;
-            return acc;
-        }, {} as CustomParams["parameters"]),
+        parameters: specifiableParams.reduce(
+            (acc, content) => {
+                acc[content.key as keyof Song] = content.default;
+                return acc;
+            },
+            {} as CustomParams["parameters"]
+        ),
     });
     const { songs, loading, error, refetch } = useSongs(searchType, searchQuery, customParams);
     const [slotsActive, setSlotsActive] = useState(false);
@@ -443,17 +456,11 @@ function MainPage() {
                     {songs !== null && songs.length > 0 && (
                         <ActionButtons
                             songs={songs}
-                            playlistHandler={(setLoadingPlaylist) =>
-                                playlistHandler(
-                                    songs,
-                                    searchType,
-                                    searchQuery,
-                                    customParams,
-                                    setLoadingPlaylist
-                                )
-                            }
                             slotsActive={slotsActive}
                             setSlotsActive={setSlotsActive}
+                            searchType={searchType}
+                            searchQuery={searchQuery}
+                            customParams={customParams}
                         />
                     )}
                     {!loading && searchType === "filter" && (

@@ -1,5 +1,9 @@
 import { Song, SongWithScore } from "./songs/types";
 import { getCurrentUser, getCurrentUserToken } from "./auth/firebase";
+import { formatDate } from "./date";
+import { SearchQuery, FilterableContents } from "./search/filter";
+import { fetchSongById } from "./songs/api";
+import { CustomParams } from "./search/nearest";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -11,11 +15,17 @@ interface YouTubePlaylist {
     videoIDs: string[];
 }
 
-export interface CreatePlaylistResult {
-    playlist?: YouTubePlaylist;
-    status: number;
-    message?: string;
+interface CreatePlaylistSuccess {
+    playlist: YouTubePlaylist;
+    status: 200;
 }
+
+interface CreatePlaylistFailure {
+    status: 403 | 429 | 503 | 500;
+    message: string;
+}
+
+export type CreatePlaylistResult = CreatePlaylistSuccess | CreatePlaylistFailure;
 
 export async function createPlaylist(
     songs: (Song | SongWithScore | string)[],
@@ -24,7 +34,8 @@ export async function createPlaylist(
 ): Promise<CreatePlaylistResult> {
     const user = getCurrentUser();
     if (!user) {
-        throw new Error("User not authenticated");
+        console.warn("User not authenticated");
+        return { status: 403, message: "未ログインのため、再生リストを作成できません。" };
     }
 
     try {
@@ -56,13 +67,48 @@ export async function createPlaylist(
                 };
             }
             console.error(`Failed to create playlist: ${response.status} ${response.statusText}`);
-            return { status: response.status, message: "サーバー側でエラーが発生しました。" };
+            return { status: 500, message: "サーバー側でエラーが発生しました。" };
         }
 
         const playlist: YouTubePlaylist = await response.json();
         return { playlist, status: 200 };
     } catch (error) {
         console.error(`Failed to create playlist:`, error);
-        throw error;
+        return { status: 500, message: "サーバー側でエラーが発生しました。" };
     }
+}
+
+export async function createMetaDataFromSearchQuery(
+    songCount: number,
+    searchType: "filter" | "nearest",
+    searchQuery: SearchQuery,
+    customParams: CustomParams
+): Promise<{ title: string; description: string }> {
+    let title = "";
+    let description = "";
+
+    if (searchType === "filter") {
+        title = `MIMIさん曲まとめ - ${formatDate(Date.now() / 1000)}`;
+
+        description += `「MIMIさん全曲紹介」の検索結果（全${songCount}曲）から自動で作成しました。\n\n`;
+        description += "【絞り込み条件】\n";
+        Object.entries(searchQuery).forEach(([key, value]) => {
+            if (key === "order" || key === "asc") return;
+
+            if (value) {
+                description += `- ${
+                    FilterableContents.find((content) => content.key === key)?.displayName || key
+                }: ${value}\n`;
+            }
+        });
+    } else if (searchType === "nearest") {
+        const targetSong = await fetchSongById(customParams.target_song_id || "");
+
+        title = `「${targetSong?.title}」が好きな人におすすめの曲 - ${formatDate(
+            Date.now() / 1000
+        )}`;
+        description += `「MIMIさん全曲紹介」で、「${targetSong?.title}」に似ている曲を${songCount}曲集めました。\n※似ている曲の選出にはカスタムパラメータが使用されています。`;
+    }
+
+    return { title, description };
 }
