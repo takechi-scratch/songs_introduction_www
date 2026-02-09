@@ -71,7 +71,7 @@ export const generateMetadata = async ({ searchParams }: Props): Promise<Metadat
     const imageURL = "https://mimi.takechi.f5.si/assets/card.png";
 
     if (typeof preferenceRankingParam === "string") {
-        const recommendedSongs = await getRecommendedSongs(preferenceRankingParam, 15);
+        const recommendedSongs = await getRecommendedSongs(preferenceRankingParam);
         if (recommendedSongs && recommendedSongs.length > 0 && hasScore(recommendedSongs[0])) {
             description = `最もおすすめの曲は「${recommendedSongs[0].song.title}」でした。`;
         }
