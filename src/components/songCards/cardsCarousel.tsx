@@ -19,7 +19,7 @@ export default function SongsCarousel({
                 height={380}
                 slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
                 slideGap={{ base: 0, sm: "md" }}
-                emblaOptions={{ align: "start" }}
+                emblaOptions={{ align: "start", skipSnaps: true }}
             >
                 {songs.map((song) => (
                     <Carousel.Slide key={song ? song.id : Math.random()}>
