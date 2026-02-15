@@ -4,7 +4,7 @@
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [YouTube Data API v3](https://developers.google.com/youtube/v3)
-- [Cloudflare Workers](https://www.cloudflare.com/ja-jp/developer-platform/products/workers/)
+- [Vercel](https://vercel.com/)
 
 など。ライセンスなどは [クレジット](public/docsFiles/credits.md) を参照してください。
 
