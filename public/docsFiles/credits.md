@@ -5,7 +5,7 @@
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [YouTube Data API v3](https://developers.google.com/youtube/v3)
-- [Cloudflare Workers](https://www.cloudflare.com/ja-jp/developer-platform/products/workers/)
+- [Vercel](https://vercel.com/)
 
 ### ライブラリ
 - [Mantine](https://mantine.dev/)
@@ -36,7 +36,7 @@
 - 利用規約などのテンプレート: [Webサイトの利用規約](https://kiyaku.jp/)
 
 ## 制作
-- takechi ( [X](https://x.com/takechi_scratch), [GitHub](https://github.com/takechi-scratch) )
+- [takechi](https://takechi.f5.si/)
 
 ### GitHubリポジトリ
 - フロントエンド: https://github.com/takechi-scratch/songs_introduction_www

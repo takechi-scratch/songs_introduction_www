@@ -144,11 +144,7 @@ function Footer() {
                 <Text size="xs" mr="xl">
                     {/* 空白を残すため */}
                     {"製作: "}
-                    <Link
-                        href="https://x.com/takechi_scratch"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <Link href="https://takechi.f5.si/" target="_blank" rel="noopener noreferrer">
                         takechi
                     </Link>
                 </Text>
@@ -170,8 +166,8 @@ function Footer() {
                 <Image
                     src="/assets/yt_logo_rgb_light.png"
                     alt="YouTubeのロゴ"
-                    width={0}
-                    height={0}
+                    width={180}
+                    height={40}
                     // ブランドガイドラインより、高さは最低20px
                     // https://www.youtube.com/intl/ALL_jp//howyoutubeworks/resources/brand-resources/
                     style={{ width: "auto", height: "20px", verticalAlign: "sub" }}

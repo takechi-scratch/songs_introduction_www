@@ -14,10 +14,8 @@
 2. `yarn dev`で開発用サーバーを起動。
 
 ## デプロイ
-1. `yarn preview`で、Cloudflare Workersのプレビューを確認。（やらないことも多い）
+1. `yarn preview`で、Vercel環境でのサーバーを起動して確認。（やらないことも多い）
 2. `yarn deploy`で、ビルド・デプロイ。
-
-初期設定で必要なことなどは、[Cloudflare Workers](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/)のページを参照してください。
 
 ## クレジット
 本当にありがとうございます。
