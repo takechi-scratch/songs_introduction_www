@@ -32,9 +32,12 @@ export interface CustomParams {
 }
 
 export const defaultCustomParams: CustomParams = {
-    limit: 30,
-    parameters: specifiableParams.reduce((acc, content) => {
-        acc[content.key as keyof Song] = content.default;
-        return acc;
-    }, {} as CustomParams["parameters"]),
+    limit: 10,
+    parameters: specifiableParams.reduce(
+        (acc, content) => {
+            acc[content.key as keyof Song] = content.default;
+            return acc;
+        },
+        {} as CustomParams["parameters"]
+    ),
 };

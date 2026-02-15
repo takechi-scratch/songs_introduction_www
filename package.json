@@ -35,8 +35,7 @@
         "react-player": "^3.3.2",
         "recharts": "^3.2.0",
         "remark-breaks": "^4.0.0",
-        "remark-gfm": "^4.0.1",
-        "vercel": "^50.17.1"
+        "remark-gfm": "^4.0.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
