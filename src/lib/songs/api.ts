@@ -60,10 +60,16 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
 
 export async function fetchSongById(id: string): Promise<Song> {
     try {
-        const response = await fetch(`${API_BASE_URL}/songs/${id}/`, {
-            next: { revalidate: 3600 },
+        const url = `${API_BASE_URL}/songs/${id}/`;
+        console.log("[fetchSongById] Requesting:", url);
+        console.log("[fetchSongById] API_BASE_URL:", API_BASE_URL);
+
+        const response = await fetch(url, {
+            cache: "no-store",
+            // next: { revalidate: 3600 },
         });
 
+        console.log("[fetchSongById] Response status:", response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
