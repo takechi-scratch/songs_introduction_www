@@ -8,6 +8,7 @@ import {
     fetchNearestSongs,
     fetchNearestSongsAdvanced,
     fetchSongById,
+    fetchSongs,
     scoreCanBeCalculated,
 } from "@/lib/songs/api";
 import { Metadata } from "next";
@@ -108,7 +109,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     title="取得エラー"
                     icon={<IconExclamationCircle />}
                 >
-                    {error instanceof Error ? error.message : String(error)}
+                    曲のデータを取得できませんでした。時間を置いて再度アクセスしてください。
                 </Alert>
                 <Link href="/">ホームに戻る</Link>
             </MyAppShell>
@@ -212,3 +213,10 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
         </MyAppShell>
     );
 }
+
+export async function generateStaticParams() {
+    const songs = await fetchSongs({});
+    return songs.map((song) => ({ id: song.id }));
+}
+
+export const dynamicParams = false;

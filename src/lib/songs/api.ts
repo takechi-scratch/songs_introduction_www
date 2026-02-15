@@ -37,8 +37,7 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
     try {
         const response = await fetch(
             `${API_BASE_URL}/search/filter/?` +
-                new URLSearchParams(FilteredQuery as Record<string, string>),
-            { next: { revalidate: 3600 } }
+                new URLSearchParams(FilteredQuery as Record<string, string>)
         );
 
         if (!response.ok) {
@@ -61,12 +60,8 @@ export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
 export async function fetchSongById(id: string): Promise<Song> {
     try {
         const url = `${API_BASE_URL}/songs/${id}/`;
-        console.log("[fetchSongById] Requesting:", url);
-        console.log("[fetchSongById] API_BASE_URL:", API_BASE_URL);
 
-        const response = await fetch(url, {
-            next: { revalidate: 3600 },
-        });
+        const response = await fetch(url, { cache: "force-cache" }); // デフォルトでもキャッシュを強制
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
