@@ -65,11 +65,9 @@ export async function fetchSongById(id: string): Promise<Song> {
         console.log("[fetchSongById] API_BASE_URL:", API_BASE_URL);
 
         const response = await fetch(url, {
-            cache: "no-store",
-            // next: { revalidate: 3600 },
+            next: { revalidate: 3600 },
         });
 
-        console.log("[fetchSongById] Response status:", response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
