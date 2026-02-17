@@ -235,15 +235,19 @@ export default function InfoTabs({ song }: { song: Song }) {
                         <Table.Tr>
                             <Table.Th>主なコード</Table.Th>
                             <Table.Td>
-                                <Badge
-                                    variant="light"
-                                    color={mainChordColor}
-                                    component={Link}
-                                    href={`/songs?type=filter&mainChord=${song.mainChord}`}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    {song.mainChord}
-                                </Badge>
+                                {song.mainChord ? (
+                                    <Badge
+                                        variant="light"
+                                        color={mainChordColor}
+                                        component={Link}
+                                        href={`/songs/?params=filter:(mainChord:'${encodeURIComponent(song.mainChord)}')`}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        {song.mainChord}
+                                    </Badge>
+                                ) : (
+                                    "不明"
+                                )}
                             </Table.Td>
                         </Table.Tr>
 

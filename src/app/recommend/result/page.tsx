@@ -10,10 +10,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
 import MantineMarkdown from "@/components/markdown";
-
-interface Props {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
+import { PageProps } from "@/lib/utils";
 
 async function getRecommendedSongs(
     preferenceRankingParam: string,
@@ -61,7 +58,7 @@ async function getRecommendedSongs(
     return recommendedSongs.slice(0, maxResults);
 }
 
-export const generateMetadata = async ({ searchParams }: Props): Promise<Metadata> => {
+export const generateMetadata = async ({ searchParams }: PageProps): Promise<Metadata> => {
     const params = await searchParams;
     const name = params.name;
     const preferenceRankingParam = params.preferenceRanking;
@@ -103,7 +100,7 @@ export const generateMetadata = async ({ searchParams }: Props): Promise<Metadat
     };
 };
 
-async function RecommendResultPage(props: Props) {
+async function RecommendResultPage(props: PageProps) {
     const params = await props.searchParams;
     const name = params.name;
     const timestamp = params.timestamp;
@@ -184,8 +181,8 @@ const explanation = `
 
 曲ごとに「好みスコア」（類似度の重み付き平均）を計算して、高い順におすすめ曲としています。
 具体的には、
-1. サンプル曲内のランキングが高いほど、好みスコアへの影響度が大きいようにする
-2. サンプル曲との「類似度」が高いほど、好みスコアへ大きく反映させる
+1. サンプル曲との「類似度」が高いほど、好みスコアへ大きく反映させる
+2. サンプル曲内のランキングが高いほど、好みスコアへの影響度が大きいようにする
 
 ようにスコアを決めています。
 
@@ -198,7 +195,7 @@ const explanation = `
 診断アルゴリズムのコードは、[GitHub](https://github.com/takechi-scratch/songs_introduction_www/blob/main/src/app/recommend/result/page.tsx)で公開しています。興味のある方はぜひ見てみてください。
 `;
 
-export default async function RecommendPage(props: Props) {
+export default async function RecommendPage(props: PageProps) {
     return (
         <MyAppShell>
             <Title mb="md">診断結果</Title>

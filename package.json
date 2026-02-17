@@ -22,6 +22,7 @@
         "@mantine/modals": "^8.3.9",
         "@mantine/notifications": "^8.3.7",
         "@tabler/icons-react": "^3.35.0",
+        "@types/rison": "^0.1.0",
         "dayjs": "^1.11.19",
         "embla-carousel": "^8.5.2",
         "embla-carousel-react": "^8.5.2",
@@ -35,7 +36,8 @@
         "react-player": "^3.3.2",
         "recharts": "^3.2.0",
         "remark-breaks": "^4.0.0",
-        "remark-gfm": "^4.0.1"
+        "remark-gfm": "^4.0.1",
+        "rison": "^0.1.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",

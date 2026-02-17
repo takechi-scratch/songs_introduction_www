@@ -70,12 +70,13 @@ function handleSearchInput(input: string): QuickSearchResult {
     return null;
 }
 
+// TODO: 新検索APIに対応。結果が1件のみなら直接曲ページへ遷移
 function QuickSearch({ style }: { style?: MantineStyleProp }) {
     const router = useRouter();
 
     return (
         <Input
-            placeholder="URL・動画ID・タイトルで検索"
+            placeholder="URL・タイトル・ボーカル名で検索"
             leftSection={<IconSearch size={16} />}
             style={{ minWidth: 150, maxWidth: 300, ...style }}
             onKeyDown={(e) => {
@@ -92,7 +93,7 @@ function QuickSearch({ style }: { style?: MantineStyleProp }) {
                     if (songID.type === "song") {
                         router.push(`/songs/${songID.id}`);
                     } else {
-                        router.push(`/songs?type=search&title=${encodeURIComponent(songID.query)}`);
+                        router.push(`/songs?q=${encodeURIComponent(songID.query)}`);
                     }
                 }
             }}
@@ -126,7 +127,7 @@ function Footer() {
             align="center"
             gap="xs"
             style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: "#e9eef5",
                 padding: 8,
                 height: isMobile ? 130 : 50,
             }}

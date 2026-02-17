@@ -27,7 +27,7 @@ export interface SongWithScore {
 }
 
 export const hasScore = (item: Song | SongWithScore): item is SongWithScore => {
-    return !!(item as SongWithScore)?.score;
+    return (item as SongWithScore).score !== undefined;
 };
 
 export interface UpsertSong {

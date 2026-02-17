@@ -2,9 +2,8 @@
 
 import MyAppShell from "@/components/appshell";
 import ReactPlayer from "react-player";
-import { useSongs } from "@/hooks/songs";
+import { useAdvancedSearch } from "@/hooks/songs";
 import { SearchQuery } from "@/lib/search/filter";
-import { defaultCustomParams } from "@/lib/search/nearest";
 import { hasScore, Song } from "@/lib/songs/types";
 import {
     Alert,
@@ -27,6 +26,7 @@ import { useMemo, useState } from "react";
 import { IconFlaskFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import { estimateComparisons } from "@/lib/utils";
+import { SongSearchParams } from "@/lib/search/search";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -266,17 +266,14 @@ function Choice({
 export default function RecommendPage() {
     const [settings, setSettings] = useState<TestSettings>({ name: "ゲスト", limit: 8 });
     const [status, setStatus] = useState<status>("start");
-    const [searchQuery, setSearchQuery] = useState<SearchQuery>({
-        order: "random",
-        publishedAfter: Math.min(...Object.values(songsPeriod)),
-        publishedType: 1,
+    const [searchQuery, setSearchQuery] = useState<SongSearchParams>({
+        filter: {
+            publishedAfter: Math.min(...Object.values(songsPeriod)),
+            publishedType: 1,
+        },
     });
 
-    const { songs: fetchedSongs, refetch: refetchSongs } = useSongs(
-        "filter",
-        searchQuery,
-        defaultCustomParams
-    );
+    const { songs: fetchedSongs, refetch: refetchSongs } = useAdvancedSearch(searchQuery, true);
     const sampleSongs = useMemo(() => {
         const filteredSongs = fetchedSongs.filter((song) => song !== null && !hasScore(song));
         return filteredSongs.slice(0, settings.limit) as Song[];

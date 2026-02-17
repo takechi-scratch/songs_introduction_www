@@ -3,21 +3,21 @@ import { Button, Center, Divider, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
-import { fetchSongs } from "@/lib/songs/api";
-import { Song } from "@/lib/songs/types";
+import { Song, SongWithScore } from "@/lib/songs/types";
 import SongsSection from "./songsSection";
 import Link from "next/link";
 import { IconPlaylist } from "@tabler/icons-react";
+import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
 
 export default async function HomePage() {
     let latestSongsData: Song[] | undefined;
-    let colaborationSongsData: Song[] | undefined;
+    let colaborationSongsData: SongWithScore[] | undefined;
 
     try {
         // 並列実行で待機時間を短縮
         [latestSongsData, colaborationSongsData] = await Promise.all([
-            fetchSongs({ order: "publishedTimestamp" }),
-            fetchSongs({ publishedType: 0 }),
+            fetchAllSongs(),
+            advancedSearchForSongs({ filter: { publishedType: 0 } }),
         ]);
     } catch (error) {
         console.error("Error fetching songs data:", error);

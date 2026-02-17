@@ -5,10 +5,10 @@ import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import {
+    advancedSearchForSongs,
+    fetchAllSongs,
     fetchNearestSongs,
-    fetchNearestSongsAdvanced,
     fetchSongById,
-    fetchSongs,
     scoreCanBeCalculated,
 } from "@/lib/songs/api";
 import { Metadata } from "next";
@@ -16,7 +16,6 @@ import { Metadata } from "next";
 import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
-import { defaultCustomParams } from "@/lib/search/nearest";
 import { hasLyrics } from "@/lib/musicValues";
 
 export const generateMetadata = async ({
@@ -76,24 +75,14 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
     try {
         song = await fetchSongById(id);
         if (scoreCanBeCalculated(song)) {
-            // 歌詞ベクトルのパラメータを事前準備
-            const lyricsParams = hasLyrics(song)
-                ? (() => {
-                      const params = { ...defaultCustomParams, target_song_id: id };
-                      for (const key of Object.keys(
-                          params.parameters
-                      ) as (keyof typeof params.parameters)[]) {
-                          params.parameters[key] = 0.0;
-                      }
-                      params.parameters.lyricsVector = 1.0;
-                      return params;
-                  })()
-                : null;
-
             // 並列実行で待機時間を短縮
             const promises = [
                 fetchNearestSongs(id),
-                lyricsParams ? fetchNearestSongsAdvanced(lyricsParams) : Promise.resolve(undefined),
+                hasLyrics(song)
+                    ? advancedSearchForSongs({
+                          nearest: { targetSongID: id, parameters: { lyricsVector: 1.0 } },
+                      })
+                    : Promise.resolve(undefined),
             ];
             [nearestSongs, nearestLyricsSongs] = await Promise.all(promises);
         }
@@ -190,7 +179,10 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             <Flex mb="md" mt="xl" gap="xl" align="end">
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
-                    <Anchor href={`/songs/?type=nearest&targetSongID=${song.id}`} component={Link}>
+                    <Anchor
+                        href={`/songs/?params=nearest:(targetSongID:${song.id})`}
+                        component={Link}
+                    >
                         高度な条件で探す
                     </Anchor>
                 )}
@@ -215,7 +207,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 }
 
 export async function generateStaticParams() {
-    const songs = await fetchSongs({});
+    const songs = await fetchAllSongs();
     return songs.map((song) => ({ id: song.id }));
 }
 

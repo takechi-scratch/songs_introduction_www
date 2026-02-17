@@ -1,8 +1,7 @@
-import { SearchQuery } from "@/lib/search/filter";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { createPlaylist, CreatePlaylistResult, createMetaDataFromSearchQuery } from "@/lib/youtube";
-import { CustomParams } from "@/lib/search/nearest";
 import { useMemo, useState } from "react";
+import { SongSearchParams } from "@/lib/search/search";
 
 export function usePlaylistManager(
     songs: (Song | SongWithScore | null)[],
@@ -21,19 +20,10 @@ export function usePlaylistManager(
             });
     }, [songs]);
 
-    async function createFromSearchQuery(
-        searchType: "filter" | "nearest",
-        searchQuery: SearchQuery,
-        customParams: CustomParams
-    ) {
+    async function createFromSearchParams(searchParams: SongSearchParams) {
         if (confirm && !(await confirm())) return;
         setLoadingPlaylist(true);
-        const metadata = await createMetaDataFromSearchQuery(
-            validSongs.length,
-            searchType,
-            searchQuery,
-            customParams
-        );
+        const metadata = await createMetaDataFromSearchQuery(validSongs.length, searchParams);
         callPlaylistAPI(metadata.title, metadata.description);
     }
 
@@ -52,5 +42,5 @@ export function usePlaylistManager(
         });
     }
 
-    return { loadingPlaylist, validSongs, createFromSearchQuery, create };
+    return { loadingPlaylist, validSongs, createFromSearchParams, create };
 }

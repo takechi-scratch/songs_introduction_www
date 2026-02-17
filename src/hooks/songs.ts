@@ -1,43 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-    fetchNearestSongs,
-    fetchNearestSongsAdvanced,
-    fetchSongById,
-    fetchSongs,
-} from "@/lib/songs/api";
+import { advancedSearchForSongs, fetchNearestSongs, fetchSongById } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { SearchQuery } from "@/lib/search/filter";
-import { CustomParams } from "@/lib/search/nearest";
+import { SongSearchParams } from "@/lib/search/search";
+import { shuffleArray } from "@/lib/utils";
 
-export function useSongs(
-    searchType: "filter" | "nearest" = "filter",
-    query: SearchQuery = {},
-    customParams: CustomParams
-) {
-    // TODO: 返す型を適切に絞り込む
-    const [songs, setSongs] = useState<(Song | SongWithScore | null)[]>([...Array(10).fill(null)]);
+export function useAdvancedSearch(searchParams: SongSearchParams, random: boolean = false) {
+    const [songs, setSongs] = useState<(SongWithScore | null)[]>([...Array(10).fill(null)]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [hasInitialized, setHasInitialized] = useState<boolean>(false);
 
-    async function loadSongs(
-        searchType: "filter" | "nearest",
-        query: SearchQuery,
-        customParams: CustomParams
-    ) {
+    async function loadSongs(searchParam: SongSearchParams) {
         try {
             setSongs([...Array(10).fill(null)]);
             setLoading(true);
-            let data;
-            if (searchType === "filter") {
-                data = await fetchSongs(query);
-            } else {
-                if (!customParams.target_song_id) {
-                    throw new Error("target_song_id is required for nearest search");
-                }
-                data = await fetchNearestSongsAdvanced(customParams);
+            const data = await advancedSearchForSongs(searchParam);
+            if (random) {
+                shuffleArray(data);
             }
             setSongs(data);
             setError(null);
@@ -50,14 +31,14 @@ export function useSongs(
 
     useEffect(() => {
         if (!hasInitialized) {
-            loadSongs(searchType, query, customParams);
+            loadSongs(searchParams);
             setHasInitialized(true);
             return;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasInitialized]);
 
-    return { songs, loading, error, refetch: () => loadSongs(searchType, query, customParams) };
+    return { songs, loading, error, refetch: () => loadSongs(searchParams) };
 }
 
 export function useSong(id: string | null) {

@@ -4,6 +4,7 @@ import { formatDate } from "./date";
 import { SearchQuery, FilterableContents } from "./search/filter";
 import { fetchSongById } from "./songs/api";
 import { CustomParams } from "./search/nearest";
+import { FilterableLabels, SongFilters, SongSearchParams } from "./search/search";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -80,35 +81,39 @@ export async function createPlaylist(
 
 export async function createMetaDataFromSearchQuery(
     songCount: number,
-    searchType: "filter" | "nearest",
-    searchQuery: SearchQuery,
-    customParams: CustomParams
+    searchParams: SongSearchParams
 ): Promise<{ title: string; description: string }> {
     let title = "";
     let description = "";
 
-    if (searchType === "filter") {
-        title = `MIMIさん曲まとめ - ${formatDate(Date.now() / 1000)}`;
-
-        description += `「MIMIさん全曲紹介」の検索結果（全${songCount}曲）から自動で作成しました。\n\n`;
-        description += "【絞り込み条件】\n";
-        Object.entries(searchQuery).forEach(([key, value]) => {
-            if (key === "order" || key === "asc") return;
-
-            if (value) {
-                description += `- ${
-                    FilterableContents.find((content) => content.key === key)?.displayName || key
-                }: ${value}\n`;
-            }
-        });
-    } else if (searchType === "nearest") {
-        const targetSong = await fetchSongById(customParams.target_song_id || "");
+    if (searchParams.nearest && !searchParams.filter) {
+        const targetSong = await fetchSongById(searchParams.nearest.targetSongID);
 
         title = `「${targetSong?.title}」が好きな人におすすめの曲 - ${formatDate(
             Date.now() / 1000
         )}`;
         description += `「MIMIさん全曲紹介」で、「${targetSong?.title}」に似ている曲を${songCount}曲集めました。\n※似ている曲の選出にはカスタムパラメータが使用されています。`;
-    }
+    } else {
+        title = `MIMIさん曲まとめ - ${formatDate(Date.now() / 1000)}`;
 
+        description += `「MIMIさん全曲紹介」の検索結果（全${songCount}曲）から自動で作成しました。\n\n`;
+        if (searchParams.q) {
+            description += `【キーワード】\n${searchParams.q}\n\n`;
+        }
+
+        if (searchParams.filter) {
+            description += "【絞り込み条件】\n";
+            Object.entries(searchParams.filter).forEach(([key, value]) => {
+                if (value) {
+                    description += `- ${FilterableLabels[key as keyof SongFilters]}: ${value}\n`;
+                }
+            });
+        }
+
+        if (searchParams.nearest) {
+            const targetSong = await fetchSongById(searchParams.nearest.targetSongID);
+            description += `【似ている曲】\n「${targetSong?.title}」に似ている曲順に並んでいます。\n※似ている曲の選出にはカスタムパラメータが使用されています。\n`;
+        }
+    }
     return { title, description };
 }

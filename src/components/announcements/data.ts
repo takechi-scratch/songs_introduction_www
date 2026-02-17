@@ -67,6 +67,14 @@ export const data: Announcement[] = [
         pinnedToTop: false,
     },
     {
+        id: "feature_004",
+        title: "検索機能の改革！",
+        content:
+            "[曲一覧](/songs/)の検索が、シンプルでよりわかりやすくなりました！\n複数ワードの検索にも対応。ぜひ試してみてください！",
+        expiresDate: 1771599600,
+        pinnedToTop: true,
+    },
+    {
         id: "survey_001",
         title: "お知らせ",
         content:

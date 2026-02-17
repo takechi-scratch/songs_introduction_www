@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
-import { Song } from "@/lib/songs/types";
+import { Song, SongWithScore } from "@/lib/songs/types";
 import { Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
@@ -10,8 +10,8 @@ export default function SongsSection({
     latestSongsData,
     colaborationSongsData,
 }: {
-    latestSongsData?: Song[] | undefined;
-    colaborationSongsData?: Song[] | undefined;
+    latestSongsData?: Song[] | SongWithScore[] | undefined;
+    colaborationSongsData?: Song[] | SongWithScore[] | undefined;
 }) {
     useEffect(() => {
         if (!latestSongsData || !colaborationSongsData) {

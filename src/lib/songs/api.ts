@@ -1,9 +1,7 @@
 import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
-import { SearchQuery } from "../search/filter";
-import { CustomParams } from "../search/nearest";
-import { shuffleArray } from "../utils";
 import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
 import { refreshHomePage, refreshSongPage } from "./refresh";
+import { SongSearchParams } from "../search/search";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -22,33 +20,18 @@ export function scoreCanBeCalculated(song: Song) {
     );
 }
 
-export async function fetchSongs(query: SearchQuery): Promise<Song[]> {
-    const FilteredQuery = Object.fromEntries(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        Object.entries(query).filter(([_, value]) => value !== "")
-    );
-
-    let isRandom = false;
-    if (FilteredQuery.order === "random") {
-        isRandom = true;
-        delete FilteredQuery.order;
-    }
-
+export async function fetchAllSongs(): Promise<Song[]> {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/search/filter/?` +
-                new URLSearchParams(FilteredQuery as Record<string, string>)
-        );
+        const response = await fetch(`${API_BASE_URL}/songs-all/`, {
+            cache: "force-cache",
+            next: { tags: ["songs"] },
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const result: Song[] = await response.json();
-
-        if (isRandom) {
-            shuffleArray(result);
-        }
 
         return result;
     } catch (error) {
@@ -78,7 +61,7 @@ export async function fetchSongById(id: string): Promise<Song> {
 export async function fetchNearestSongs(id: string, limit: number = 10): Promise<SongWithScore[]> {
     try {
         const response = await fetch(
-            `${API_BASE_URL}/search/nearest/?target_song_id=${id}&limit=${limit}`,
+            `${API_BASE_URL}/nearest-search/?target_song_id=${id}&limit=${limit}`,
             { next: { revalidate: 3600 } }
         );
 
@@ -94,13 +77,27 @@ export async function fetchNearestSongs(id: string, limit: number = 10): Promise
     }
 }
 
-export async function fetchNearestSongsAdvanced(params: CustomParams): Promise<SongWithScore[]> {
+export async function searchSongs(q: string): Promise<Song[]> {
     try {
-        if (!params.target_song_id) {
-            throw new Error("target_song_id is required");
+        const response = await fetch(`${API_BASE_URL}/search/?q=${encodeURIComponent(q)}`, {
+            next: { revalidate: 3600 },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const response = await fetch(`${API_BASE_URL}/search/nearest_advanced/`, {
+        const result: Song[] = await response.json();
+        return result;
+    } catch (error) {
+        console.error(`Failed to search songs with keyword ${q}:`, error);
+        throw error;
+    }
+}
+
+export async function advancedSearchForSongs(params: SongSearchParams): Promise<SongWithScore[]> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/advanced-search/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -110,13 +107,13 @@ export async function fetchNearestSongsAdvanced(params: CustomParams): Promise<S
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
         }
 
         const result: SongWithScore[] = await response.json();
         return result;
     } catch (error) {
-        console.error(`Failed to fetch nearest songs for ${params.target_song_id}:`, error);
+        console.error(`Failed to search songs with params ${JSON.stringify(params)}:`, error);
         throw error;
     }
 }

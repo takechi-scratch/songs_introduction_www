@@ -4,19 +4,41 @@ import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
 import { IconCalendarClock } from "@tabler/icons-react";
 
+export function SongCardSkeleton() {
+    return <Skeleton height={350} />;
+}
+
 export default function SongCard({
     song,
     isHighLighted,
+    displayScore = null,
 }: {
     song: Song | SongWithScore | null;
     isHighLighted?: boolean;
+    displayScore?: boolean | null;
 }) {
-    if (!song) return <Skeleton height={350} />;
+    if (!song) return <SongCardSkeleton />;
+
+    let score = null;
+    if (hasScore(song)) {
+        score = song.score;
+        song = song.song;
+        if (displayScore === null && score !== null) {
+            displayScore = true;
+        }
+    }
 
     let hoverData;
-    if (hasScore(song)) {
-        hoverData = <Text size="sm">類似度: {(song.score * 100).toFixed(2)}%</Text>;
-        song = song.song;
+    if (displayScore) {
+        if (score !== null) {
+            hoverData = <Text size="sm">類似度: {(score * 100).toFixed(2)}%</Text>;
+        } else {
+            hoverData = (
+                <Text size="sm" c="dimmed">
+                    類似度: 不明
+                </Text>
+            );
+        }
     } else {
         const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
         hoverData = (
