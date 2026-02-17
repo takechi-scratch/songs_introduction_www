@@ -1,9 +1,7 @@
 import { Song, SongWithScore } from "./songs/types";
 import { getCurrentUser, getCurrentUserToken } from "./auth/firebase";
 import { formatDate } from "./date";
-import { SearchQuery, FilterableContents } from "./search/filter";
 import { fetchSongById } from "./songs/api";
-import { CustomParams } from "./search/nearest";
 import { FilterableLabels, SongFilters, SongSearchParams } from "./search/search";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
