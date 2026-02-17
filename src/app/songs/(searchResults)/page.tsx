@@ -76,8 +76,10 @@ export default async function Page(props: PageProps) {
             <Title order={2} mb="md">
                 曲一覧
             </Title>
-            <SearchBar />
-            <Suspense fallback={<Text>読み込み中...</Text>}>
+            <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
+                <SearchBar />
+            </Suspense>
+            <Suspense fallback={<Text>曲の情報を読み込み中...</Text>}>
                 <MainPage {...props} />
             </Suspense>
         </MyAppShell>
