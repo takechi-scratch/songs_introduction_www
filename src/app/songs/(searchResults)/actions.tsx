@@ -8,7 +8,7 @@ import { useUserRole } from "@/hooks/auth";
 import { usePlaylistManager } from "@/hooks/playlist";
 import { SongSearchParams } from "@/lib/search/search";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { Flex, Button } from "@mantine/core";
+import { Flex, Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useRef, useState } from "react";
 
@@ -88,12 +88,17 @@ export default function Actions({
 
     return (
         <>
-            <ActionButtons
-                songs={songs}
-                slotsActive={slotsActive}
-                setSlotsActive={setSlotsActive}
-                searchParams={songSearchParams}
-            />
+            {songs.length > 0 && (
+                <ActionButtons
+                    songs={songs}
+                    slotsActive={slotsActive}
+                    setSlotsActive={setSlotsActive}
+                    searchParams={songSearchParams}
+                />
+            )}
+            <Text size="sm" ta="right" m="md">
+                検索結果: {songs.length}曲
+            </Text>
             {slotsActive ? <SongsSlot songs={songs} /> : <CardsList songs={songs} />}
         </>
     );

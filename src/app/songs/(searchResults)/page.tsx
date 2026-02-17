@@ -42,17 +42,7 @@ async function MainPage(props: PageProps) {
 
     return (
         <>
-            {songs !== null && (
-                <Text size="sm" ta="right" m="md">
-                    検索結果: {songs.length}曲
-                </Text>
-            )}
-            {songs !== null && songs.length > 0 && (
-                <Actions songs={songs} songSearchParams={songSearchParams} />
-            )}
-            {/* <Button onClick={() => router.replace("/songs/?type=nearest")}>
-                routerで再読み込み
-            </Button> */}
+            {songs !== null && <Actions songs={songs} songSearchParams={songSearchParams} />}
             {/* <Drawer
                 opened={opened}
                 onClose={close}
