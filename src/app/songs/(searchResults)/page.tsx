@@ -10,6 +10,7 @@ import { SongSearchParams } from "@/lib/search/search";
 import { advancedSearchForSongs } from "@/lib/songs/api";
 import Actions from "./actions";
 import SearchBar from "./search";
+import { redirect } from "next/navigation";
 
 async function MainPage(props: PageProps) {
     const searchParams = await props.searchParams;
@@ -29,6 +30,11 @@ async function MainPage(props: PageProps) {
         }
     }
 
+    let autoRedirect = false;
+    if (typeof searchParams.autoRedirect === "string" && searchParams.autoRedirect === "1") {
+        autoRedirect = true;
+    }
+
     let songs;
     try {
         songs = await advancedSearchForSongs(songSearchParams);
@@ -38,6 +44,11 @@ async function MainPage(props: PageProps) {
                 {e instanceof Error ? e.message : "不明なエラーが発生しました"}
             </Alert>
         );
+    }
+
+    if (autoRedirect && songs.length === 1) {
+        const song = songs[0];
+        redirect(`/songs/${song.id}`);
     }
 
     return (

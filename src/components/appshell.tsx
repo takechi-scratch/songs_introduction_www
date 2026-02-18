@@ -20,7 +20,6 @@ import UserMenu from "./userMenu";
 import { noticeActiveAnnouncements } from "./announcements/manager";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { showNotification } from "@mantine/notifications";
 
 type QuickSearchResult =
     | {
@@ -33,8 +32,10 @@ type QuickSearchResult =
       }
     | null;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function handleSearchInput(input: string): QuickSearchResult {
     // YouTubeのURLから動画IDを抽出、なければ検索キーワードとして返す
+    // 現在は使用していないが、当面は保持
     try {
         const url = new URL(input);
         if (url.hostname === "youtu.be") {
@@ -70,7 +71,6 @@ function handleSearchInput(input: string): QuickSearchResult {
     return null;
 }
 
-// TODO: 新検索APIに対応。結果が1件のみなら直接曲ページへ遷移
 function QuickSearch({ style }: { style?: MantineStyleProp }) {
     const router = useRouter();
 
@@ -81,20 +81,9 @@ function QuickSearch({ style }: { style?: MantineStyleProp }) {
             style={{ minWidth: 150, maxWidth: 300, ...style }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    const songID = handleSearchInput(e.currentTarget.value);
-                    if (songID === null) {
-                        showNotification({
-                            title: "URLを解釈できませんでした",
-                            message: "YouTubeの動画URL、または動画IDを入力してください。",
-                            color: "red",
-                        });
-                        return;
-                    }
-                    if (songID.type === "song") {
-                        router.push(`/songs/${songID.id}`);
-                    } else {
-                        router.push(`/songs?q=${encodeURIComponent(songID.query)}`);
-                    }
+                    router.push(
+                        `/songs?q=${encodeURIComponent(e.currentTarget.value)}&autoRedirect=1`
+                    );
                 }
             }}
             ml="sm"

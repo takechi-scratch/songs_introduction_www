@@ -550,6 +550,7 @@ function AdvancedSearch() {
                 <Button
                     fullWidth
                     data-disabled={!songSearchParams.nearest?.targetSongID && nearestEnabled}
+                    disabled={!songSearchParams.nearest?.targetSongID && nearestEnabled}
                     mt="md"
                     onClick={() => {
                         if (

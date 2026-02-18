@@ -20,11 +20,12 @@ export function scoreCanBeCalculated(song: Song) {
     );
 }
 
+// TODO: キャッシュ戦略の見直し
 export async function fetchAllSongs(): Promise<Song[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/songs-all/`, {
             cache: "force-cache",
-            next: { tags: ["songs"] },
+            next: { revalidate: 3600 },
         });
 
         if (!response.ok) {
