@@ -211,4 +211,6 @@ export async function generateStaticParams() {
     return songs.map((song) => ({ id: song.id }));
 }
 
-export const dynamicParams = false;
+// バックエンドからの曲の直接追加用
+// TODO: 曲一覧のrevalidateエンドポイントの作成
+export const dynamicParams = true;

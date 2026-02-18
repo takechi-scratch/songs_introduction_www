@@ -281,7 +281,7 @@ export default function RecommendPage() {
 
     const router = useRouter();
 
-    console.log("Sample songs for recommendation:", sampleSongs);
+    // console.log("Sample songs for recommendation:", sampleSongs);
 
     function navigateToResults(sortedSongIDs: string[]) {
         router.push(
