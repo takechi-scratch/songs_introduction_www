@@ -97,6 +97,7 @@ export const generateMetadata = async ({ searchParams }: PageProps): Promise<Met
             description: description,
             images: imageURL,
         },
+        robots: { index: false },
     };
 };
 

@@ -11,6 +11,39 @@ import { advancedSearchForSongs } from "@/lib/songs/api";
 import Actions from "./actions";
 import SearchBar from "./search";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+const title = "曲一覧 | MIMIさん全曲紹介";
+const description = "MIMIさんの曲を全曲紹介。気になるあの曲も検索できます。";
+const imageUrl = "https://mimi.takechi.f5.si/assets/card.png";
+
+export const metadata: Metadata = {
+    title: title,
+    description: description,
+    openGraph: {
+        title: title,
+        description: description,
+        url: imageUrl,
+        siteName: title,
+        images: [
+            {
+                url: imageUrl,
+                width: 1200,
+                height: 630,
+                alt: title,
+            },
+        ],
+        locale: "ja_JP",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: title,
+        description: description,
+        images: [imageUrl],
+    },
+    robots: { index: false },
+};
 
 async function MainPage(props: PageProps) {
     const searchParams = await props.searchParams;
