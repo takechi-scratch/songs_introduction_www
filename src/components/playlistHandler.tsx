@@ -1,5 +1,6 @@
 "use client";
 
+import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { CreatePlaylistResult } from "@/lib/youtube";
 import { List, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
@@ -7,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { IconPlaylistX, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
 
-export function confirmModal(isMany: boolean = false) {
+export function confirmModal(isMany: boolean = false, inValidSongs: (Song | SongWithScore)[] = []) {
     return new Promise<boolean>((resolve) => {
         modals.openConfirmModal({
             title: "確認",
@@ -15,6 +16,24 @@ export function confirmModal(isMany: boolean = false) {
                 <List size="sm" spacing="xs">
                     {isMany && (
                         <List.Item>曲数が多いため、操作に時間がかかる場合があります。</List.Item>
+                    )}
+                    {inValidSongs.length > 0 && (
+                        <List.Item>
+                            以下の曲は仮掲載のため、再生リストには含まれません。
+                            <List size="sm">
+                                {inValidSongs.map((song) => (
+                                    <List.Item key={song.id}>
+                                        <Link
+                                            href={`/songs/${song.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {hasScore(song) ? song.song.title : song.title}
+                                        </Link>
+                                    </List.Item>
+                                ))}
+                            </List>
+                        </List.Item>
                     )}
                     <List.Item>
                         作成した再生リストは、

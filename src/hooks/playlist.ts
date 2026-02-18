@@ -20,6 +20,15 @@ export function usePlaylistManager(
             });
     }, [songs]);
 
+    const inValidSongs = useMemo(() => {
+        return songs
+            .filter((song) => song !== null)
+            .filter((song) => {
+                if (hasScore(song)) return song.song.publishedType === -1;
+                return song.publishedType === -1;
+            });
+    }, [songs]);
+
     async function createFromSearchParams(searchParams: SongSearchParams) {
         if (confirm && !(await confirm())) return;
         setLoadingPlaylist(true);
@@ -42,5 +51,5 @@ export function usePlaylistManager(
         });
     }
 
-    return { loadingPlaylist, validSongs, createFromSearchParams, create };
+    return { loadingPlaylist, validSongs, inValidSongs, createFromSearchParams, create };
 }

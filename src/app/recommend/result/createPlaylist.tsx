@@ -20,9 +20,9 @@ export default function CreatePlaylistButton({
     const userRole = useUserRole();
 
     const notificationID = useRef<string | null>(null);
-    const { loadingPlaylist, validSongs, create } = usePlaylistManager(
+    const { loadingPlaylist, validSongs, inValidSongs, create } = usePlaylistManager(
         songs,
-        async () => await confirmModal(validSongs.length > 30),
+        async () => await confirmModal(validSongs.length > 30, inValidSongs),
         () => {
             const id = notifications.show({
                 loading: true,

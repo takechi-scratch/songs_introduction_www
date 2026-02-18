@@ -425,7 +425,7 @@ function AdvancedSearch() {
         const paramsText = params.get("params");
         const songSearchParams: SongSearchParams = {
             filter: {},
-            limit: undefined,
+            // limit: undefined,
             order: "publishedTimestamp",
             asc: false,
         };
@@ -443,6 +443,28 @@ function AdvancedSearch() {
     });
 
     const [nearestEnabled, setNearestEnabled] = useState(!!songSearchParams.nearest);
+
+    function encodeSearchParams() {
+        if (
+            // 0が入力になることもあるので厳密にチェック
+            Object.values(songSearchParams.filter || {}).filter(
+                (v) => v !== undefined && v !== null && v !== ""
+            ).length === 0
+        ) {
+            delete songSearchParams.filter;
+        }
+        if (!nearestEnabled) delete songSearchParams.nearest;
+        if (!songSearchParams.asc) delete songSearchParams.asc;
+        if (
+            !songSearchParams.order ||
+            songSearchParams.order === "publishedTimestamp" ||
+            nearestEnabled
+        )
+            delete songSearchParams.order;
+        // undefinedのプロパティを削除
+        const cleanParams = JSON.parse(JSON.stringify(songSearchParams));
+        return rison.encode_object(cleanParams);
+    }
 
     return (
         <>
@@ -523,7 +545,7 @@ function AdvancedSearch() {
                 value={nearestEnabled ? "類似度順" : undefined}
                 label="並び替え"
                 defaultValue="公開日時"
-                mt="md"
+                mb="md"
                 onChange={(value) => {
                     if (nearestEnabled) return;
                     setSongSearchParams({
@@ -534,7 +556,7 @@ function AdvancedSearch() {
             />
             <SegmentedControl
                 data={["昇順", "降順"]}
-                mt="sm"
+                mb="sm"
                 defaultValue="降順"
                 onChange={(value) =>
                     setSongSearchParams({ ...songSearchParams, asc: value === "昇順" })
@@ -551,32 +573,40 @@ function AdvancedSearch() {
                     fullWidth
                     data-disabled={!songSearchParams.nearest?.targetSongID && nearestEnabled}
                     disabled={!songSearchParams.nearest?.targetSongID && nearestEnabled}
-                    mt="md"
+                    mb="sm"
                     onClick={() => {
-                        if (
-                            // 0が入力になることもあるので厳密にチェック
-                            Object.values(songSearchParams.filter || {}).filter(
-                                (v) => v !== undefined && v !== null && v !== ""
-                            ).length === 0
-                        ) {
-                            delete songSearchParams.filter;
-                        }
-                        if (!nearestEnabled) delete songSearchParams.nearest;
-                        if (!songSearchParams.asc) delete songSearchParams.asc;
-                        if (
-                            !songSearchParams.order ||
-                            songSearchParams.order === "publishedTimestamp" ||
-                            nearestEnabled
-                        )
-                            delete songSearchParams.order;
-                        // undefinedのプロパティを削除
-                        const cleanParams = JSON.parse(JSON.stringify(songSearchParams));
-                        const encodedParams = rison.encode_object(cleanParams);
-                        router.push(`/songs/?params=${encodedParams}`);
+                        router.push(`/songs/?params=${encodeSearchParams()}`);
                     }}
                 >
                     検索
                 </Button>
+                <Group gap="md" mb="md" grow>
+                    <Button
+                        variant="light"
+                        color="teal"
+                        onClick={() => {
+                            router.push(`/search/?params=${encodeSearchParams()}`, {
+                                scroll: false,
+                            });
+                        }}
+                    >
+                        条件を保存
+                    </Button>
+                    <Button
+                        variant="light"
+                        color="red"
+                        onClick={() => {
+                            setSongSearchParams({
+                                filter: {},
+                                order: "publishedTimestamp",
+                                asc: false,
+                            });
+                            router.push("/search/");
+                        }}
+                    >
+                        条件をクリア
+                    </Button>
+                </Group>
             </WarningTip>
         </>
     );
@@ -591,14 +621,9 @@ export default function Page() {
             <Suspense fallback={<Text>読み込み中...</Text>}>
                 <AdvancedSearch />
             </Suspense>
-            <Group mt="xl" gap="xl">
-                <Anchor component={Link} href="/search/">
-                    すべての条件をクリア
-                </Anchor>
-                <Anchor component={Link} href="/songs/">
-                    曲一覧に戻る
-                </Anchor>
-            </Group>
+            <Anchor component={Link} href="/songs/">
+                曲一覧に戻る
+            </Anchor>
         </MyAppShell>
     );
 }

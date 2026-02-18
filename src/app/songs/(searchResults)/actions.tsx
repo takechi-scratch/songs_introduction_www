@@ -26,23 +26,24 @@ function ActionButtons({
     const userRole = useUserRole();
 
     const notificationID = useRef<string | null>(null);
-    const { loadingPlaylist, validSongs, createFromSearchParams } = usePlaylistManager(
-        songs,
-        async () => await confirmModal(validSongs.length > 30),
-        () => {
-            const id = notifications.show({
-                loading: true,
-                title: "再生リストを作成中...",
-                message: "作成完了まで数秒～数十秒かかります。しばらくお待ちください。",
-                autoClose: false,
-                withCloseButton: false,
-            });
-            notificationID.current = id;
-        },
-        (result) => {
-            if (notificationID.current) fallbackNotifications(result, notificationID.current);
-        }
-    );
+    const { loadingPlaylist, validSongs, inValidSongs, createFromSearchParams } =
+        usePlaylistManager(
+            songs,
+            async () => await confirmModal(validSongs.length > 30, inValidSongs),
+            () => {
+                const id = notifications.show({
+                    loading: true,
+                    title: "再生リストを作成中...",
+                    message: "作成完了まで数秒～数十秒かかります。しばらくお待ちください。",
+                    autoClose: false,
+                    withCloseButton: false,
+                });
+                notificationID.current = id;
+            },
+            (result) => {
+                if (notificationID.current) fallbackNotifications(result, notificationID.current);
+            }
+        );
 
     return (
         <Flex
