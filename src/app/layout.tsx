@@ -5,6 +5,7 @@ import "./globals.css";
 // 将来的に移行予定
 // Noto_Sans_JP();
 
+
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
