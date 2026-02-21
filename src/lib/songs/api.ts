@@ -2,6 +2,7 @@ import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
 import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
 import { refreshHomePage, refreshSongPage } from "./refresh";
 import { SongSearchParams } from "../search/search";
+import { shuffleArray } from "../utils";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -100,6 +101,12 @@ export async function searchSongs(q: string): Promise<Song[]> {
 }
 
 export async function advancedSearchForSongs(params: SongSearchParams): Promise<SongWithScore[]> {
+    let random = false;
+    if (params.order === "random") {
+        random = true;
+        delete params.order;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/advanced-search/`, {
             method: "POST",
@@ -115,6 +122,11 @@ export async function advancedSearchForSongs(params: SongSearchParams): Promise<
         }
 
         const result: SongWithScore[] = await response.json();
+
+        if (random) {
+            shuffleArray(result);
+        }
+
         return result;
     } catch (error) {
         console.error(`Failed to search songs with params ${JSON.stringify(params)}:`, error);
