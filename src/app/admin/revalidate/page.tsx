@@ -29,6 +29,7 @@ async function revalidateAll() {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            body: JSON.stringify({ songIDs: [] }),
         });
 
         if (response.ok) {
