@@ -51,7 +51,7 @@ export function useSong(id: string | null) {
 
         try {
             setLoading(true);
-            const data = await fetchSongById(id);
+            const data = await fetchSongById(id, "no-cache");
             setSong(data);
             setError(null);
         } catch (err) {
