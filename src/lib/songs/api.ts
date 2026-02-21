@@ -25,7 +25,7 @@ export async function fetchAllSongs(): Promise<Song[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/songs-all/`, {
             cache: "force-cache",
-            next: { revalidate: 3600 },
+            next: { tags: ["songs-all"] },
         });
 
         if (!response.ok) {
@@ -45,7 +45,7 @@ export async function fetchSongById(id: string): Promise<Song> {
     try {
         const url = `${API_BASE_URL}/songs/${id}/`;
 
-        const response = await fetch(url, { cache: "force-cache" }); // デフォルトでもキャッシュを強制
+        const response = await fetch(url, { cache: "force-cache", next: { tags: [`song-${id}`] } }); // デフォルトでもキャッシュを強制
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -63,7 +63,7 @@ export async function fetchNearestSongs(id: string, limit: number = 10): Promise
     try {
         const response = await fetch(
             `${API_BASE_URL}/nearest-search/?target_song_id=${id}&limit=${limit}`,
-            { next: { revalidate: 3600 } }
+            { next: { tags: ["songs-all"] } }
         );
 
         if (!response.ok) {
@@ -81,7 +81,7 @@ export async function fetchNearestSongs(id: string, limit: number = 10): Promise
 export async function searchSongs(q: string): Promise<Song[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/search/?q=${encodeURIComponent(q)}`, {
-            next: { revalidate: 3600 },
+            next: { tags: ["songs-all"] },
         });
 
         if (!response.ok) {
@@ -104,7 +104,7 @@ export async function advancedSearchForSongs(params: SongSearchParams): Promise<
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(params),
-            next: { revalidate: 3600 },
+            next: { tags: ["songs-all"] },
         });
 
         if (!response.ok) {

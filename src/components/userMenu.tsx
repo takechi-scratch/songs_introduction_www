@@ -13,6 +13,7 @@ import {
     IconLogout,
     IconUserCog,
     IconFileMusic,
+    IconRefresh,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,6 +77,13 @@ export default function UserMenu() {
                             leftSection={<IconUserCog size={14} />}
                         >
                             専用アカウントの管理
+                        </Menu.Item>
+                        <Menu.Item
+                            href="/admin/revalidate/"
+                            component={Link}
+                            leftSection={<IconRefresh size={14} />}
+                        >
+                            キャッシュの再生成
                         </Menu.Item>
                     </>
                 )}
