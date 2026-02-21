@@ -34,7 +34,7 @@ export interface UpsertSong {
     id: string;
     title?: string;
     publishedTimestamp?: number;
-    publishedType?: number;
+    publishedType: number;
     durationSeconds?: number;
     thumbnailURL?: string;
     vocal: string[];

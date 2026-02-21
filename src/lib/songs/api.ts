@@ -124,6 +124,8 @@ export async function upsertSong(songID: string | null, data: UpsertSong): Promi
         throw new Error("Unauthorized");
     }
 
+    console.log("Upserting song with data:", data);
+
     try {
         const response = await fetch(`${API_BASE_URL}/songs/${songID ?? data.id}/`, {
             method: "POST",
@@ -139,8 +141,17 @@ export async function upsertSong(songID: string | null, data: UpsertSong): Promi
         }
 
         const result: Song = await response.json();
-        refreshSongPage(result.id);
-        refreshHomePage();
+        fetch(`/api/revalidate/`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${await getCurrentUserToken()}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ songIDs: [result.id] }),
+        }).catch((error) => {
+            console.error("Failed to trigger revalidation:", error);
+        });
+
         return result;
     } catch (error) {
         console.error(`Failed to fetch song ${data.id}:`, error);

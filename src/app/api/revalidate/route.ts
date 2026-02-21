@@ -20,6 +20,10 @@ export async function POST(request: NextRequest) {
         }
 
         revalidateTag("songs-all");
+        const body = await request.json();
+        for (const songID of body.songIDs) {
+            revalidateTag(`song-${songID}`);
+        }
 
         return NextResponse.json({ success: true });
     } catch (error) {
