@@ -20,6 +20,7 @@ import UserMenu from "./userMenu";
 import { noticeActiveAnnouncements } from "./announcements/manager";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type QuickSearchResult =
     | {
@@ -170,7 +171,9 @@ function Footer() {
 export default function MyAppShell({ children }: { children: React.ReactNode }) {
     const [opened, { toggle }] = useDisclosure();
 
-    noticeActiveAnnouncements();
+    useEffect(() => {
+        noticeActiveAnnouncements();
+    }, []);
 
     return (
         <AppShell

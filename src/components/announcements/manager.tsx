@@ -6,13 +6,10 @@ import MantineMarkdown from "@/components/markdown";
 import { Alert } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 
+// 必ずuseEffect内で呼び出す！
 export function noticeActiveAnnouncements() {
     const currentTimeStamp = Math.floor(Date.now() / 1000);
     const isDev = process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true";
-
-    if (typeof window === "undefined") {
-        return;
-    }
 
     const rawShownAnnouncements = localStorage.getItem("shown_announcements") || "[]";
     const shownAnnouncements: string[] = JSON.parse(rawShownAnnouncements);
