@@ -77,7 +77,7 @@ function InfoTabs() {
         initialValues: {
             id: "",
             title: "",
-            publishedTimestamp: Date.now(),
+            publishedTimestamp: Math.floor(Date.now() / 1000),
             durationSeconds: 0,
             publishedType: "1",
             vocal: [],
@@ -104,7 +104,7 @@ function InfoTabs() {
             form.setValues({
                 id: beforeSong.id,
                 title: beforeSong.title ?? "",
-                publishedTimestamp: beforeSong.publishedTimestamp ?? Date.now(),
+                publishedTimestamp: beforeSong.publishedTimestamp ?? Math.floor(Date.now() / 1000),
                 durationSeconds: beforeSong.durationSeconds ?? 0,
                 publishedType: beforeSong.publishedType.toString(),
                 vocal: beforeSong.vocal ?? [],
@@ -280,7 +280,7 @@ function InfoTabs() {
                             {...form.getInputProps("title")}
                             {...inputStylesProps({ example: "ハナタバ", displayName: "タイトル" })}
                         />
-                        <Flex gap="md">
+                        <Flex gap="md" align="anchor-center" mb="xs">
                             <NumberInput
                                 disabled={autoFetchVideoData}
                                 key={form.key("publishedTimestamp")}
@@ -289,6 +289,7 @@ function InfoTabs() {
                                     example: "1771650763",
                                     displayName: "公開日時",
                                 })}
+                                mb={0}
                             />
                             <Link
                                 href="https://begoodtool.com/timestamp/jp"

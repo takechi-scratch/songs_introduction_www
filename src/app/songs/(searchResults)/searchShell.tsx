@@ -40,6 +40,7 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                 transitionDuration={300}
                 transitionTimingFunction="ease"
             >
+                {/* TODO: Asideのアニメーション */}
                 <AppShellAside
                     p="md"
                     style={{ zIndex: 0 }}

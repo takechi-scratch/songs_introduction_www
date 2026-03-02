@@ -54,18 +54,22 @@ function Start({ startCallback }: { startCallback?: () => void }) {
 }
 
 function Prepare({
-    searchQuery,
-    setSearchQuery,
+    searchParams,
+    setSearchParams,
     proceedCallback,
     settings,
     setSettings,
 }: {
-    searchQuery: SearchQuery;
-    setSearchQuery: (query: SearchQuery) => void;
+    searchParams: SongSearchParams;
+    setSearchParams: (params: SongSearchParams) => void;
     proceedCallback?: () => void;
     settings: TestSettings;
     setSettings: (settings: TestSettings) => void;
 }) {
+    if (!searchParams.filter) {
+        return <Text>検索条件が正しく初期化されていません。前の画面に戻ってください。</Text>;
+    }
+
     return (
         <Flex direction="column" gap="lg" align="center">
             <Text>まず、いくつかの質問に答えてください。</Text>
@@ -98,11 +102,14 @@ function Prepare({
                 <Radio.Group
                     name="startFrom"
                     label="MIMIさんの楽曲で、知っているのはいつ頃からですか？"
-                    value={String(searchQuery.publishedAfter || "")}
+                    value={String(searchParams.filter.publishedAfter || "")}
                     onChange={(value) =>
-                        setSearchQuery({
-                            ...searchQuery,
-                            publishedAfter: Number(value),
+                        setSearchParams({
+                            ...searchParams,
+                            filter: {
+                                ...searchParams.filter,
+                                publishedAfter: Number(value),
+                            },
                         })
                     }
                 >
@@ -115,11 +122,14 @@ function Prepare({
                 <Divider />
                 <Checkbox
                     label="提供曲も質問に含める"
-                    checked={searchQuery.publishedType !== 1}
+                    checked={searchParams.filter.publishedType !== 1}
                     onChange={(e) =>
-                        setSearchQuery({
-                            ...searchQuery,
-                            publishedType: e.currentTarget.checked ? undefined : 1,
+                        setSearchParams({
+                            ...searchParams,
+                            filter: {
+                                ...searchParams.filter,
+                                publishedType: e.currentTarget.checked ? undefined : 1,
+                            },
                         })
                     }
                 />
@@ -266,16 +276,18 @@ function Choice({
 export default function RecommendPage() {
     const [settings, setSettings] = useState<TestSettings>({ name: "ゲスト", limit: 8 });
     const [status, setStatus] = useState<status>("start");
-    const [searchQuery, setSearchQuery] = useState<SongSearchParams>({
+    const [searchParams, setSearchParams] = useState<SongSearchParams>({
         filter: {
             publishedAfter: Math.min(...Object.values(songsPeriod)),
             publishedType: 1,
         },
     });
 
-    const { songs: fetchedSongs, refetch: refetchSongs } = useAdvancedSearch(searchQuery, true);
+    const { songs: fetchedSongs, refetch: refetchSongs } = useAdvancedSearch(searchParams, true);
     const sampleSongs = useMemo(() => {
-        const filteredSongs = fetchedSongs.filter((song) => song !== null && !hasScore(song));
+        const filteredSongs = fetchedSongs
+            .filter((song) => song !== null && song.score === null)
+            .map((song) => song?.song);
         return filteredSongs.slice(0, settings.limit) as Song[];
     }, [fetchedSongs, settings.limit]);
 
@@ -302,8 +314,8 @@ export default function RecommendPage() {
                 {status === "start" && <Start startCallback={() => setStatus("prepare")} />}
                 {status === "prepare" && (
                     <Prepare
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
+                        searchParams={searchParams}
+                        setSearchParams={setSearchParams}
                         proceedCallback={() => {
                             refetchSongs();
                             setStatus("choice");
