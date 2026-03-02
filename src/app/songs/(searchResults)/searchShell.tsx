@@ -20,11 +20,7 @@ function SearchSideBar() {
     const params = useSearchParams();
     const router = useRouter();
 
-    return (
-        <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
-            <AdvancedSearch params={params} router={router} />
-        </Suspense>
-    );
+    return <AdvancedSearch params={params} router={router} />;
 }
 
 // childrenではサーバー側で曲が取得され、actionsに渡される
@@ -67,7 +63,9 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                         </Anchor>
                     </Group>
                     <ScrollArea h="calc(100vh - 200px)">
-                        <SearchSideBar />
+                        <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
+                            <SearchSideBar />
+                        </Suspense>
                     </ScrollArea>
                 </AppShellAside>
                 <AppShellMain>
