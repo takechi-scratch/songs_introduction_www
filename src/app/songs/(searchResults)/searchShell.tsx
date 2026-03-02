@@ -1,6 +1,5 @@
 "use client";
 
-import { AdvancedSearch } from "@/app/search/page";
 import {
     AppShell,
     AppShellAside,
@@ -13,7 +12,20 @@ import {
 import { Suspense } from "react";
 import SearchBar from "./searchBar";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { AdvancedSearch } from "@/components/advancedSearch";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+
+function SearchSideBar() {
+    const params = useSearchParams();
+    const router = useRouter();
+
+    return (
+        <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
+            <AdvancedSearch params={params} router={router} />
+        </Suspense>
+    );
+}
 
 // childrenではサーバー側で曲が取得され、actionsに渡される
 export default function SearchShell({ children }: { children: React.ReactNode }) {
@@ -55,7 +67,7 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                         </Anchor>
                     </Group>
                     <ScrollArea h="calc(100vh - 200px)">
-                        <AdvancedSearch />
+                        <SearchSideBar />
                     </ScrollArea>
                 </AppShellAside>
                 <AppShellMain>
