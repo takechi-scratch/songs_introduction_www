@@ -280,7 +280,7 @@ function InfoTabs() {
                             {...form.getInputProps("title")}
                             {...inputStylesProps({ example: "ハナタバ", displayName: "タイトル" })}
                         />
-                        <Flex gap="md" align="anchor-center" mb="xs">
+                        <Flex gap="md" align="center" mb="xs">
                             <NumberInput
                                 disabled={autoFetchVideoData}
                                 key={form.key("publishedTimestamp")}
