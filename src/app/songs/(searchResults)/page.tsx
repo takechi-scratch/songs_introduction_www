@@ -1,7 +1,6 @@
 import MyAppShell from "@/components/appshell";
-import { Title, Text, Alert } from "@mantine/core";
+import { Title, Alert } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
-import { Suspense } from "react";
 
 import { PageProps } from "@/lib/utils";
 
@@ -9,9 +8,9 @@ import rison from "rison";
 import { SongSearchParams } from "@/lib/search/search";
 import { advancedSearchForSongs } from "@/lib/songs/api";
 import Actions from "./actions";
-import SearchBar from "./search";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import SearchShell from "./searchShell";
 
 const title = "曲一覧 | MIMIさん全曲紹介";
 const description = "MIMIさんの曲を全曲紹介。気になるあの曲も検索できます。";
@@ -110,12 +109,9 @@ export default async function Page(props: PageProps) {
             <Title order={2} mb="md">
                 曲一覧
             </Title>
-            <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
-                <SearchBar />
-            </Suspense>
-            <Suspense fallback={<Text>曲の情報を読み込み中...</Text>}>
+            <SearchShell>
                 <MainPage {...props} />
-            </Suspense>
+            </SearchShell>
         </MyAppShell>
     );
 }

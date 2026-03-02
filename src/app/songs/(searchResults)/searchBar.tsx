@@ -1,16 +1,23 @@
 "use client";
 
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
-import { useHotkeys, useMediaQuery } from "@mantine/hooks";
+import { useHotkeys } from "@mantine/hooks";
 import { IconListSearch } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import rison from "rison";
 
-export default function SearchBar() {
+export default function SearchBar({
+    isLargeScreen,
+    advancedSearchOpened,
+    toggleAdvancedSearch,
+}: {
+    isLargeScreen: boolean;
+    advancedSearchOpened: boolean;
+    toggleAdvancedSearch: () => void;
+}) {
     const params = useSearchParams();
-    const isLargeScreen = useMediaQuery("(min-width: 48em)");
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     useHotkeys([
@@ -19,20 +26,27 @@ export default function SearchBar() {
         ["mod + F", () => searchInputRef.current?.focus()],
     ]);
 
-    const [searchQuery, setSearchQuery] = useState(() => {
+    const defaultSearchQuery = useMemo(() => {
         if (params.get("params") !== null) {
             try {
                 rison.decode_object(params.get("params") || "");
-                return "?" + params.get("params") || "";
+                return "?" + params.get("params");
             } catch (e) {
                 console.warn("Failed to decode search params from URL. Error:", e);
+                return "";
             }
         } else if (params.get("q") !== null) {
             return params.get("q") || "";
         }
         return "";
-    });
+    }, [params]);
+
+    const [searchQuery, setSearchQuery] = useState(defaultSearchQuery);
     const router = useRouter();
+
+    useEffect(() => {
+        setSearchQuery(defaultSearchQuery);
+    }, [defaultSearchQuery]);
 
     function handleSearch() {
         if (searchQuery.trim() === "") {
@@ -55,7 +69,7 @@ export default function SearchBar() {
     }
 
     return (
-        <Flex m="md" gap="md" direction={{ base: "column", sm: "row" }}>
+        <Flex ml="md" mr="md" gap="md" direction={{ base: "column", sm: "row" }}>
             <TextInput
                 placeholder="URL・タイトル・ボーカル名などで検索"
                 ref={searchInputRef}
@@ -76,14 +90,30 @@ export default function SearchBar() {
                 <Button size="md" radius="md" onClick={handleSearch}>
                     検索
                 </Button>
-                <Button variant="light" size="md" radius="md" onClick={handleAdvancedSearchLink}>
-                    <Group gap="xs" wrap="nowrap">
-                        <IconListSearch size={20} />
-                        <Text size="sm" fw={700}>
-                            詳しく
-                        </Text>
-                    </Group>
-                </Button>
+                {isLargeScreen ? (
+                    <Button variant="light" size="md" radius="md" onClick={toggleAdvancedSearch}>
+                        <Group gap="xs" wrap="nowrap">
+                            <IconListSearch size={20} />
+                            <Text size="sm" fw={700}>
+                                {advancedSearchOpened ? "閉じる" : "詳しく"}
+                            </Text>
+                        </Group>
+                    </Button>
+                ) : (
+                    <Button
+                        variant="light"
+                        size="md"
+                        radius="md"
+                        onClick={handleAdvancedSearchLink}
+                    >
+                        <Group gap="xs" wrap="nowrap">
+                            <IconListSearch size={20} />
+                            <Text size="sm" fw={700}>
+                                詳しく
+                            </Text>
+                        </Group>
+                    </Button>
+                )}
             </Group>
         </Flex>
     );

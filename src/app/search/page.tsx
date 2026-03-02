@@ -20,7 +20,7 @@ import {
     Anchor,
 } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 // Do this once in your application root file
 import dayjs from "dayjs";
@@ -417,11 +417,11 @@ function NearestTab({
     );
 }
 
-function AdvancedSearch() {
+export function AdvancedSearch() {
     const params = useSearchParams();
     const router = useRouter();
 
-    const [songSearchParams, setSongSearchParams] = useState<SongSearchParams>(() => {
+    const defaultSongSearchParams: SongSearchParams = useMemo(() => {
         const paramsText = params.get("params");
         const songSearchParams: SongSearchParams = {
             filter: {},
@@ -440,9 +440,17 @@ function AdvancedSearch() {
             }
         }
         return songSearchParams;
-    });
+    }, [params]);
+
+    const [songSearchParams, setSongSearchParams] =
+        useState<SongSearchParams>(defaultSongSearchParams);
 
     const [nearestEnabled, setNearestEnabled] = useState(!!songSearchParams.nearest);
+
+    useEffect(() => {
+        setSongSearchParams(defaultSongSearchParams);
+        setNearestEnabled(!!defaultSongSearchParams.nearest);
+    }, [defaultSongSearchParams]);
 
     function encodeSearchParams() {
         if (
