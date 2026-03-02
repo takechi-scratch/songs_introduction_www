@@ -3,8 +3,7 @@
 import MyAppShell from "@/components/appshell";
 import ReactPlayer from "react-player";
 import { useAdvancedSearch } from "@/hooks/songs";
-import { SearchQuery } from "@/lib/search/filter";
-import { hasScore, Song } from "@/lib/songs/types";
+import { Song } from "@/lib/songs/types";
 import {
     Alert,
     Button,
