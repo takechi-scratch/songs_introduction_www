@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import "./globals.css";
 // import { Noto_Sans_JP } from "next/font/google";
 
 // 将来的に移行予定
 // Noto_Sans_JP();
 
-
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "./globals.css";
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";

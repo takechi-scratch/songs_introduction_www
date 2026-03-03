@@ -22,6 +22,7 @@
         "@mantine/modals": "^8.3.9",
         "@mantine/notifications": "^8.3.7",
         "@tabler/icons-react": "^3.35.0",
+        "@tailwindcss/postcss": "^4.2.1",
         "@types/rison": "^0.1.0",
         "dayjs": "^1.11.19",
         "embla-carousel": "^8.5.2",
@@ -30,6 +31,7 @@
         "firebase-admin": "^13.6.1",
         "motion": "^12.23.12",
         "next": "15.5.10",
+        "postcss": "^8.5.8",
         "react": "19.1.0",
         "react-dom": "19.1.0",
         "react-is": "^19.2.3",
@@ -38,7 +40,8 @@
         "recharts": "^3.2.0",
         "remark-breaks": "^4.0.0",
         "remark-gfm": "^4.0.1",
-        "rison": "^0.1.1"
+        "rison": "^0.1.1",
+        "tailwindcss": "^4.2.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",

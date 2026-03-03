@@ -101,9 +101,9 @@ function Buttons() {
             <UnstyledButton className={classes.control} component={Link} href="/songs">
                 曲一覧
             </UnstyledButton>
-            <UnstyledButton className={classes.control} component={Link} href="/contact">
+            {/* <UnstyledButton className={classes.control} component={Link} href="/contact">
                 お問い合わせ
-            </UnstyledButton>
+            </UnstyledButton> */}
         </>
     );
 }
@@ -177,15 +177,26 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
 
     return (
         <AppShell
-            header={{ height: 60 }}
+            className="bg-gradient-to-br from-bg-start to-bg-end"
+            header={{ height: 20 }}
             navbar={{
                 width: 300,
                 breakpoint: "sm",
                 collapsed: { desktop: true, mobile: !opened },
             }}
+            withBorder={false}
         >
-            <AppShell.Header>
-                <Group h="100%" px="md">
+            <AppShell.Header className="bg-transparent" style={{ backgroundColor: "transparent" }}>
+                <Group
+                    h={60}
+                    px="md"
+                    m="lg"
+                    style={{
+                        borderRadius: 16,
+                        backgroundColor: "white",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    }}
+                >
                     <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                     <Group justify="space-between" style={{ flex: 1 }}>
                         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
@@ -230,7 +241,7 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 <QuickSearch />
             </AppShell.Navbar>
 
-            <AppShell.Main>
+            <AppShell.Main pt={80}>
                 <Flex
                     direction="column"
                     style={{

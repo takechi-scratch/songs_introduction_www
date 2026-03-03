@@ -1,0 +1,7 @@
+@import "tailwindcss/utilities";
+@import "tailwindcss/theme";
+
+@theme {
+    --color-bg-start: #e6f5fa;
+    --color-bg-end: #8bbdc7;
+}

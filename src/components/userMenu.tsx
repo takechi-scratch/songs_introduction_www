@@ -14,6 +14,8 @@ import {
     IconUserCog,
     IconFileMusic,
     IconRefresh,
+    IconCopyleft,
+    IconMessageChatbot,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -110,6 +112,20 @@ export default function UserMenu() {
                         ログイン
                     </Menu.Item>
                 )}
+                <Menu.Item
+                    href="/contact"
+                    component={Link}
+                    leftSection={<IconMessageChatbot size={14} />}
+                >
+                    お問い合わせ・機能提案
+                </Menu.Item>
+                <Menu.Item
+                    href="/docs/credits"
+                    component={Link}
+                    leftSection={<IconCopyleft size={14} />}
+                >
+                    クレジット
+                </Menu.Item>
             </Menu.Dropdown>
         </Menu>
     );

@@ -134,7 +134,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                         （YouTube Data APIより取得）
                     </Text>
                 </Flex>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>タイトル</Table.Th>
@@ -159,7 +159,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Title order={4} mb="sm">
                     曲に関するデータ
                 </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>公開形式</Table.Th>
@@ -218,7 +218,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Title order={4} mb="sm">
                     基本データ
                 </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>BPM</Table.Th>
