@@ -192,6 +192,9 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                                 <Text size="lg" fw={700} style={{ margin: 0 }}>
                                     MIMIさん全曲紹介
                                 </Text>
+                                <Badge ml="sm" color="green">
+                                    BETA
+                                </Badge>
                                 {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
                                     <Badge ml="sm" color="orange">
                                         DEV
