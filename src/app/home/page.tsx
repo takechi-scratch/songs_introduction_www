@@ -11,6 +11,9 @@ export default function Home() {
                 <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
                     すべての楽曲を一覧・検索・再生。 あなたのお気に入りの1曲を見つけよう。
                 </p>
+                <p className="text-lg text-gray-300 mb-10 mx-auto">
+                    ※このページはテスト用として生成AIによって作成されました。
+                </p>
 
                 <div className="flex justify-center gap-4 flex-wrap">
                     <Link

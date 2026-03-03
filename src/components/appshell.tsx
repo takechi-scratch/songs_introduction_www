@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Anchor,
     AppShell,
     Badge,
     Burger,
@@ -9,6 +10,7 @@ import {
     Group,
     Input,
     MantineStyleProp,
+    Paper,
     Text,
     UnstyledButton,
 } from "@mantine/core";
@@ -18,9 +20,10 @@ import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
 import { noticeActiveAnnouncements } from "./announcements/manager";
-import { IconSearch } from "@tabler/icons-react";
+import { IconPlaylist, IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import QuickSearch from "./quickSearch";
 
 type QuickSearchResult =
     | {
@@ -72,26 +75,6 @@ function handleSearchInput(input: string): QuickSearchResult {
     return null;
 }
 
-function QuickSearch({ style }: { style?: MantineStyleProp }) {
-    const router = useRouter();
-
-    return (
-        <Input
-            placeholder="URL・タイトル・ボーカル名で検索"
-            leftSection={<IconSearch size={16} />}
-            style={{ minWidth: 150, maxWidth: 300, ...style }}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    router.push(
-                        `/songs?q=${encodeURIComponent(e.currentTarget.value)}&autoRedirect=1`
-                    );
-                }
-            }}
-            ml="sm"
-        />
-    );
-}
-
 function Buttons() {
     return (
         <>
@@ -113,13 +96,18 @@ function Footer() {
 
     return (
         <Flex
-            mt={40}
+            mr="lg"
+            ml="lg"
+            mb="xs"
+            mt="lg"
             align="center"
             gap="xs"
             style={{
                 backgroundColor: "#e9eef5",
                 padding: 8,
                 height: isMobile ? 130 : 50,
+                borderRadius: 16,
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             }}
         >
             <Flex direction={{ base: "column", sm: "row" }} flex="1" gap={{ base: 1, sm: "sm" }}>
@@ -169,24 +157,17 @@ function Footer() {
 }
 
 export default function MyAppShell({ children }: { children: React.ReactNode }) {
-    const [opened, { toggle }] = useDisclosure();
-
     useEffect(() => {
         noticeActiveAnnouncements();
     }, []);
 
     return (
         <AppShell
-            className="bg-gradient-to-br from-bg-start to-bg-end"
-            header={{ height: 20 }}
-            navbar={{
-                width: 300,
-                breakpoint: "sm",
-                collapsed: { desktop: true, mobile: !opened },
-            }}
+            className="bg-gradient-to-br from-bg-start to-bg-end bg-fixed"
+            header={{ height: 60 / 2 + 16 }}
             withBorder={false}
         >
-            <AppShell.Header className="bg-transparent" style={{ backgroundColor: "transparent" }}>
+            <AppShell.Header className="z-50 bg-gradient-to-br from-bg-start to-bg-end bg-fixed">
                 <Group
                     h={60}
                     px="md"
@@ -197,7 +178,7 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                 >
-                    <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+                    {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" /> */}
                     <Group justify="space-between" style={{ flex: 1 }}>
                         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
                             <Flex align="center">
@@ -226,7 +207,15 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                             visibleFrom="sm"
                             style={{ flex: 1 }}
                         >
-                            <Buttons />
+                            <Anchor
+                                href="/songs"
+                                c="green"
+                                mr="sm"
+                                component={Link}
+                                className="flex items-center"
+                            >
+                                <IconPlaylist />
+                            </Anchor>
                             <QuickSearch style={{ flex: 1 }} />
                         </Flex>
                         <Group>
@@ -236,11 +225,6 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                 </Group>
             </AppShell.Header>
 
-            <AppShell.Navbar py="md" px={4}>
-                <Buttons />
-                <QuickSearch />
-            </AppShell.Navbar>
-
             <AppShell.Main pt={80}>
                 <Flex
                     direction="column"
@@ -248,14 +232,19 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                         minHeight: `calc(100vh - 60px)`, // ヘッダーの高さを引く
                     }}
                 >
-                    <div
+                    <Paper
+                        p="md"
+                        mt="lg"
+                        mr="lg"
+                        ml="lg"
+                        radius="md"
                         style={{
                             padding: "var(--mantine-spacing-lg)",
                             flex: 1,
                         }}
                     >
                         {children}
-                    </div>
+                    </Paper>
                     <Footer />
                 </Flex>
             </AppShell.Main>

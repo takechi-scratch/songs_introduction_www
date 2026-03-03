@@ -1,12 +1,12 @@
 import MyAppShell from "@/components/appshell";
-import { Button, Center, Divider, Text, Title } from "@mantine/core";
+import { Alert, Button, Center, Divider, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import SongsSection from "./songsSection";
 import Link from "next/link";
-import { IconPlaylist } from "@tabler/icons-react";
+import { IconFlaskFilled, IconPlaylist } from "@tabler/icons-react";
 import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
 
 export default async function HomePage() {
@@ -26,6 +26,17 @@ export default async function HomePage() {
     return (
         <MyAppShell>
             <PinnedAnnouncements />
+            <Alert
+                icon={<IconFlaskFilled />}
+                title="このサイトはベータ版です"
+                color="green"
+                mb="lg"
+            >
+                <Text>
+                    サイトデザインの変更を予定しています。ご意見があれば「お問い合わせ」でお気軽にご連絡ください。
+                </Text>
+            </Alert>
+
             <SongsSection
                 latestSongsData={latestSongsData}
                 colaborationSongsData={colaborationSongsData}
