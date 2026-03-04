@@ -1,6 +1,6 @@
 "use client";
 
-import { Code, Divider, Table, Text, Title } from "@mantine/core";
+import { Anchor, Code, Divider, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
@@ -21,15 +21,26 @@ export default function MantineMarkdown({
                 a: ({ href, children, ...props }) => {
                     if (!href || href?.startsWith("http")) {
                         return (
-                            <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                            <Anchor
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ wordBreak: "break-all" }}
+                                {...props}
+                            >
                                 {children}
-                            </a>
+                            </Anchor>
                         );
                     } else {
                         return (
-                            <Link href={href} {...props}>
+                            <Anchor
+                                component={Link}
+                                href={href}
+                                style={{ wordBreak: "break-all" }}
+                                {...props}
+                            >
                                 {children}
-                            </Link>
+                            </Anchor>
                         );
                     }
                 },
