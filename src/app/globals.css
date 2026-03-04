@@ -2,6 +2,28 @@
 @import "tailwindcss/theme";
 
 @theme {
+    --color-bg-start: #dbf3ff;
+    --color-bg-end: #c3d9eb;
+}
+
+/*
+マシュマリーカラー
     --color-bg-start: #e6f5fa;
     --color-bg-end: #8bbdc7;
+
+静寂に咲くカラー
+    --color-bg-start: #dbf3ff;
+    --color-bg-end: #c3d9eb;
+*/
+
+.mantine-Accordion-control:hover {
+    background-color: #0000000a !important;
+}
+
+.mantine-Accordion-item {
+    border-color: #ffffffa0 !important;
+}
+
+.mantine-AppShell-aside {
+    border-color: #ffffffa0 !important;
 }

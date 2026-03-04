@@ -1,27 +1,12 @@
 "use client";
 
-import {
-    Anchor,
-    AppShell,
-    Badge,
-    Burger,
-    em,
-    Flex,
-    Group,
-    Input,
-    MantineStyleProp,
-    Paper,
-    Text,
-    UnstyledButton,
-} from "@mantine/core";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import classes from "./MobileNavbar.module.css";
+import { Anchor, AppShell, Badge, Box, em, Flex, Group, Paper, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
 import { noticeActiveAnnouncements } from "./announcements/manager";
-import { IconPlaylist, IconSearch } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { IconPlaylist } from "@tabler/icons-react";
 import { useEffect } from "react";
 import QuickSearch from "./quickSearch";
 
@@ -75,31 +60,13 @@ function handleSearchInput(input: string): QuickSearchResult {
     return null;
 }
 
-function Buttons() {
-    return (
-        <>
-            {/* <UnstyledButton className={classes.control} component={Link} href="/">
-                トップ
-            </UnstyledButton> */}
-            <UnstyledButton className={classes.control} component={Link} href="/songs">
-                曲一覧
-            </UnstyledButton>
-            {/* <UnstyledButton className={classes.control} component={Link} href="/contact">
-                お問い合わせ
-            </UnstyledButton> */}
-        </>
-    );
-}
-
 function Footer() {
     const isMobile = useMediaQuery(`(max-width: ${em(768)})`);
 
     return (
         <Flex
-            mr="lg"
-            ml="lg"
-            mb="xs"
             mt="lg"
+            mb="xs"
             align="center"
             gap="xs"
             style={{
@@ -111,21 +78,26 @@ function Footer() {
             }}
         >
             <Flex direction={{ base: "column", sm: "row" }} flex="1" gap={{ base: 1, sm: "sm" }}>
-                <Link href="/docs/terms">
+                <Anchor component={Link} href="/docs/terms">
                     <Text size="xs">規約など</Text>
-                </Link>
-                <Link href="/docs/credits">
+                </Anchor>
+                <Anchor component={Link} href="/docs/credits">
                     <Text size="xs">クレジット</Text>
-                </Link>
-                <Link href="/docs/analysis/guidelines">
+                </Anchor>
+                <Anchor component={Link} href="/docs/analysis/guidelines">
                     <Text size="xs">分析ガイドライン</Text>
-                </Link>
+                </Anchor>
                 <Text size="xs" mr="xl">
                     {/* 空白を残すため */}
                     {"製作: "}
-                    <Link href="https://takechi.f5.si/" target="_blank" rel="noopener noreferrer">
+                    <Anchor
+                        component={Link}
+                        href="https://takechi.f5.si/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         takechi
-                    </Link>
+                    </Anchor>
                 </Text>
                 <Text
                     size="xs"
@@ -156,21 +128,29 @@ function Footer() {
     );
 }
 
-export default function MyAppShell({ children }: { children: React.ReactNode }) {
+export default function MyAppShell({
+    children,
+    wrapInPaper,
+}: {
+    children: React.ReactNode;
+    wrapInPaper?: boolean;
+}) {
     useEffect(() => {
         noticeActiveAnnouncements();
     }, []);
 
     return (
         <AppShell
-            className="bg-gradient-to-br from-bg-start to-bg-end bg-fixed"
+            className="bg-gradient-to-r from-bg-start to-bg-end bg-fixed"
             header={{ height: 60 / 2 + 16 }}
             withBorder={false}
         >
-            <AppShell.Header className="z-50 bg-gradient-to-br from-bg-start to-bg-end bg-fixed">
+            <AppShell.Header className="z-50 bg-gradient-to-r from-bg-start to-bg-end bg-fixed">
                 <Group
-                    h={60}
+                    justify="space-between"
+                    mih={60}
                     px="md"
+                    py="xs"
                     m="lg"
                     style={{
                         borderRadius: 16,
@@ -178,8 +158,7 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                 >
-                    {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" /> */}
-                    <Group justify="space-between" style={{ flex: 1 }}>
+                    <Group align="center" justify="space-between" gap="xs" style={{ flex: 1 }}>
                         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
                             <Flex align="center">
                                 <Image
@@ -192,16 +171,13 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                                 <Text size="lg" fw={700} style={{ margin: 0 }}>
                                     MIMIさん全曲紹介
                                 </Text>
-                                <Badge ml="sm" color="green">
-                                    BETA
-                                </Badge>
-                                {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
-                                    <Badge ml="sm" color="orange">
-                                        DEV
-                                    </Badge>
-                                )}
                             </Flex>
                         </Link>
+                        <Badge color="green">BETA</Badge>
+                        {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
+                            <Badge color="orange">DEV</Badge>
+                        )}
+                        <Box hiddenFrom="sm" style={{ flex: 1 }} />
                         <Flex
                             justify="flex-end"
                             align="center"
@@ -221,33 +197,31 @@ export default function MyAppShell({ children }: { children: React.ReactNode }) 
                             </Anchor>
                             <QuickSearch style={{ flex: 1 }} />
                         </Flex>
-                        <Group>
-                            <UserMenu />
-                        </Group>
+                    </Group>
+                    <Group>
+                        <UserMenu />
                     </Group>
                 </Group>
             </AppShell.Header>
 
             <AppShell.Main pt={80}>
-                <Flex
-                    direction="column"
-                    style={{
-                        minHeight: `calc(100vh - 60px)`, // ヘッダーの高さを引く
-                    }}
-                >
-                    <Paper
-                        p="md"
-                        mt="lg"
-                        mr="lg"
-                        ml="lg"
-                        radius="md"
-                        style={{
-                            padding: "var(--mantine-spacing-lg)",
-                            flex: 1,
-                        }}
-                    >
-                        {children}
-                    </Paper>
+                <Flex direction="column" mt="lg" mr="lg" ml="lg">
+                    <div style={{ minHeight: `calc(100vh - 72px - 108px)` }}>
+                        {wrapInPaper ? (
+                            <Paper
+                                p="md"
+                                radius="md"
+                                style={{
+                                    padding: "var(--mantine-spacing-lg)",
+                                    flex: 1,
+                                }}
+                            >
+                                {children}
+                            </Paper>
+                        ) : (
+                            children
+                        )}
+                    </div>
                     <Footer />
                 </Flex>
             </AppShell.Main>

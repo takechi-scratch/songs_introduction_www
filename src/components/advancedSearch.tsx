@@ -496,7 +496,16 @@ export function AdvancedSearch({
                 ml="md"
                 mb="md"
             />
-            <Accordion multiple defaultValue={["filter", "nearest"]} mb="xl">
+            <Accordion
+                multiple
+                defaultValue={["filter", "nearest"]}
+                mb="xl"
+                styles={{
+                    control: {
+                        "&:hover": "backgroundColor: transparent",
+                    },
+                }}
+            >
                 <Accordion.Item value="filter">
                     <Accordion.Control icon={<IconFilter color="#82c91e" />}>
                         <Title order={3} fw={300}>
@@ -565,6 +574,7 @@ export function AdvancedSearch({
             <SegmentedControl
                 data={["昇順", "降順"]}
                 mb="sm"
+                fullWidth={false}
                 defaultValue="降順"
                 onChange={(value) =>
                     setSongSearchParams({ ...songSearchParams, asc: value === "昇順" })

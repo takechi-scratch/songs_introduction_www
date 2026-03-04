@@ -17,7 +17,7 @@ function SearchPage() {
 
 export default function Page() {
     return (
-        <MyAppShell>
+        <MyAppShell wrapInPaper>
             <Title order={2} mb="md">
                 詳細検索
             </Title>

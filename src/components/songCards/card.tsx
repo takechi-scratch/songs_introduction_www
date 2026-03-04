@@ -73,9 +73,10 @@ export default function SongCard({
             <Card.Section>
                 <Image
                     src={song.thumbnailURL || null}
-                    h={200}
+                    mb="xs"
                     alt={`${song.title}のサムネイル`}
                     fit="contain"
+                    style={{ objectPosition: "top" }}
                 />
             </Card.Section>
 

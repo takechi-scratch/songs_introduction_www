@@ -51,7 +51,7 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                 {/* TODO: Asideのアニメーション */}
                 <AppShellAside
                     p="md"
-                    style={{ zIndex: 0 }}
+                    style={{ zIndex: 0, backgroundColor: "transparent" }}
                     display={isLargeScreen ? undefined : "none"}
                 >
                     <Group gap="md" mb="md" align="center">

@@ -1,5 +1,5 @@
 import MyAppShell from "@/components/appshell";
-import { Alert, Anchor, Button, Flex, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Button, Flex, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
@@ -173,7 +173,9 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                         </Anchor>
                     </Flex>
                 </div>
-                <InfoTabs song={song} />
+                <Paper p="md" radius="md" shadow="sm" withBorder style={{ flex: 1 }}>
+                    <InfoTabs song={song} />
+                </Paper>
             </Flex>
 
             <Flex mb="md" mt="xl" gap="xl" align="end">
@@ -196,7 +198,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 
             {nearestLyricsSongs && (
                 <>
-                    <Title mt="xl" order={2}>
+                    <Title mt="xl" mb="md" order={2}>
                         歌詞が似ている曲
                     </Title>
                     <NearestSongsCarousel songs={nearestLyricsSongs} />
