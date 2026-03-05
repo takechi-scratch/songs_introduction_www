@@ -175,6 +175,7 @@ export default function MyAppShell({
                         )}
                         <Box style={{ flex: 1 }} />
                         <Flex justify="flex-end" align="center" ml="auto" gap={0} visibleFrom="sm">
+                            <QuickSearch />
                             <Anchor
                                 href="/songs"
                                 c="green"
@@ -184,14 +185,6 @@ export default function MyAppShell({
                             >
                                 <IconPlaylist />
                             </Anchor>
-                            <Button
-                                onClick={() =>
-                                    setColorMode(mantineScheme === "light" ? "indigo" : "sky")
-                                }
-                            >
-                                色切替
-                            </Button>
-                            <QuickSearch />
                             <ColorModeMenu />
                         </Flex>
                     </Group>

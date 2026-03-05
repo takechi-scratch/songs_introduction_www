@@ -1,4 +1,4 @@
-import { Input } from "@mantine/core";
+import { Box, Center, Input } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,15 +30,14 @@ export default function QuickSearch() {
                         }
                     }}
                     ml="sm"
-                    mr={0}
+                    mr="sm"
                     radius="lg"
                 />
             ) : (
-                <IconSearch
-                    size={18}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsExpanded(true)}
-                />
+                <Center mr="sm">
+                    <IconSearch style={{ cursor: "pointer" }} onClick={() => setIsExpanded(true)} />
+                    <Box style={{ flex: 1 }} />
+                </Center>
             )}
         </motion.div>
     );

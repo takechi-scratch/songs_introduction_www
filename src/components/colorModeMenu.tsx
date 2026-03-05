@@ -48,9 +48,9 @@ export default function ColorModeMenu() {
         ));
 
     return (
-        <Menu shadow="md" width={200}>
+        <Menu shadow="md" width={200} closeOnItemClick={false}>
             <Menu.Target>
-                <IconPalette size={20} />
+                <IconPalette color="#be4bdb" />
             </Menu.Target>
 
             <Menu.Dropdown>
