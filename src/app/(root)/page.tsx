@@ -6,7 +6,7 @@ import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import SongsSection from "./songsSection";
 import Link from "next/link";
-import { IconFlaskFilled, IconPlaylist } from "@tabler/icons-react";
+import { IconFlaskFilled, IconMusicHeart, IconPlaylist } from "@tabler/icons-react";
 import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
 
 export default async function HomePage() {
@@ -33,7 +33,7 @@ export default async function HomePage() {
                 mb="lg"
             >
                 <Text>
-                    サイトデザインの変更を予定しています。ご意見があれば「お問い合わせ」でお気軽にご連絡ください。
+                    今春の大型アップデートで、サイトデザインの変更・おすすめ曲診断などの新機能を予定しています。ご意見があれば「お問い合わせ」でお気軽にご連絡ください。
                 </Text>
             </Alert>
 
@@ -44,7 +44,7 @@ export default async function HomePage() {
 
             <Center mt="md" mb="xl">
                 <Button
-                    // mr="xl"
+                    mr="xl"
                     href="/songs/"
                     color="orange.7"
                     size="xl"
@@ -54,10 +54,10 @@ export default async function HomePage() {
                     <IconPlaylist size={20} style={{ marginRight: 8 }} />
                     すべての曲を見る
                 </Button>
-                {/* <Button href="/recommend" color="green" size="xl" radius="lg" component={Link}>
+                <Button href="/recommend" color="green" size="xl" radius="lg" component={Link}>
                     <IconMusicHeart size={20} style={{ marginRight: 8 }} />
-                    おすすめの曲診断（今後一般公開）
-                </Button> */}
+                    おすすめの曲診断
+                </Button>
             </Center>
 
             <Title order={2} mt="lg">

@@ -10,56 +10,6 @@ import { IconPlaylist } from "@tabler/icons-react";
 import { useEffect } from "react";
 import QuickSearch from "./quickSearch";
 
-type QuickSearchResult =
-    | {
-          type: "song";
-          id: string;
-      }
-    | {
-          type: "search";
-          query: string;
-      }
-    | null;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handleSearchInput(input: string): QuickSearchResult {
-    // YouTubeのURLから動画IDを抽出、なければ検索キーワードとして返す
-    // 現在は使用していないが、当面は保持
-    try {
-        const url = new URL(input);
-        if (url.hostname === "youtu.be") {
-            return { type: "song", id: url.pathname.slice(1) };
-        } else if (url.hostname === "www.youtube.com" || url.hostname === "youtube.com") {
-            if (url.pathname.startsWith("/shorts/")) {
-                return { type: "song", id: url.pathname.slice(8) };
-            }
-
-            const id = url.searchParams.get("v");
-            if (id === null) {
-                return null;
-            }
-
-            return { type: "song", id: id };
-        } else if (
-            url.hostname === window.location.hostname &&
-            url.pathname.startsWith("/songs/")
-        ) {
-            const id = url.pathname.split("/")[2];
-            if (!id) {
-                return null;
-            }
-            return { type: "song", id: id };
-        }
-    } catch {
-        if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
-            return { type: "song", id: input };
-        } else {
-            return { type: "search", query: input };
-        }
-    }
-    return null;
-}
-
 function Footer() {
     const isMobile = useMediaQuery(`(max-width: ${em(768)})`);
 
@@ -177,15 +127,8 @@ export default function MyAppShell({
                         {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
                             <Badge color="orange">DEV</Badge>
                         )}
-                        <Box hiddenFrom="sm" style={{ flex: 1 }} />
-                        <Flex
-                            justify="flex-end"
-                            align="center"
-                            ml="auto"
-                            gap={0}
-                            visibleFrom="sm"
-                            style={{ flex: 1 }}
-                        >
+                        <Box style={{ flex: 1 }} />
+                        <Flex justify="flex-end" align="center" ml="auto" gap={0} visibleFrom="sm">
                             <Anchor
                                 href="/songs"
                                 c="green"
@@ -195,7 +138,7 @@ export default function MyAppShell({
                             >
                                 <IconPlaylist />
                             </Anchor>
-                            <QuickSearch style={{ flex: 1 }} />
+                            <QuickSearch />
                         </Flex>
                     </Group>
                     <Group>

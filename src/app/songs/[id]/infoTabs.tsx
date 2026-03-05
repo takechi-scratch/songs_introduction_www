@@ -258,7 +258,12 @@ export default function InfoTabs({ song }: { song: Song }) {
                     </Table.Tbody>
                 </Table>
 
-                <Flex direction="row" gap="xl" style={{ alignItems: "flex-start" }} mb="md">
+                <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    gap="xl"
+                    style={{ alignItems: "flex-start" }}
+                    mb="md"
+                >
                     {/* Divで囲んだところは縦方向の並びになる */}
                     <div>
                         {chordData !== null ? (
