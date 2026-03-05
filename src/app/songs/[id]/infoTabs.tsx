@@ -42,7 +42,7 @@ function Comment({ text, author, icon }: { text: string; author: string; icon: R
     return (
         <Blockquote color="blue" m="md" icon={icon} style={{ maxWidth: 500 }}>
             <MantineMarkdown text={text} />
-            <Text size="sm" c="gray.8" mt="sm">
+            <Text size="sm" opacity={0.6} mt="sm">
                 — {author}
             </Text>
         </Blockquote>
@@ -130,11 +130,11 @@ export default function InfoTabs({ song }: { song: Song }) {
             <Tabs.Panel value="basicInfo">
                 <Flex mb="sm" gap="sm" align="center">
                     <Title order={4}>動画データ</Title>
-                    <Text size="sm" c="gray.8">
+                    <Text size="sm" opacity={0.6}>
                         （YouTube Data APIより取得）
                     </Text>
                 </Flex>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>タイトル</Table.Th>
@@ -159,7 +159,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Title order={4} mb="sm">
                     曲に関するデータ
                 </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>公開形式</Table.Th>
@@ -218,7 +218,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Title order={4} mb="sm">
                     基本データ
                 </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md" bg="white">
+                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
                             <Table.Th w={140}>BPM</Table.Th>

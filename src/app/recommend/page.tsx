@@ -82,7 +82,7 @@ function Prepare({
 
                 <Stack gap={0}>
                     <Text size="sm">診断の質問数</Text>
-                    <Text size="xs" c="dimmed" mb="xs">
+                    <Text size="xs" opacity={0.6} mb="xs">
                         右に行くほど正確に診断できますが、時間がかかります。
                     </Text>
                     <SegmentedControl

@@ -1,4 +1,4 @@
-import { MantineStyleProp, Input } from "@mantine/core";
+import { Input } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -2,14 +2,18 @@
 @import "tailwindcss/theme";
 
 @theme {
-    --color-bg-start: #dbf3ff;
-    --color-bg-end: #c3d9eb;
+    --color-bg-start: #416987;
+    --color-bg-end: #101947;
 }
 
 /*
 マシュマリーカラー
     --color-bg-start: #e6f5fa;
     --color-bg-end: #8bbdc7;
+
+ただ声一つカラー
+    --color-bg-start: #416987;
+    --color-bg-end: #101947;
 
 静寂に咲くカラー
     --color-bg-start: #dbf3ff;

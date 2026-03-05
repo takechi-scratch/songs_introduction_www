@@ -9,11 +9,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import rison from "rison";
 
 export default function SearchBar({
-    isLargeScreen,
     advancedSearchOpened,
     toggleAdvancedSearch,
 }: {
-    isLargeScreen: boolean;
     advancedSearchOpened: boolean;
     toggleAdvancedSearch: () => void;
 }) {
@@ -86,34 +84,39 @@ export default function SearchBar({
                 }}
                 flex={1}
             />
-            <Group gap="md" grow={!isLargeScreen}>
-                <Button size="md" radius="md" onClick={handleSearch}>
+            <Group gap="md">
+                <Button size="md" radius="md" onClick={handleSearch} style={{ flex: 1 }}>
                     検索
                 </Button>
-                {isLargeScreen ? (
-                    <Button variant="light" size="md" radius="md" onClick={toggleAdvancedSearch}>
-                        <Group gap="xs" wrap="nowrap">
-                            <IconListSearch size={20} />
-                            <Text size="sm" fw={700}>
-                                {advancedSearchOpened ? "閉じる" : "詳しく"}
-                            </Text>
-                        </Group>
-                    </Button>
-                ) : (
-                    <Button
-                        variant="light"
-                        size="md"
-                        radius="md"
-                        onClick={handleAdvancedSearchLink}
-                    >
-                        <Group gap="xs" wrap="nowrap">
-                            <IconListSearch size={20} />
-                            <Text size="sm" fw={700}>
-                                詳しく
-                            </Text>
-                        </Group>
-                    </Button>
-                )}
+                <Button
+                    visibleFrom="sm"
+                    variant="light"
+                    size="md"
+                    radius="md"
+                    onClick={toggleAdvancedSearch}
+                >
+                    <Group gap="xs" wrap="nowrap">
+                        <IconListSearch size={20} />
+                        <Text size="sm" fw={700}>
+                            {advancedSearchOpened ? "閉じる" : "詳しく"}
+                        </Text>
+                    </Group>
+                </Button>
+                <Button
+                    hiddenFrom="sm"
+                    variant="light"
+                    size="md"
+                    radius="md"
+                    onClick={handleAdvancedSearchLink}
+                    style={{ flex: 1 }}
+                >
+                    <Group gap="xs" wrap="nowrap">
+                        <IconListSearch size={20} />
+                        <Text size="sm" fw={700}>
+                            詳しく
+                        </Text>
+                    </Group>
+                </Button>
             </Group>
         </Flex>
     );

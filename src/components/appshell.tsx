@@ -1,7 +1,18 @@
 "use client";
 
-import { Anchor, AppShell, Badge, Box, em, Flex, Group, Paper, Text } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import {
+    Anchor,
+    AppShell,
+    Badge,
+    Box,
+    Button,
+    Flex,
+    getGradient,
+    Group,
+    Paper,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
@@ -9,9 +20,12 @@ import { noticeActiveAnnouncements } from "./announcements/manager";
 import { IconPlaylist } from "@tabler/icons-react";
 import { useEffect } from "react";
 import QuickSearch from "./quickSearch";
+import { useColorMode } from "@/contexts/ThemeContext";
+import ColorModeMenu from "./colorModeMenu";
+import { ColorThemes, DefaultColorMode } from "@/lib/themes";
 
 function Footer() {
-    const isMobile = useMediaQuery(`(max-width: ${em(768)})`);
+    const { mantineScheme } = useColorMode();
 
     return (
         <Flex
@@ -19,10 +33,11 @@ function Footer() {
             mb="xs"
             align="center"
             gap="xs"
+            bg={mantineScheme === "dark" ? "dark.7" : "blue.0"}
+            h={{ base: 130, sm: 50 }}
             style={{
                 backgroundColor: "#e9eef5",
                 padding: 8,
-                height: isMobile ? 130 : 50,
                 borderRadius: 16,
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             }}
@@ -53,7 +68,17 @@ function Footer() {
                     size="xs"
                     flex="1"
                     mt={{ base: "sm", sm: 0 }}
-                    style={{ textAlign: isMobile ? "left" : "right" }}
+                    visibleFrom="sm"
+                    style={{ textAlign: "right" }}
+                >
+                    動画データ取得・埋め込みにYouTube APIを使用しています。
+                </Text>
+                <Text
+                    size="xs"
+                    flex="1"
+                    mt={{ base: "sm", sm: 0 }}
+                    hiddenFrom="sm"
+                    style={{ textAlign: "left" }}
                 >
                     動画データ取得・埋め込みにYouTube APIを使用しています。
                 </Text>
@@ -65,13 +90,18 @@ function Footer() {
                 // style={{ marginLeft: "auto" }}
             >
                 <Image
-                    src="/assets/yt_logo_rgb_light.png"
+                    src={
+                        mantineScheme === "dark"
+                            ? "/assets/yt_logo_fullcolor_white_digital.png"
+                            : "/assets/yt_logo_fullcolor_almostblack_digital.png"
+                    }
                     alt="YouTubeのロゴ"
                     width={180}
                     height={40}
-                    // ブランドガイドラインより、高さは最低20px
-                    // https://www.youtube.com/intl/ALL_jp//howyoutubeworks/resources/brand-resources/
-                    style={{ width: "auto", height: "20px", verticalAlign: "sub" }}
+                    // ブランドガイドラインより、高さは最低20px→100pxに変更されたらしい。
+                    // TODO: 配置場所の見直し
+                    // https://brand.youtube/youtube-logo/
+                    style={{ width: "auto", height: "40px", verticalAlign: "sub" }}
                 />
             </Link>
         </Flex>
@@ -89,22 +119,38 @@ export default function MyAppShell({
         noticeActiveAnnouncements();
     }, []);
 
+    const { colorMode, setColorMode, mantineScheme } = useColorMode();
+    const theme = useMantineTheme();
+
+    let bgTheme = ColorThemes[colorMode];
+    if (bgTheme.value === "auto") {
+        bgTheme = ColorThemes[DefaultColorMode[mantineScheme]];
+    }
+
     return (
         <AppShell
-            className="bg-gradient-to-r from-bg-start to-bg-end bg-fixed"
+            bg={getGradient(
+                { deg: 90, from: bgTheme.background.start, to: bgTheme.background.end },
+                theme
+            )}
             header={{ height: 60 / 2 + 16 }}
             withBorder={false}
         >
-            <AppShell.Header className="z-50 bg-gradient-to-r from-bg-start to-bg-end bg-fixed">
+            <AppShell.Header
+                bg={getGradient(
+                    { deg: 90, from: bgTheme.background.start, to: bgTheme.background.end },
+                    theme
+                )}
+            >
                 <Group
                     justify="space-between"
                     mih={60}
                     px="md"
                     py="xs"
                     m="lg"
+                    bg={mantineScheme === "dark" ? "dark.7" : "white"}
                     style={{
                         borderRadius: 16,
-                        backgroundColor: "white",
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                 >
@@ -138,7 +184,15 @@ export default function MyAppShell({
                             >
                                 <IconPlaylist />
                             </Anchor>
+                            <Button
+                                onClick={() =>
+                                    setColorMode(mantineScheme === "light" ? "indigo" : "sky")
+                                }
+                            >
+                                色切替
+                            </Button>
                             <QuickSearch />
+                            <ColorModeMenu />
                         </Flex>
                     </Group>
                     <Group>

@@ -84,7 +84,7 @@ function ServiceAccountPage() {
             <Button color="orange" onClick={handleStartAuth} mb="md">
                 認証・トークンを更新
             </Button>
-            <Text mb="md" c="dimmed" size="sm">
+            <Text mb="md" opacity={0.6} size="sm">
                 ※2分以内に認証を完了させてください。
             </Text>
         </>

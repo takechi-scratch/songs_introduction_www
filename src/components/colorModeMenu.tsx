@@ -1,0 +1,71 @@
+import { useColorMode } from "@/contexts/ThemeContext";
+import { ColorMode, ColorThemes } from "@/lib/themes";
+import { Menu } from "@mantine/core";
+import { IconCheck, IconPalette } from "@tabler/icons-react";
+
+function ColorModeItem({
+    theme,
+    colorMode,
+    setColorMode,
+}: {
+    theme: (typeof ColorThemes)[keyof typeof ColorThemes];
+    colorMode: ColorMode;
+    setColorMode: (value: ColorMode) => void;
+}) {
+    return (
+        <Menu.Item
+            key={theme.value}
+            onClick={() => setColorMode(theme.value)}
+            rightSection={colorMode === theme.value ? <IconCheck size={14} /> : null}
+        >
+            {theme.label}
+        </Menu.Item>
+    );
+}
+
+export default function ColorModeMenu() {
+    const { colorMode, setColorMode } = useColorMode();
+
+    const lightThemes = Object.values(ColorThemes)
+        .filter((theme) => theme.mantineScheme === "light")
+        .map((theme) => (
+            <ColorModeItem
+                key={theme.value}
+                theme={theme}
+                colorMode={colorMode}
+                setColorMode={setColorMode}
+            />
+        ));
+    const DarkThemes = Object.values(ColorThemes)
+        .filter((theme) => theme.mantineScheme === "dark")
+        .map((theme) => (
+            <ColorModeItem
+                key={theme.value}
+                theme={theme}
+                colorMode={colorMode}
+                setColorMode={setColorMode}
+            />
+        ));
+
+    return (
+        <Menu shadow="md" width={200}>
+            <Menu.Target>
+                <IconPalette size={20} />
+            </Menu.Target>
+
+            <Menu.Dropdown>
+                <ColorModeItem
+                    theme={ColorThemes.auto}
+                    colorMode={colorMode}
+                    setColorMode={setColorMode}
+                />
+                <Menu.Divider />
+                <Menu.Label>ライトテーマ</Menu.Label>
+                {lightThemes}
+                <Menu.Divider />
+                <Menu.Label>ダークテーマ</Menu.Label>
+                {DarkThemes}
+            </Menu.Dropdown>
+        </Menu>
+    );
+}

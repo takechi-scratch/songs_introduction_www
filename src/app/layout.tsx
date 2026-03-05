@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 // import { Noto_Sans_JP } from "next/font/google";
 
 // 将来的に移行予定
@@ -15,6 +16,8 @@ import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ColorModeProvider } from "@/contexts/ThemeContext";
+import { ColorMode, ColorThemes } from "@/lib/themes";
 
 const title = "MIMIさん全曲紹介";
 const description = "MIMIさんの曲を全曲掲載・おすすめの曲が見つかるアプリ。";
@@ -51,17 +54,31 @@ const theme = createTheme({
     // fontFamily: "Noto Sans JP, Arial, sans-serif",
 });
 
-export function RootLayout({ children }: { children: React.ReactNode }) {
+export async function RootLayout({ children }: { children: React.ReactNode }) {
+    const cookieStore = await cookies();
+    function toColorMode(value: string | undefined): ColorMode {
+        if (value && ColorThemes.hasOwnProperty(value)) {
+            return value as ColorMode;
+        }
+        return "auto";
+    }
+
+    const initialColorMode = toColorMode(cookieStore.get("colorMode")?.value);
+
     return (
         <html lang="ja" {...mantineHtmlProps}>
             <head>
-                <ColorSchemeScript />
+                <ColorSchemeScript defaultColorScheme="auto" />
             </head>
             <body>
-                <MantineProvider theme={theme}>
+                <MantineProvider theme={theme} defaultColorScheme="auto">
                     <ModalsProvider>
                         <Notifications />
-                        <AuthProvider>{children}</AuthProvider>
+                        <AuthProvider>
+                            <ColorModeProvider initialColorMode={initialColorMode}>
+                                {children}
+                            </ColorModeProvider>
+                        </AuthProvider>
                     </ModalsProvider>
                 </MantineProvider>
             </body>

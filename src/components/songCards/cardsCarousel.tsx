@@ -34,7 +34,7 @@ export default function SongsCarousel({
                 ))}
             </Carousel>
             {displayNotice && displayScore && (
-                <Text size="sm" c="gray.8" mb="md">
+                <Text size="sm" opacity={0.6} mb="md">
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>
             )}
