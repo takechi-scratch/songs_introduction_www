@@ -5,7 +5,6 @@ import {
     AppShell,
     Badge,
     Box,
-    Button,
     Flex,
     getGradient,
     Group,
@@ -120,7 +119,7 @@ export default function MyAppShell({
         noticeActiveAnnouncements();
     }, []);
 
-    const { colorMode, setColorMode, mantineScheme } = useColorMode();
+    const { colorMode, mantineScheme } = useColorMode();
     const theme = useMantineTheme();
 
     let bgTheme = ColorThemes[colorMode];
