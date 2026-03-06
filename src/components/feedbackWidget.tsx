@@ -1,8 +1,9 @@
 "use client";
 
+import { useColorMode } from "@/contexts/ThemeContext";
 import { Skeleton } from "@mantine/core";
 import Script from "next/script";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // KoeLoopWidget の型定義
 declare global {
@@ -24,6 +25,39 @@ declare global {
 
 export default function KoeLoopWidget() {
     const [isLoading, setIsLoading] = useState(true);
+    const [scriptLoaded, setScriptLoaded] = useState(false);
+    const { mantineScheme } = useColorMode();
+
+    useEffect(() => {
+        // スクリプトが読み込まれていない場合は何もしない
+        if (!scriptLoaded || !window.KoeLoopWidget) {
+            return;
+        }
+
+        new window.KoeLoopWidget({
+            productId: "10300196-bddc-4e37-a315-ef77401e6f14",
+            containerId: "koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14",
+            theme: mantineScheme,
+            primaryColor: "#1864ab",
+            showVoting: true,
+            showFeedback: true,
+            showFAQ: false,
+            showEmailField: true,
+            locale: "ja",
+            apiBase: "https://koeloop.dev",
+        });
+        setIsLoading(false);
+
+        return () => {
+            // クリーンアップ: ウィジェットのコンテナを空にする
+            const container = document.getElementById(
+                "koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14"
+            );
+            if (container) {
+                container.innerHTML = "";
+            }
+        };
+    }, [scriptLoaded, mantineScheme]);
 
     return (
         <>
@@ -40,22 +74,8 @@ export default function KoeLoopWidget() {
                 src="https://koeloop.dev/widget.js"
                 strategy="afterInteractive"
                 onReady={() => {
-                    // ウィジェットスクリプトが読み込まれた後にKoeLoopWidgetを初期化
-                    if (typeof window !== "undefined" && window.KoeLoopWidget) {
-                        new window.KoeLoopWidget({
-                            productId: "10300196-bddc-4e37-a315-ef77401e6f14",
-                            containerId: "koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14",
-                            theme: "light",
-                            primaryColor: "#1864ab",
-                            showVoting: true,
-                            showFeedback: true,
-                            showFAQ: false,
-                            showEmailField: true,
-                            locale: "ja",
-                            apiBase: "https://koeloop.dev",
-                        });
-                        setIsLoading(false);
-                    }
+                    // スクリプトが読み込まれたことを通知
+                    setScriptLoaded(true);
                 }}
             />
         </>
