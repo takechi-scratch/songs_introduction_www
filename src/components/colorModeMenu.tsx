@@ -52,7 +52,7 @@ export default function ColorModeMenu({ submenu = false }: { submenu?: boolean }
         return (
             <Menu.Sub shadow="md" width={200} onOpen={() => console.log("opened")}>
                 <Menu.Sub.Target>
-                    <Menu.Sub.Item>テーマを変更</Menu.Sub.Item>
+                    <Menu.Sub.Item hiddenFrom="sm">テーマを変更</Menu.Sub.Item>
                 </Menu.Sub.Target>
 
                 <Menu.Sub.Dropdown>
