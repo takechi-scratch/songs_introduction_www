@@ -1,4 +1,4 @@
-import { Box, Center, Input } from "@mantine/core";
+import { Box, Center, Input, Text, Tooltip } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,7 +35,12 @@ export default function QuickSearch() {
                 />
             ) : (
                 <Center mr="sm">
-                    <IconSearch style={{ cursor: "pointer" }} onClick={() => setIsExpanded(true)} />
+                    <Tooltip label={<Text size="sm">検索</Text>} withArrow position="bottom">
+                        <IconSearch
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setIsExpanded(true)}
+                        />
+                    </Tooltip>
                     <Box style={{ flex: 1 }} />
                 </Center>
             )}

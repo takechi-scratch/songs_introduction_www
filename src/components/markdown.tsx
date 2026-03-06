@@ -7,6 +7,8 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
+
 export default function MantineMarkdown({
     text,
     textSize,
@@ -19,12 +21,12 @@ export default function MantineMarkdown({
             remarkPlugins={[remarkGfm, remarkBreaks]}
             components={{
                 a: ({ href, children, ...props }) => {
-                    if (!href || href?.startsWith("http")) {
+                    if (!href || (href?.startsWith("http") && !href.startsWith(BASE_URL))) {
                         return (
                             <Anchor
                                 href={href}
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener noreferrer nofollow"
                                 style={{ wordBreak: "break-all" }}
                                 {...props}
                             >

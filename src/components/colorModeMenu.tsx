@@ -23,7 +23,7 @@ function ColorModeItem({
     );
 }
 
-export default function ColorModeMenu() {
+export default function ColorModeMenu({ submenu = false }: { submenu?: boolean }) {
     const { colorMode, setColorMode } = useColorMode();
 
     const lightThemes = Object.values(ColorThemes)
@@ -46,6 +46,31 @@ export default function ColorModeMenu() {
                 setColorMode={setColorMode}
             />
         ));
+
+    // TODO: 実機環境でちゃんと開けるか確認
+    if (submenu) {
+        return (
+            <Menu.Sub shadow="md" width={200} onOpen={() => console.log("opened")}>
+                <Menu.Sub.Target>
+                    <Menu.Sub.Item>テーマを変更</Menu.Sub.Item>
+                </Menu.Sub.Target>
+
+                <Menu.Sub.Dropdown>
+                    <ColorModeItem
+                        theme={ColorThemes.auto}
+                        colorMode={colorMode}
+                        setColorMode={setColorMode}
+                    />
+                    <Menu.Divider />
+                    <Menu.Label>ライトテーマ</Menu.Label>
+                    {lightThemes}
+                    <Menu.Divider />
+                    <Menu.Label>ダークテーマ</Menu.Label>
+                    {DarkThemes}
+                </Menu.Sub.Dropdown>
+            </Menu.Sub>
+        );
+    }
 
     return (
         <Menu shadow="md" width={200} closeOnItemClick={false}>

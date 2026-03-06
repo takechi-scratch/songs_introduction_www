@@ -19,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import ColorModeMenu from "./colorModeMenu";
 
 export default function UserMenu() {
     const { user } = useAuth();
@@ -42,7 +43,7 @@ export default function UserMenu() {
     }
 
     return (
-        <Menu shadow="md" width={250}>
+        <Menu shadow="md" width={250} position="bottom-end">
             <Menu.Target>{userImage}</Menu.Target>
 
             <Menu.Dropdown>
@@ -126,6 +127,7 @@ export default function UserMenu() {
                 >
                     クレジット
                 </Menu.Item>
+                <ColorModeMenu submenu />
             </Menu.Dropdown>
         </Menu>
     );

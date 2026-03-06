@@ -11,6 +11,7 @@ import {
     Group,
     Paper,
     Text,
+    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 import Link from "next/link";
@@ -176,15 +177,21 @@ export default function MyAppShell({
                         <Box style={{ flex: 1 }} />
                         <Flex justify="flex-end" align="center" ml="auto" gap={0} visibleFrom="sm">
                             <QuickSearch />
-                            <Anchor
-                                href="/songs"
-                                c="green"
-                                mr="sm"
-                                component={Link}
-                                className="flex items-center"
+                            <Tooltip
+                                label={<Text size="sm">曲一覧</Text>}
+                                withArrow
+                                position="bottom"
                             >
-                                <IconPlaylist />
-                            </Anchor>
+                                <Anchor
+                                    href="/songs"
+                                    c="green"
+                                    mr="sm"
+                                    component={Link}
+                                    className="flex items-center"
+                                >
+                                    <IconPlaylist />
+                                </Anchor>
+                            </Tooltip>
                             <ColorModeMenu />
                         </Flex>
                     </Group>
