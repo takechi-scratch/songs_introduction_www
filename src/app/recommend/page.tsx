@@ -6,6 +6,7 @@ import { useAdvancedSearch } from "@/hooks/songs";
 import { Song } from "@/lib/songs/types";
 import {
     Alert,
+    alpha,
     Button,
     Checkbox,
     Divider,
@@ -26,6 +27,7 @@ import { IconFlaskFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import { estimateComparisons } from "@/lib/utils";
 import { SongSearchParams } from "@/lib/search/search";
+import { useColorMode } from "@/contexts/ThemeContext";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -229,7 +231,7 @@ function Choice({
             <Flex gap="md" direction={{ base: "column", sm: "row" }} w="100%">
                 <Paper
                     withBorder
-                    bg="red.0"
+                    bg={alpha("var(--mantine-color-red-4)", 0.3)}
                     p="md"
                     onClick={() => handleChoice(songA, songB)}
                     style={{ flex: 1 }}
@@ -247,7 +249,7 @@ function Choice({
                 </Paper>
                 <Paper
                     withBorder
-                    bg="blue.0"
+                    bg={alpha("var(--mantine-color-blue-4)", 0.3)}
                     p="md"
                     onClick={() => handleChoice(songB, songA)}
                     style={{ flex: 1 }}
@@ -305,10 +307,6 @@ export default function RecommendPage() {
     return (
         <MyAppShell>
             <Title mb="xl">おすすめ曲診断</Title>
-            <Alert mb="lg" radius="md" color="green" icon={<IconFlaskFilled />}>
-                この機能は現在テスト中です。気づいた点・改善してほしい点があれば、お気軽に
-                <Link href="/contact">お問い合わせ</Link>から教えてください！
-            </Alert>
             <Paper shadow="md" radius="md" p="lg">
                 {status === "start" && <Start startCallback={() => setStatus("prepare")} />}
                 {status === "prepare" && (

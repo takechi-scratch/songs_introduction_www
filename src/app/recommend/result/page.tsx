@@ -3,13 +3,12 @@ import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { formatDateTime } from "@/lib/date";
 import { fetchNearestSongs } from "@/lib/songs/api";
 import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
-import { Alert, Button, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Button, Text, Title } from "@mantine/core";
 import { IconFlaskFilled } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
-import MantineMarkdown from "@/components/markdown";
 import { PageProps } from "@/lib/utils";
 
 async function getRecommendedSongs(
@@ -167,34 +166,9 @@ async function RecommendResultPage(props: PageProps) {
             >
                 Xでシェア
             </Button>
-            <Link href="/recommend">もう一度診断</Link>
         </>
     );
 }
-
-const explanation = `
-## 診断のしくみ（詳しい情報）
-
-おすすめ曲診断は以下の手順で行われます。
-1. 公開日時・提供曲かどうかの条件で絞り込み、ランダムにいくつかの曲（5曲～20曲）を選出。これをサンプル曲と呼びます。
-2. 「どちらの曲が好きですか？」で2択を選んでもらい、サンプル曲における、選んだ人の好みのランキングを作成。
-3. サンプル曲に「似ている曲」を分析データから取得して、おすすめ曲として表示。
-
-曲ごとに「好みスコア」（類似度の重み付き平均）を計算して、高い順におすすめ曲としています。
-具体的には、
-1. サンプル曲との「類似度」が高いほど、好みスコアへ大きく反映させる
-2. サンプル曲内のランキングが高いほど、好みスコアへの影響度が大きいようにする
-
-ようにスコアを決めています。
-
-この強め具合をどのくらいにしたら最適かはよく分かっていないため、現在いろいろ試しているところです。
-ちなみに、上の「パターン2」が、1の影響を強めたもので、「パターン3」が、2の影響を強めたものです。
-
-みなさんの診断の感想があると、おすすめの精度をよりよくする助けになります。
-どのパターンが良かったか教えてくれると嬉しいです！
-
-診断アルゴリズムのコードは、[GitHub](https://github.com/takechi-scratch/songs_introduction_www/blob/main/src/app/recommend/result/page.tsx)で公開しています。興味のある方はぜひ見てみてください。
-`;
 
 export default async function RecommendPage(props: PageProps) {
     return (
@@ -211,7 +185,12 @@ export default async function RecommendPage(props: PageProps) {
             <Suspense fallback={<Text>結果を読み込み中...</Text>}>
                 <RecommendResultPage searchParams={props.searchParams} />
             </Suspense>
-            <MantineMarkdown text={explanation} />
+            <Anchor component={Link} mr="md" href="/recommend">
+                もう一度診断
+            </Anchor>
+            <Anchor component={Link} href="/docs/analysis/recommend">
+                診断の仕組み（詳しい情報）
+            </Anchor>
         </MyAppShell>
     );
 }
