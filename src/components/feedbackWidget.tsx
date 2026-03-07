@@ -1,7 +1,6 @@
 "use client";
 
-import { useColorMode } from "@/contexts/ThemeContext";
-import { Skeleton } from "@mantine/core";
+import { Skeleton, useComputedColorScheme } from "@mantine/core";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 
@@ -26,7 +25,7 @@ declare global {
 export default function KoeLoopWidget() {
     const [isLoading, setIsLoading] = useState(true);
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const { mantineScheme } = useColorMode();
+    const computedColorScheme = useComputedColorScheme("light");
 
     useEffect(() => {
         // スクリプトが読み込まれていない場合は何もしない
@@ -37,7 +36,7 @@ export default function KoeLoopWidget() {
         new window.KoeLoopWidget({
             productId: "10300196-bddc-4e37-a315-ef77401e6f14",
             containerId: "koeloop-widget-10300196-bddc-4e37-a315-ef77401e6f14",
-            theme: mantineScheme,
+            theme: computedColorScheme,
             primaryColor: "#1864ab",
             showVoting: true,
             showFeedback: true,
@@ -57,7 +56,7 @@ export default function KoeLoopWidget() {
                 container.innerHTML = "";
             }
         };
-    }, [scriptLoaded, mantineScheme]);
+    }, [scriptLoaded, computedColorScheme]);
 
     return (
         <>

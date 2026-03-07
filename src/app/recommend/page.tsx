@@ -2,10 +2,9 @@
 
 import MyAppShell from "@/components/appshell";
 import ReactPlayer from "react-player";
-import { useAdvancedSearch } from "@/hooks/songs";
+import { useSampleSongs } from "@/hooks/songs";
 import { Song } from "@/lib/songs/types";
 import {
-    Alert,
     alpha,
     Button,
     Checkbox,
@@ -23,11 +22,7 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { IconFlaskFilled } from "@tabler/icons-react";
-import Link from "next/link";
 import { estimateComparisons } from "@/lib/utils";
-import { SongSearchParams } from "@/lib/search/search";
-import { useColorMode } from "@/contexts/ThemeContext";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -41,6 +36,8 @@ const songsPeriod = {
 interface TestSettings {
     name: string;
     limit: number;
+    includeRequestedSongs?: boolean;
+    publishedAfter?: number;
 }
 
 function Start({ startCallback }: { startCallback?: () => void }) {
@@ -55,22 +52,14 @@ function Start({ startCallback }: { startCallback?: () => void }) {
 }
 
 function Prepare({
-    searchParams,
-    setSearchParams,
     proceedCallback,
     settings,
     setSettings,
 }: {
-    searchParams: SongSearchParams;
-    setSearchParams: (params: SongSearchParams) => void;
     proceedCallback?: () => void;
     settings: TestSettings;
     setSettings: (settings: TestSettings) => void;
 }) {
-    if (!searchParams.filter) {
-        return <Text>検索条件が正しく初期化されていません。前の画面に戻ってください。</Text>;
-    }
-
     return (
         <Flex direction="column" gap="lg" align="center">
             <Text>まず、いくつかの質問に答えてください。</Text>
@@ -103,14 +92,11 @@ function Prepare({
                 <Radio.Group
                     name="startFrom"
                     label="MIMIさんの楽曲で、知っているのはいつ頃からですか？"
-                    value={String(searchParams.filter.publishedAfter || "")}
+                    value={String(settings.publishedAfter || "")}
                     onChange={(value) =>
-                        setSearchParams({
-                            ...searchParams,
-                            filter: {
-                                ...searchParams.filter,
-                                publishedAfter: Number(value),
-                            },
+                        setSettings({
+                            ...settings,
+                            publishedAfter: value ? Number(value) : undefined,
                         })
                     }
                 >
@@ -123,14 +109,11 @@ function Prepare({
                 <Divider />
                 <Checkbox
                     label="提供曲も質問に含める"
-                    checked={searchParams.filter.publishedType !== 1}
+                    checked={settings.includeRequestedSongs}
                     onChange={(e) =>
-                        setSearchParams({
-                            ...searchParams,
-                            filter: {
-                                ...searchParams.filter,
-                                publishedType: e.currentTarget.checked ? undefined : 1,
-                            },
+                        setSettings({
+                            ...settings,
+                            includeRequestedSongs: e.currentTarget.checked,
                         })
                     }
                 />
@@ -145,16 +128,27 @@ function Prepare({
 type SongsBetter = Map<string, Set<string>>;
 
 function Choice({
-    songs,
+    settings,
     navigateToResults,
     backToPrepare,
 }: {
-    songs: Song[];
+    settings: TestSettings;
     navigateToResults: (sortedSongIDs: string[]) => void;
     backToPrepare: () => void;
 }) {
     const [comparisons, setComparisons] = useState<SongsBetter>(new Map());
     const [currentPair, setCurrentPair] = useState<[Song, Song] | null>(null);
+
+    const songSearchParams = useMemo(() => {
+        return {
+            filter: {
+                publishedAfter: settings?.publishedAfter,
+                publishedType: settings?.includeRequestedSongs ? undefined : 1,
+            },
+            limit: settings.limit,
+        };
+    }, [settings]);
+    const { songs } = useSampleSongs(songSearchParams);
 
     const [sortedSongs, validAnswersCount] = useMemo(() => {
         console.log("Current comparisons:", comparisons);
@@ -275,22 +269,13 @@ function Choice({
 }
 
 export default function RecommendPage() {
-    const [settings, setSettings] = useState<TestSettings>({ name: "ゲスト", limit: 8 });
-    const [status, setStatus] = useState<status>("start");
-    const [searchParams, setSearchParams] = useState<SongSearchParams>({
-        filter: {
-            publishedAfter: Math.min(...Object.values(songsPeriod)),
-            publishedType: 1,
-        },
+    const [settings, setSettings] = useState<TestSettings>({
+        name: "ゲスト",
+        limit: 8,
+        publishedAfter: Math.min(...Object.values(songsPeriod)),
+        includeRequestedSongs: false,
     });
-
-    const { songs: fetchedSongs, refetch: refetchSongs } = useAdvancedSearch(searchParams, true);
-    const sampleSongs = useMemo(() => {
-        const filteredSongs = fetchedSongs
-            .filter((song) => song !== null && song.score === null)
-            .map((song) => song?.song);
-        return filteredSongs.slice(0, settings.limit) as Song[];
-    }, [fetchedSongs, settings.limit]);
+    const [status, setStatus] = useState<status>("start");
 
     const router = useRouter();
 
@@ -311,10 +296,7 @@ export default function RecommendPage() {
                 {status === "start" && <Start startCallback={() => setStatus("prepare")} />}
                 {status === "prepare" && (
                     <Prepare
-                        searchParams={searchParams}
-                        setSearchParams={setSearchParams}
                         proceedCallback={() => {
-                            refetchSongs();
                             setStatus("choice");
                         }}
                         settings={settings}
@@ -323,7 +305,7 @@ export default function RecommendPage() {
                 )}
                 {status === "choice" && (
                     <Choice
-                        songs={sampleSongs}
+                        settings={settings}
                         navigateToResults={navigateToResults}
                         backToPrepare={() => setStatus("prepare")}
                     />

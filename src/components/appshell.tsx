@@ -11,6 +11,7 @@ import {
     Paper,
     Text,
     Tooltip,
+    useComputedColorScheme,
     useMantineTheme,
 } from "@mantine/core";
 import Link from "next/link";
@@ -25,7 +26,7 @@ import ColorModeMenu from "./colorModeMenu";
 import { ColorThemes, DefaultColorMode } from "@/lib/themes";
 
 function Footer() {
-    const { mantineScheme } = useColorMode();
+    const computedColorScheme = useComputedColorScheme("light");
 
     return (
         <Flex
@@ -33,7 +34,7 @@ function Footer() {
             mb="xs"
             align="center"
             gap="xs"
-            bg={mantineScheme === "dark" ? "dark.7" : "blue.0"}
+            bg={computedColorScheme === "dark" ? "dark.7" : "blue.0"}
             h={{ base: 130, sm: 50 }}
             style={{
                 backgroundColor: "#e9eef5",
@@ -91,7 +92,7 @@ function Footer() {
             >
                 <Image
                     src={
-                        mantineScheme === "dark"
+                        computedColorScheme === "dark"
                             ? "/assets/yt_logo_fullcolor_white_digital.png"
                             : "/assets/yt_logo_fullcolor_almostblack_digital.png"
                     }
@@ -119,12 +120,13 @@ export default function MyAppShell({
         noticeActiveAnnouncements();
     }, []);
 
-    const { colorMode, mantineScheme } = useColorMode();
+    const { colorMode } = useColorMode();
+    const computedColorScheme = useComputedColorScheme("light");
     const theme = useMantineTheme();
 
     let bgTheme = ColorThemes[colorMode];
     if (bgTheme.value === "auto") {
-        bgTheme = ColorThemes[DefaultColorMode[mantineScheme]];
+        bgTheme = ColorThemes[DefaultColorMode[computedColorScheme]];
     }
 
     return (
@@ -148,7 +150,7 @@ export default function MyAppShell({
                     px="md"
                     py="xs"
                     m="lg"
-                    bg={mantineScheme === "dark" ? "dark.7" : "white"}
+                    bg={computedColorScheme === "dark" ? "dark.7" : "white"}
                     style={{
                         borderRadius: 16,
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",

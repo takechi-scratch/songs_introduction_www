@@ -26,6 +26,8 @@ async function getRecommendedSongs(
         return null;
     }
 
+    const randomPickCount = Math.ceil(maxResults / 10);
+
     const preferenceScores: { [key: string]: number } = {};
     const preferenceSongs: { [key: string]: Song } = {};
     const weightSum = Array.from({ length: preferenceRanking.length })
@@ -91,7 +93,7 @@ export const generateMetadata = async ({ searchParams }: PageProps): Promise<Met
             type: "website",
         },
         twitter: {
-            card: "summary_large_image",
+            card: "summary",
             title: title,
             description: description,
             images: imageURL,
@@ -142,17 +144,25 @@ async function RecommendResultPage(props: PageProps) {
             <Title order={2} mb="sm">
                 パターン1
             </Title>
-            <SongsCarousel songs={recommendedSongs} />
+            <SongsCarousel songs={recommendedSongs} displayScore={false} />
 
             <Title order={2} mb="sm">
                 パターン2
             </Title>
-            <SongsCarousel songs={recommendedSongs2 ?? []} displayNotice={false} />
+            <SongsCarousel
+                songs={recommendedSongs2 ?? []}
+                displayNotice={false}
+                displayScore={false}
+            />
 
             <Title order={2} mb="sm">
                 パターン3
             </Title>
-            <SongsCarousel songs={recommendedSongs3 ?? []} displayNotice={false} />
+            <SongsCarousel
+                songs={recommendedSongs3 ?? []}
+                displayNotice={false}
+                displayScore={false}
+            />
 
             <Text mb="md">診断日時: {formatDateTime(Number(timestamp) / 1000)}</Text>
             <CreatePlaylistButton songs={recommendedSongs} name={name} />
