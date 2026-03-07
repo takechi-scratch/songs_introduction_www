@@ -120,9 +120,9 @@ async function RecommendResultPage(props: PageProps) {
         );
     }
 
-    const recommendedSongs = await getRecommendedSongs(preferenceRankingParam, 2, 1);
-    const recommendedSongs2 = await getRecommendedSongs(preferenceRankingParam, 2, 5);
-    const recommendedSongs3 = await getRecommendedSongs(preferenceRankingParam, 5, 1);
+    const recommendedSongs = await getRecommendedSongs(preferenceRankingParam, 2, 5);
+    const recommendedSongs2 = await getRecommendedSongs(preferenceRankingParam, 3, 5);
+    const recommendedSongs3 = await getRecommendedSongs(preferenceRankingParam, 4, 5);
     if (recommendedSongs === null) {
         return (
             <>
