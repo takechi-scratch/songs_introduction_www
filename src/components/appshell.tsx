@@ -11,7 +11,6 @@ import {
     Paper,
     Text,
     Tooltip,
-    useComputedColorScheme,
     useMantineTheme,
 } from "@mantine/core";
 import Link from "next/link";
@@ -25,9 +24,7 @@ import { useColorMode } from "@/contexts/ThemeContext";
 import ColorModeMenu from "./colorModeMenu";
 import { ColorThemes, DefaultColorMode } from "@/lib/themes";
 
-function Footer() {
-    const computedColorScheme = useComputedColorScheme("light");
-
+function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark" }) {
     return (
         <Flex
             mt="lg"
@@ -120,9 +117,9 @@ export default function MyAppShell({
         noticeActiveAnnouncements();
     }, []);
 
-    const { colorMode } = useColorMode();
-    const computedColorScheme = useComputedColorScheme("light");
+    const { colorMode, computedColorScheme } = useColorMode();
     const theme = useMantineTheme();
+    console.log("Current color mode:", colorMode, "Computed color scheme:", computedColorScheme);
 
     let bgTheme = ColorThemes[colorMode];
     if (bgTheme.value === "auto") {
@@ -220,7 +217,7 @@ export default function MyAppShell({
                             children
                         )}
                     </div>
-                    <Footer />
+                    <Footer computedColorScheme={computedColorScheme} />
                 </Flex>
             </AppShell.Main>
         </AppShell>

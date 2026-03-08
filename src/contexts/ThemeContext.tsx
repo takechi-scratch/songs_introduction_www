@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from "react";
-import { useMantineColorScheme } from "@mantine/core";
+import { useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
 import { ColorMode, ColorThemes } from "@/lib/themes";
 
 export const COLOR_MODE_COOKIE_KEY = "colorMode";
@@ -22,6 +22,7 @@ interface ColorModeContextType {
     colorMode: ColorMode;
     setColorMode: (mode: ColorMode) => void;
     mantineScheme: "light" | "dark" | "auto";
+    computedColorScheme: "light" | "dark";
 }
 
 const ColorModeContext = createContext<ColorModeContextType | undefined>(undefined);
@@ -32,10 +33,18 @@ interface ColorModeProviderProps {
 }
 
 export function ColorModeProvider({ children, initialColorMode = "auto" }: ColorModeProviderProps) {
-    const { setColorScheme } = useMantineColorScheme();
+    const { colorScheme: mantineScheme, setColorScheme } = useMantineColorScheme();
+    const mantineComputedScheme = useComputedColorScheme("light");
 
     const [colorMode, setColorModeState] = useState<ColorMode>(initialColorMode);
-    const mantineScheme = ColorThemes[colorMode]?.mantineScheme || "auto";
+
+    // computedColorSchemeを計算値にすることで即座に反映される
+    const computedColorScheme = useMemo(() => {
+        if (colorMode === "auto") {
+            return mantineComputedScheme;
+        }
+        return ColorThemes[colorMode]?.mantineScheme || "light";
+    }, [colorMode, mantineComputedScheme]);
 
     // 無限ループを防ぐためのフラグ
     const isUpdatingFromBroadcast = useRef(false);
@@ -44,10 +53,6 @@ export function ColorModeProvider({ children, initialColorMode = "auto" }: Color
     const setColorMode = useCallback((mode: ColorMode) => {
         setColorModeState(mode);
     }, []);
-
-    useEffect(() => {
-        setColorModeState(initialColorMode);
-    }, [initialColorMode]);
 
     // BroadcastChannelの初期化
     useEffect(() => {
@@ -97,8 +102,8 @@ export function ColorModeProvider({ children, initialColorMode = "auto" }: Color
     }, [colorMode, setColorScheme]);
 
     const value = useMemo(
-        () => ({ colorMode, setColorMode, mantineScheme }),
-        [colorMode, setColorMode, mantineScheme]
+        () => ({ colorMode, setColorMode, mantineScheme, computedColorScheme }),
+        [colorMode, setColorMode, mantineScheme, computedColorScheme]
     );
 
     return <ColorModeContext.Provider value={value}>{children}</ColorModeContext.Provider>;

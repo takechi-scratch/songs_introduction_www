@@ -1,6 +1,7 @@
 "use client";
 
-import { Skeleton, useComputedColorScheme } from "@mantine/core";
+import { useColorMode } from "@/contexts/ThemeContext";
+import { Skeleton } from "@mantine/core";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 
@@ -25,7 +26,7 @@ declare global {
 export default function KoeLoopWidget() {
     const [isLoading, setIsLoading] = useState(true);
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const computedColorScheme = useComputedColorScheme("light");
+    const { computedColorScheme } = useColorMode();
 
     useEffect(() => {
         // スクリプトが読み込まれていない場合は何もしない

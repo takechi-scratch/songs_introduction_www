@@ -1,5 +1,5 @@
 import MyAppShell from "@/components/appshell";
-import { Alert, Button, Center, Divider, Text, Title } from "@mantine/core";
+import { Alert, Button, Divider, Flex, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
@@ -42,15 +42,14 @@ export default async function HomePage() {
                 colaborationSongsData={colaborationSongsData}
             />
 
-            <Center mt="md" mb="xl">
-                <Button
-                    mr="xl"
-                    href="/songs/"
-                    color="orange.7"
-                    size="xl"
-                    radius="lg"
-                    component={Link}
-                >
+            <Flex
+                mt="md"
+                mb="xl"
+                gap={{ base: "md", sm: "xl" }}
+                justify="center"
+                direction={{ base: "column", sm: "row" }}
+            >
+                <Button href="/songs/" color="orange.7" size="xl" radius="lg" component={Link}>
                     <IconPlaylist size={20} style={{ marginRight: 8 }} />
                     すべての曲を見る
                 </Button>
@@ -58,7 +57,7 @@ export default async function HomePage() {
                     <IconMusicHeart size={20} style={{ marginRight: 8 }} />
                     おすすめの曲診断
                 </Button>
-            </Center>
+            </Flex>
 
             <Title order={2} mt="lg">
                 フィードバック・機能投票

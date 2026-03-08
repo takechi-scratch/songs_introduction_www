@@ -43,7 +43,7 @@ export default function UserMenu() {
     }
 
     return (
-        <Menu shadow="md" width={250} position="bottom-end">
+        <Menu shadow="md" width={250} position="bottom-end" closeOnItemClick={false}>
             <Menu.Target>{userImage}</Menu.Target>
 
             <Menu.Dropdown>
