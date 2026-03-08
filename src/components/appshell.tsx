@@ -119,7 +119,6 @@ export default function MyAppShell({
 
     const { colorMode, computedColorScheme } = useColorMode();
     const theme = useMantineTheme();
-    console.log("Current color mode:", colorMode, "Computed color scheme:", computedColorScheme);
 
     let bgTheme = ColorThemes[colorMode];
     if (bgTheme.value === "auto") {

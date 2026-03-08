@@ -47,7 +47,11 @@ export default function UserMenu() {
             <Menu.Target>{userImage}</Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item>{user ? `${user.email} (${userRole})` : "未ログイン"}</Menu.Item>
+                <Menu.Item>
+                    {user
+                        ? `${user.displayName || user.email || user.uid} (${userRole})`
+                        : "未ログイン"}
+                </Menu.Item>
 
                 {user && userRole !== "user" && (
                     <>
