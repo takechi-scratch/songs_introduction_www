@@ -180,7 +180,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
                     <Anchor
-                        href={`/songs/?params=nearest:(targetSongID:${song.id})`}
+                        href={`/songs/?params=nearest:(targetSongID:'${song.id}')`}
                         component={Link}
                     >
                         高度な条件で探す

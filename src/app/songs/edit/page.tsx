@@ -431,6 +431,7 @@ function InfoTabs() {
                         <Switch
                             label="公式の歌詞"
                             mb="xs"
+                            defaultChecked={beforeSong?.lyricsOfficiallyReleased ?? false}
                             key={form.key("lyricsOfficiallyReleased")}
                             {...form.getInputProps("lyricsOfficiallyReleased")}
                         />
