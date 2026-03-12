@@ -29,7 +29,8 @@ function ActionButtons({
     const { loadingPlaylist, validSongs, inValidSongs, createFromSearchParams } =
         usePlaylistManager(
             songs,
-            async () => await confirmModal(validSongs.length > 30, inValidSongs),
+            async () =>
+                await confirmModal(validSongs.length > 30, inValidSongs, validSongs.length > 0),
             () => {
                 const id = notifications.show({
                     loading: true,
