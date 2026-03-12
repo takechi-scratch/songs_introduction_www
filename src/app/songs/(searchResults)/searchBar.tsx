@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
-import { useHotkeys } from "@mantine/hooks";
+import { useHotkeys, usePrevious } from "@mantine/hooks";
 import { IconListSearch } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -40,6 +40,7 @@ export default function SearchBar({
     }, [params]);
 
     const [searchQuery, setSearchQuery] = useState(defaultSearchQuery);
+    const previousSearchQuery = usePrevious(searchQuery);
     const router = useRouter();
 
     useEffect(() => {
@@ -80,6 +81,11 @@ export default function SearchBar({
                         handleSearch();
                     } else if (e.key === "Escape") {
                         searchInputRef.current?.blur();
+                    }
+                }}
+                onInput={(e) => {
+                    if (e.currentTarget.value === "" && previousSearchQuery !== "") {
+                        router.push("/songs/", { scroll: false });
                     }
                 }}
                 flex={1}
