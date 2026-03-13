@@ -17,6 +17,7 @@ import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
 import { hasLyrics } from "@/lib/musicValues";
+import { Comment } from "@/components/commentCard";
 
 export const generateMetadata = async ({
     params,
@@ -204,6 +205,13 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     <NearestSongsCarousel songs={nearestLyricsSongs} />
                 </>
             )}
+
+            <Title mt="xl" mb="xl" order={2}>
+                コメント
+            </Title>
+            <Comment text="大好きな曲！" author="takechi" />
+            <Comment text="歌詞が心に響く…" author="yuki" />
+            <Comment text="MIMIさんの曲はどれも素晴らしい！" author="sora" />
         </MyAppShell>
     );
 }

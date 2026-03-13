@@ -3,10 +3,10 @@
 import {
     Alert,
     Badge,
-    Blockquote,
     Box,
     Button,
     Collapse,
+    Divider,
     Flex,
     Grid,
     HoverCard,
@@ -23,30 +23,17 @@ import {
     IconHelpHexagon,
     IconInfoCircle,
     IconRosetteDiscountCheckFilled,
-    ReactNode,
 } from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
 import { DonutChart } from "@mantine/charts";
-import Image from "next/image";
 import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
-import MantineMarkdown from "@/components/markdown";
 import { useDisclosure } from "@mantine/hooks";
+import MantineMarkdown from "@/components/markdown";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
-}
-
-function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
-    return (
-        <Blockquote color="blue" m="md" icon={icon} style={{ maxWidth: 500 }}>
-            <MantineMarkdown text={text} />
-            <Text size="sm" opacity={0.6} mt="sm">
-                — {author}
-            </Text>
-        </Blockquote>
-    );
 }
 
 export default function InfoTabs({ song }: { song: Song }) {
@@ -92,10 +79,6 @@ export default function InfoTabs({ song }: { song: Song }) {
     } else {
         displayedModulationTimes = `${song.modulationTimes}回`;
     }
-
-    const takechiIcon = (
-        <Image src="/assets/takechi.svg" alt="製作者takechiのアイコン" width={32} height={32} />
-    );
 
     const userRole = useUserRole();
 
@@ -386,18 +369,17 @@ export default function InfoTabs({ song }: { song: Song }) {
             </Tabs.Panel>
 
             <Tabs.Panel value="others">
-                <Title order={4} mb="xl">
-                    コメント
+                <Title order={4} mb="md">
+                    補足・メモ
                 </Title>
-                {song.comment ? (
-                    <Comment text={song.comment} author="takechi" icon={takechiIcon} />
-                ) : (
-                    <Text m="sm">なし</Text>
-                )}
+                {song.comment ? <MantineMarkdown text={song.comment} /> : <Text m="sm">なし</Text>}
                 {userRole === "admin" && (
-                    <Button component={Link} href={`/songs/edit?id=${song.id}`} color="blue">
-                        データの編集
-                    </Button>
+                    <>
+                        <Divider my="md" />
+                        <Button component={Link} href={`/songs/edit?id=${song.id}`} color="blue">
+                            データの編集
+                        </Button>
+                    </>
                 )}
             </Tabs.Panel>
         </Tabs>

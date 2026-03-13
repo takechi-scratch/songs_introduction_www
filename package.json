@@ -24,6 +24,7 @@
         "@tabler/icons-react": "^3.35.0",
         "@tailwindcss/postcss": "^4.2.1",
         "@types/rison": "^0.1.0",
+        "boring-avatars": "^2.0.4",
         "dayjs": "^1.11.19",
         "embla-carousel": "^8.5.2",
         "embla-carousel-react": "^8.5.2",
