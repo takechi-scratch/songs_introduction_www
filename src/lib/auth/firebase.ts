@@ -6,6 +6,7 @@ import {
     AuthProvider,
     signInWithRedirect,
     signInWithEmailAndPassword,
+    signInAnonymously,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need
@@ -64,6 +65,8 @@ export async function getCurrentUserRole(): Promise<string> {
         return "admin";
     } else if (idTokenResult?.claims.editor === true) {
         return "editor";
+    } else if (idTokenResult?.signInProvider === "anonymous") {
+        return "user-temp";
     } else {
         return "user";
     }
@@ -100,6 +103,12 @@ export async function loginWithProvider(provider: AuthProvider): Promise<User> {
 export function loginWithProviderRedirect(provider: AuthProvider): Promise<void> {
     const auth = getAuth();
     return signInWithRedirect(auth, provider);
+}
+
+export async function loginWithAnonymous(): Promise<User> {
+    const auth = getAuth();
+    const result = await signInAnonymously(auth);
+    return result.user;
 }
 
 // ログアウト関数

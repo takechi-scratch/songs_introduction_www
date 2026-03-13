@@ -1,3 +1,5 @@
+"use client";
+
 import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";

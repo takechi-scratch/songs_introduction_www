@@ -16,6 +16,7 @@ import {
     IconRefresh,
     IconCopyleft,
     IconMessageChatbot,
+    IconUserQuestion,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,6 +29,8 @@ export default function UserMenu() {
     let userImage;
     if (user === null) {
         userImage = <IconUserFilled color="#868e96" width={32} height={32} />;
+    } else if (userRole === "user-temp") {
+        userImage = <IconUserQuestion color="#1c79d6" width={32} height={32} />;
     } else if (user?.photoURL === null) {
         userImage = <IconUserCheck color="#1c79d6" width={32} height={32} />;
     } else {

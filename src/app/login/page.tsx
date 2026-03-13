@@ -2,11 +2,16 @@
 
 import MyAppShell from "@/components/appshell";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCurrentUserToken, loginWithProvider, logout } from "@/lib/auth/firebase";
+import {
+    getCurrentUserToken,
+    loginWithAnonymous,
+    loginWithProvider,
+    logout,
+} from "@/lib/auth/firebase";
 import { Title, Button, Alert, Text, Anchor, Flex, Paper } from "@mantine/core";
 import { GoogleAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { IconInfoCircle, IconUserFilled } from "@tabler/icons-react";
+import { IconInfoCircle, IconUserFilled, IconUserQuestion } from "@tabler/icons-react";
 import Link from "next/link";
 import GoogleSignInButton from "@/components/signIn/google";
 import { notifications } from "@mantine/notifications";
@@ -88,10 +93,28 @@ export default function LoginPage() {
                             <Text
                                 ml="xs"
                                 size="sm"
-                                fw={500}
+                                fw={700}
                                 c={computedColorScheme === "dark" ? "black" : "white"}
                             >
                                 Xでログイン
+                            </Text>
+                        </Button>
+                        <Button
+                            color={computedColorScheme === "dark" ? "blue" : "blue"}
+                            radius="xl"
+                            onClick={async () => {
+                                await loginWithAnonymous();
+                                notifications.show({
+                                    title: "ゲストアカウントを作成しました",
+                                    color: "green",
+                                    message: `再生リスト作成などの一部機能は使えません。\nログインページから、他のアカウントを紐づけられます！`,
+                                });
+                                router.push("/");
+                            }}
+                        >
+                            <IconUserQuestion color="white" />
+                            <Text ml="xs" size="sm" fw={500}>
+                                ゲストとしてログイン
                             </Text>
                         </Button>
                         <Anchor component={Link} href="/login/examining">

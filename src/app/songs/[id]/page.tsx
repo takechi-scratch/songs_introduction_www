@@ -17,7 +17,8 @@ import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
 import { hasLyrics } from "@/lib/musicValues";
-import { Comment } from "@/components/commentCard";
+import { CommentCard } from "@/components/commentCard";
+import { fetchCommentsBySongID } from "@/lib/interaction/api";
 
 export const generateMetadata = async ({
     params,
@@ -105,6 +106,8 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </MyAppShell>
         );
     }
+
+    const comments = await fetchCommentsBySongID(id);
 
     return (
         <MyAppShell>
@@ -206,12 +209,17 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 </>
             )}
 
-            <Title mt="xl" mb="xl" order={2}>
+            <Title mt="xl" mb="md" order={2}>
                 コメント
             </Title>
-            <Comment text="大好きな曲！" author="takechi" />
+            {comments.length > 0 ? (
+                comments.map((comment) => <CommentCard key={comment.id} comment={comment} />)
+            ) : (
+                <Text>この曲にはまだコメントがありません。最初のコメントを投稿しましょう！</Text>
+            )}
+            {/* <Comment text="大好きな曲！" author="takechi" />
             <Comment text="歌詞が心に響く…" author="yuki" />
-            <Comment text="MIMIさんの曲はどれも素晴らしい！" author="sora" />
+            <Comment text="MIMIさんの曲はどれも素晴らしい！" author="sora" /> */}
         </MyAppShell>
     );
 }

@@ -1,6 +1,10 @@
-import { Blockquote, Image, Text } from "@mantine/core";
+"use client";
+
+import { Blockquote, Text, Avatar as MantineAvater } from "@mantine/core";
 import MantineMarkdown from "./markdown";
 import Avatar from "boring-avatars";
+import { Comment } from "@/lib/interaction/types";
+import { formatElapsedSeconds } from "@/lib/date";
 
 const names = [
     "Mary Baker",
@@ -21,37 +25,46 @@ const colorTypes = [
     ["#fff4ce", "#d0deb8", "#ffa492", "#ff7f81", "#ff5c71"],
 ];
 
-export function randomIdenticon(name: string) {
-    const hash = Array.from(name).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const displayNames = ["うさぎ", "フランスパン", "ラベンダー", "ハート", "紅茶", "桜"];
+
+export function randomContents(name: string) {
+    const hash = Array.from(name).reduce(
+        (acc, char, i) => acc + char.charCodeAt(0) * (i + 1),
+        3131
+    );
 
     const colorType = colorTypes[hash % colorTypes.length];
     const iconName = names[hash % names.length];
 
-    return <Avatar name={iconName} colors={colorType} variant="beam" size={40} />;
+    return [
+        <Avatar name={iconName} colors={colorType} variant="beam" size={40} />,
+        displayNames[hash % displayNames.length],
+    ];
 }
 
-export function Comment({
-    text,
-    author,
-    iconURL,
-}: {
-    text: string;
-    author: string;
-    iconURL?: string;
-}) {
+export function CommentCard({ comment }: { comment: Comment }) {
+    const [Identicon, displayName] = randomContents(comment.user.id);
+
     return (
         <Blockquote
             color="blue"
             mx="md"
-            mb="xl"
-            icon={iconURL ? <Image src={iconURL} alt="Icon" /> : randomIdenticon(author)}
+            mt="xl"
+            icon={
+                comment.user.IconURL ? (
+                    <MantineAvater src={comment.user.IconURL} alt="Icon" />
+                ) : (
+                    Identicon
+                )
+            }
             style={{ maxWidth: 500 }}
             iconSize={40}
         >
-            <MantineMarkdown text={text} />
+            <MantineMarkdown text={comment.content} />
 
             <Text size="sm" opacity={0.6} mt="sm">
-                — {author}
+                — {comment.user.displayName || "匿名 " + displayName}{" "}
+                {formatElapsedSeconds(Number(Date.now() / 1000 - comment.createdAt))}前
             </Text>
         </Blockquote>
     );
