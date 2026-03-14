@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Alert, Anchor, Button, Flex, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";

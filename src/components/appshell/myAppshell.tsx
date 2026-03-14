@@ -16,10 +16,10 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import UserMenu from "./userMenu";
-import { noticeActiveAnnouncements } from "./announcements/manager";
+import { noticeActiveAnnouncements } from "../announcements/manager";
 import { IconPlaylist } from "@tabler/icons-react";
 import { useEffect } from "react";
-import QuickSearch from "./quickSearch";
+import QuickSearch from "../quickSearch";
 import { useColorMode } from "@/contexts/ThemeContext";
 import ColorModeMenu from "./colorModeMenu";
 import { ColorThemes, DefaultColorMode } from "@/lib/themes";

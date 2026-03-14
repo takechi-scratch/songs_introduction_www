@@ -1,7 +1,7 @@
 "use client";
 
 import AdminOnlyComponent from "@/components/adminOnly";
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Button, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";

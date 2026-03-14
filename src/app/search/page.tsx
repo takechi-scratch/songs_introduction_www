@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Title, Text, Anchor } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";

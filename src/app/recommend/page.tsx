@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import ReactPlayer from "react-player";
 import { useSampleSongs } from "@/hooks/songs";
 import { Song } from "@/lib/songs/types";

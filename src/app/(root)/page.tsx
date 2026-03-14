@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Alert, Button, Divider, Flex, Text, Title } from "@mantine/core";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { FadeInUp } from "@/components/animatedContents";

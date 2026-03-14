@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Title, Alert } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
 

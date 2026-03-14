@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { useDocsFile } from "@/hooks/docs";
 import MarkdownDocs from "./markdownDocs";
 import { use } from "react";

@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { formatDateTime } from "@/lib/date";
 import { fetchNearestSongs } from "@/lib/songs/api";
