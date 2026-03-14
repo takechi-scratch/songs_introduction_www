@@ -100,10 +100,19 @@ export default function UserMenu() {
 
                 <Menu.Divider />
                 <Menu.Label>メニュー</Menu.Label>
-                {user ? (
+                {userRole === "guest" && (
+                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                        ログイン
+                    </Menu.Item>
+                )}
+                {userRole === "user-temp" && (
+                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                        アカウント連携
+                    </Menu.Item>
+                )}
+                {userRole !== "guest" && userRole !== "user-temp" && (
                     <Menu.Item
                         color="red"
-                        // component={UnstyledButton}
                         leftSection={<IconLogout size={14} />}
                         onClick={async () => {
                             await logout();
@@ -114,10 +123,6 @@ export default function UserMenu() {
                         }}
                     >
                         ログアウト
-                    </Menu.Item>
-                ) : (
-                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
-                        ログイン
                     </Menu.Item>
                 )}
                 <Menu.Item

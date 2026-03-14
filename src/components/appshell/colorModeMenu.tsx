@@ -47,7 +47,7 @@ export default function ColorModeMenu({ submenu = false }: { submenu?: boolean }
             />
         ));
 
-    // TODO: 実機環境でちゃんと開けるか確認
+    // FloorpのDevToolsで試すとなぜか開かない
     if (submenu) {
         return (
             <Menu.Sub shadow="md" width={200} onOpen={() => console.log("opened")}>

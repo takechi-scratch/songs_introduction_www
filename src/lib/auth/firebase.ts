@@ -7,6 +7,9 @@ import {
     signInWithRedirect,
     signInWithEmailAndPassword,
     signInAnonymously,
+    linkWithCredential,
+    linkWithPopup,
+    OAuthCredential,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need
@@ -108,6 +111,21 @@ export function loginWithProviderRedirect(provider: AuthProvider): Promise<void>
 export async function loginWithAnonymous(): Promise<User> {
     const auth = getAuth();
     const result = await signInAnonymously(auth);
+    return result.user;
+}
+
+export async function linkAnonymousAccountWithProvider(provider: AuthProvider): Promise<User> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error("No user is currently signed in.");
+    }
+    if (!user.isAnonymous) {
+        throw new Error("Current user is not anonymous.");
+    }
+
+    // TODO: すでにユーザーが存在する場合はエラーになり、ユーザーデータを統合する必要がある
+    const result = await linkWithPopup(user, provider);
     return result.user;
 }
 
