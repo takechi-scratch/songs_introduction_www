@@ -19,6 +19,7 @@ import { Suspense } from "react";
 import { hasLyrics } from "@/lib/musicValues";
 import { CommentCard } from "@/components/commentCard";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import rison from "rison";
 
 export const generateMetadata = async ({
     params,
@@ -73,20 +74,11 @@ export const generateMetadata = async ({
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;
 
-    let song, nearestSongs, nearestLyricsSongs;
+    let song, nearestSongs;
     try {
         song = await fetchSongById(id);
         if (scoreCanBeCalculated(song)) {
-            // 並列実行で待機時間を短縮
-            const promises = [
-                fetchNearestSongs(id),
-                hasLyrics(song)
-                    ? advancedSearchForSongs({
-                          nearest: { targetSongID: id, parameters: { lyricsVector: 1.0 } },
-                      })
-                    : Promise.resolve(undefined),
-            ];
-            [nearestSongs, nearestLyricsSongs] = await Promise.all(promises);
+            nearestSongs = await fetchNearestSongs(id);
         }
     } catch (error) {
         console.error("Error fetching song data:", error);
@@ -186,7 +178,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
                     <Anchor
-                        href={`/songs/?params=nearest:(targetSongID:'${song.id}')`}
+                        href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID: song.id } })}`}
                         component={Link}
                     >
                         高度な条件で探す
@@ -195,18 +187,9 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </Flex>
 
             {nearestSongs ? (
-                <NearestSongsCarousel songs={nearestSongs} displayNotice={!nearestLyricsSongs} />
+                <NearestSongsCarousel songs={nearestSongs} />
             ) : (
                 <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
-            )}
-
-            {nearestLyricsSongs && (
-                <>
-                    <Title mt="xl" mb="md" order={2}>
-                        歌詞が似ている曲
-                    </Title>
-                    <NearestSongsCarousel songs={nearestLyricsSongs} />
-                </>
             )}
 
             <Title mt="xl" mb="md" order={2}>
@@ -217,9 +200,6 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             ) : (
                 <Text>この曲にはまだコメントがありません。最初のコメントを投稿しましょう！</Text>
             )}
-            {/* <Comment text="大好きな曲！" author="takechi" />
-            <Comment text="歌詞が心に響く…" author="yuki" />
-            <Comment text="MIMIさんの曲はどれも素晴らしい！" author="sora" /> */}
         </MyAppShell>
     );
 }

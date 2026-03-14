@@ -31,6 +31,7 @@ import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
 import { useDisclosure } from "@mantine/hooks";
 import MantineMarkdown from "@/components/markdown";
+import rison from "rison";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
@@ -223,7 +224,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                         variant="light"
                                         color={mainChordColor}
                                         component={Link}
-                                        href={`/songs/?params=filter:(mainChord:'${encodeURIComponent(song.mainChord)}')`}
+                                        href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
                                         style={{ cursor: "pointer" }}
                                     >
                                         {song.mainChord}
@@ -290,7 +291,7 @@ export default function InfoTabs({ song }: { song: Song }) {
 
             <Tabs.Panel value="lyrics">
                 <Flex mb="md" gap="sm" align="center">
-                    <Title order={4}>{"歌詞"}</Title>
+                    <Title order={4}>歌詞</Title>
                     <Text>{lyricsStatus}</Text>
                     {lyricsStatus === "あり" &&
                         (song.lyricsOfficiallyReleased ? (
@@ -326,8 +327,19 @@ export default function InfoTabs({ song }: { song: Song }) {
                         )}`}
                         target="_blank"
                         mb="md"
+                        mr="md"
                     >
                         Googleで歌詞を検索
+                    </Button>
+                )}
+
+                {lyricsStatus !== "なし" && (
+                    <Button
+                        component={Link}
+                        href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
+                        mb="md"
+                    >
+                        歌詞が似ている曲を見る
                     </Button>
                 )}
 

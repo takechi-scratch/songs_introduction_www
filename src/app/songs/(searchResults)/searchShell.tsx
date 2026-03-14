@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { Suspense } from "react";
 import SearchBar from "./searchBar";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { AdvancedSearch } from "@/components/advancedSearch";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
