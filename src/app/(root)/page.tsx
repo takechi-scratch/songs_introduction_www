@@ -45,6 +45,7 @@ export default async function HomePage() {
             <Flex
                 mt="md"
                 mb="xl"
+                mx="md"
                 gap={{ base: "md", sm: "xl" }}
                 justify="center"
                 direction={{ base: "column", sm: "row" }}

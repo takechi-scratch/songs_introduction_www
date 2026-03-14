@@ -178,6 +178,7 @@ export default function MyAppShell({
                                 label={<Text size="sm">曲一覧</Text>}
                                 withArrow
                                 position="bottom"
+                                events={{ hover: true, focus: true, touch: true }}
                             >
                                 <Anchor
                                     href="/songs"

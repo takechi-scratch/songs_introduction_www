@@ -46,7 +46,10 @@ export default function SongCard({
         hoverData = (
             <>
                 {song.publishedType === -1 && (
-                    <Tooltip label="仮掲載中（不正確な可能性あり）">
+                    <Tooltip
+                        label="仮掲載中（不正確な可能性あり）"
+                        events={{ hover: true, focus: true, touch: true }}
+                    >
                         <IconCalendarClock color="#ffa94d" />
                     </Tooltip>
                 )}

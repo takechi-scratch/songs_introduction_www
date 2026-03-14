@@ -218,6 +218,7 @@ function Choice({
 
             <Tooltip
                 label={`${validAnswersCount} / ${estimateComparisons(songs.length)} （予測のため、質問回数は前後します）`}
+                events={{ hover: true, focus: true, touch: true }}
             >
                 <Progress radius="md" size="lg" value={Math.min(progress, 100)} w="100%" />
             </Tooltip>

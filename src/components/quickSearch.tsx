@@ -35,7 +35,12 @@ export default function QuickSearch() {
                 />
             ) : (
                 <Center mr="sm">
-                    <Tooltip label={<Text size="sm">検索</Text>} withArrow position="bottom">
+                    <Tooltip
+                        label={<Text size="sm">検索</Text>}
+                        withArrow
+                        position="bottom"
+                        events={{ hover: true, focus: true, touch: true }}
+                    >
                         <IconSearch
                             style={{ cursor: "pointer" }}
                             onClick={() => setIsExpanded(true)}
