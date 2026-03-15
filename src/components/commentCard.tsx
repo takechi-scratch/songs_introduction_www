@@ -15,7 +15,6 @@ import MantineMarkdown from "./markdown";
 import Avatar from "boring-avatars";
 import { Comment } from "@/lib/interaction/types";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
-import { useMyUserInfo } from "@/hooks/user";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { IconUserQuestion } from "@tabler/icons-react";
@@ -166,7 +165,9 @@ export function NewCommentCard({ songID }: { songID: string }) {
                     )}
                 </Group>
                 <Textarea
-                    placeholder="コメントを入力..."
+                    placeholder={
+                        "コメントを入力...\nマークダウン記法に対応（**太字**、- 箇条書き など）"
+                    }
                     minRows={3}
                     mb="xs"
                     autosize
