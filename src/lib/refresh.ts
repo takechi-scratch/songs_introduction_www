@@ -1,5 +1,5 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function refreshSongPage(songID: string) {
     revalidatePath("/songs/" + songID);
@@ -7,4 +7,8 @@ export async function refreshSongPage(songID: string) {
 
 export async function refreshHomePage() {
     revalidatePath("/");
+}
+
+export async function refreshComments(songID: string) {
+    revalidateTag("comments-" + songID);
 }

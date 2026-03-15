@@ -1,6 +1,6 @@
 import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
 import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
-import { refreshHomePage, refreshSongPage } from "./refresh";
+import { refreshHomePage, refreshSongPage } from "../refresh";
 import { SongSampleParams, SongSearchParams } from "../search/search";
 import { shuffleArray } from "../utils";
 

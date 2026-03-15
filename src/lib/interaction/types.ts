@@ -2,6 +2,7 @@ export interface User {
     id: string;
     displayName: string;
     IconURL: string | null;
+    useProvidedIcon: boolean;
 }
 
 export interface UpdateUser {

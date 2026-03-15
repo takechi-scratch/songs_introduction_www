@@ -1,10 +1,29 @@
 "use client";
 
-import { Blockquote, Text, Avatar as MantineAvater } from "@mantine/core";
+import {
+    Text,
+    Avatar as MantineAvater,
+    Group,
+    Box,
+    HoverCard,
+    Textarea,
+    Button,
+    Anchor,
+    Alert,
+} from "@mantine/core";
 import MantineMarkdown from "./markdown";
 import Avatar from "boring-avatars";
 import { Comment } from "@/lib/interaction/types";
-import { formatElapsedSeconds } from "@/lib/date";
+import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
+import { useMyUserInfo } from "@/hooks/user";
+import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
+import { IconUserQuestion } from "@tabler/icons-react";
+import { useState } from "react";
+import { postComment } from "@/lib/interaction/api";
+import { useRouter } from "next/navigation";
+import { refreshComments } from "@/lib/refresh";
+import { loginWithAnonymous } from "@/lib/auth/firebase";
 
 const names = [
     "Mary Baker",
@@ -27,7 +46,7 @@ const colorTypes = [
 
 const displayNames = ["うさぎ", "フランスパン", "ラベンダー", "ハート", "紅茶", "桜"];
 
-export function randomContents(name: string) {
+function randomContents(name: string) {
     const hash = Array.from(name).reduce(
         (acc, char, i) => acc + char.charCodeAt(0) * (i + 1),
         3131
@@ -46,26 +65,151 @@ export function CommentCard({ comment }: { comment: Comment }) {
     const [Identicon, displayName] = randomContents(comment.user.id);
 
     return (
-        <Blockquote
-            color="blue"
-            mx="md"
-            mt="xl"
-            icon={
-                comment.user.IconURL ? (
-                    <MantineAvater src={comment.user.IconURL} alt="Icon" />
-                ) : (
-                    Identicon
-                )
-            }
-            style={{ maxWidth: 500 }}
-            iconSize={40}
-        >
-            <MantineMarkdown text={comment.content} />
+        <Group gap="sm" align="start">
+            {comment.user.IconURL ? (
+                <MantineAvater src={comment.user.IconURL} alt="Icon" />
+            ) : (
+                Identicon
+            )}
 
-            <Text size="sm" opacity={0.6} mt="sm">
-                — {comment.user.displayName || "匿名 " + displayName}{" "}
-                {formatElapsedSeconds(Number(Date.now() / 1000 - comment.createdAt))}前
-            </Text>
-        </Blockquote>
+            <Box>
+                <Group gap="sm" mb="xs">
+                    <Text>{comment.user.displayName || "匿名 " + displayName}</Text>
+                    <HoverCard width={250} shadow="sm" position="right">
+                        <HoverCard.Target>
+                            <Text size="sm" opacity={0.6}>
+                                {formatElapsedSeconds(
+                                    Number(Date.now() / 1000 - comment.createdAt)
+                                )}
+                                前
+                            </Text>
+                        </HoverCard.Target>
+                        <HoverCard.Dropdown>
+                            <Text size="sm">投稿：{formatDateTime(comment.createdAt)}</Text>
+                            <Text size="sm">更新：{formatDateTime(comment.updatedAt)}</Text>
+                        </HoverCard.Dropdown>
+                    </HoverCard>
+                </Group>
+
+                <MantineMarkdown text={comment.content} />
+            </Box>
+        </Group>
+    );
+}
+
+export function NewCommentCard({ songID }: { songID: string }) {
+    const { user: authUser, userInfo } = useAuth();
+    const linkedUser = authUser && authUser.providerData.length > 0;
+
+    let randomIdenticon, randomDisplayName;
+    if (userInfo) {
+        randomIdenticon = <Avatar radius="xl" />;
+        [randomIdenticon, randomDisplayName] = randomContents(userInfo.id);
+    } else {
+        [randomIdenticon, randomDisplayName] = randomContents("guest");
+    }
+
+    let displayIcon, displayName;
+    if (!userInfo) {
+        // 投稿後にアイコン・表示名が決定する
+        displayIcon = <MantineAvater alt="Icon" />;
+    } else if (!linkedUser) {
+        // アカウント連携するとアイコン表示可能
+        displayIcon = randomIdenticon;
+        displayName = randomDisplayName;
+    } else if (!userInfo.useProvidedIcon) {
+        // 設定からアイコンを表示可能
+        displayIcon = randomIdenticon;
+        displayName = randomDisplayName;
+    } else {
+        displayIcon = <MantineAvater src={userInfo.IconURL} alt="Icon" />;
+        displayName = userInfo.displayName || "匿名";
+    }
+
+    if (!authUser) {
+        displayName = "匿名";
+    } else if (!linkedUser) {
+        displayName = "匿名 " + randomDisplayName;
+    } else {
+        displayName = userInfo?.displayName || "匿名 " + randomDisplayName;
+    }
+
+    const [content, setContent] = useState("");
+    const router = useRouter();
+    async function handlePostComment() {
+        if (content.trim() === "") {
+            return;
+        }
+
+        let user;
+        if (!authUser) {
+            user = await loginWithAnonymous();
+        }
+
+        await postComment(songID, content, user);
+        await refreshComments(songID);
+
+        setContent("");
+        router.refresh();
+    }
+
+    return (
+        <Group gap="sm" align="start" mb="md">
+            {displayIcon}
+            <Box style={{ flex: 1 }}>
+                <Group gap="sm" mb="xs">
+                    <Text>{displayName}</Text>
+                    {linkedUser && (
+                        <Anchor ml="md" component={Link} href="/settings/profile" size="sm">
+                            ユーザー設定
+                        </Anchor>
+                    )}
+                </Group>
+                <Textarea
+                    placeholder="コメントを入力..."
+                    minRows={3}
+                    mb="xs"
+                    autosize
+                    w="50%"
+                    maw={500}
+                    value={content}
+                    onChange={(event) => setContent(event.currentTarget.value)}
+                />
+                <Button mb="xs" onClick={handlePostComment}>
+                    コメントを投稿
+                </Button>
+                {!userInfo && (
+                    <Alert
+                        color="pink"
+                        title="ログインしていません"
+                        icon={<IconUserQuestion />}
+                        mb="xs"
+                    >
+                        <Text size="sm">
+                            コメントを投稿すると、ゲストアカウントが自動で作成されます。
+                        </Text>
+                        <Text size="sm">
+                            <Anchor href="/login/" component={Link} size="sm">
+                                ログイン
+                            </Anchor>
+                            すると、アイコン・表示名の変更や、コメントの編集・削除ができるようになります！（後から連携することもできます）
+                        </Text>
+                    </Alert>
+                )}
+                {userInfo && !linkedUser && (
+                    <Alert
+                        color="pink"
+                        title="ゲストアカウントでログインしています"
+                        icon={<IconUserQuestion />}
+                        mb="xs"
+                    >
+                        <Anchor href="/login/" component={Link} size="sm">
+                            アカウント連携
+                        </Anchor>
+                        をすると、アイコン・表示名の変更や、コメントの編集・削除ができるようになります！
+                    </Alert>
+                )}
+            </Box>
+        </Group>
     );
 }

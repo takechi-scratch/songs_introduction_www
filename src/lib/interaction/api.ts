@@ -1,5 +1,6 @@
 import { getCurrentUserRole, getCurrentUserToken } from "../auth/firebase";
 import { Comment, UpdateUser, User } from "./types";
+import { User as FirebaseUser } from "firebase/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -82,8 +83,17 @@ export async function fetchCommentsBySongID(songID: string): Promise<Comment[]> 
     }
 }
 
-export async function postComment(songID: string, content: string): Promise<Comment> {
-    if ((await getCurrentUserRole()) === "guest") {
+export async function postComment(
+    songID: string,
+    content: string,
+    user?: FirebaseUser
+): Promise<Comment> {
+    let token;
+    if (user) {
+        token = await user.getIdToken();
+    } else if ((await getCurrentUserRole()) !== "guest") {
+        token = await getCurrentUserToken();
+    } else {
         throw new Error("Unauthorized");
     }
 
@@ -93,7 +103,7 @@ export async function postComment(songID: string, content: string): Promise<Comm
             {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${await getCurrentUserToken()}`,
+                    Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ content }),

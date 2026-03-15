@@ -1,5 +1,16 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Alert, Anchor, Button, Flex, Paper, Text, Title } from "@mantine/core";
+import {
+    Alert,
+    Anchor,
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Group,
+    Paper,
+    Text,
+    Title,
+} from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
@@ -17,7 +28,7 @@ import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
 import { hasLyrics } from "@/lib/musicValues";
-import { CommentCard } from "@/components/commentCard";
+import { CommentCard, NewCommentCard } from "@/components/commentCard";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
 import rison from "rison";
 
@@ -192,14 +203,27 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
             )}
 
-            <Title mt="xl" mb="md" order={2}>
+            <Title mb="md" mt="xl" order={2}>
                 コメント
             </Title>
-            {comments.length > 0 ? (
-                comments.map((comment) => <CommentCard key={comment.id} comment={comment} />)
-            ) : (
-                <Text>この曲にはまだコメントがありません。最初のコメントを投稿しましょう！</Text>
-            )}
+            <Paper p="md" radius="md" shadow="xs">
+                <NewCommentCard songID={song.id} />
+
+                {comments.length > 0 ? (
+                    comments.map((comment) => (
+                        <Box key={comment.id}>
+                            <Divider my="sm" />
+                            <CommentCard comment={comment} />
+                        </Box>
+                    ))
+                ) : (
+                    <>
+                        <Text mb="lg">
+                            この曲にはまだコメントがありません。最初のコメントを投稿しましょう！
+                        </Text>
+                    </>
+                )}
+            </Paper>
         </MyAppShell>
     );
 }
