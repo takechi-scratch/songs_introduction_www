@@ -7,9 +7,7 @@ import {
     signInWithRedirect,
     signInWithEmailAndPassword,
     signInAnonymously,
-    linkWithCredential,
     linkWithPopup,
-    OAuthCredential,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need

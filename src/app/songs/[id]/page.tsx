@@ -1,22 +1,10 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import {
-    Alert,
-    Anchor,
-    Box,
-    Button,
-    Divider,
-    Flex,
-    Group,
-    Paper,
-    Text,
-    Title,
-} from "@mantine/core";
+import { Alert, Anchor, Box, Button, Divider, Flex, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 import { IconAlertTriangle, IconExclamationCircle, IconFlaskFilled } from "@tabler/icons-react";
 import {
-    advancedSearchForSongs,
     fetchAllSongs,
     fetchNearestSongs,
     fetchSongById,
@@ -27,7 +15,6 @@ import { Metadata } from "next";
 import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
-import { hasLyrics } from "@/lib/musicValues";
 import { CommentCard, NewCommentCard } from "@/components/commentCard";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
 import rison from "rison";

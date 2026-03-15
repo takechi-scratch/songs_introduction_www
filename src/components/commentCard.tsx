@@ -54,22 +54,18 @@ function randomContents(name: string) {
     const colorType = colorTypes[hash % colorTypes.length];
     const iconName = names[hash % names.length];
 
-    return [
-        <Avatar name={iconName} colors={colorType} variant="beam" size={40} />,
-        displayNames[hash % displayNames.length],
-    ];
+    return {
+        icon: <Avatar name={iconName} colors={colorType} variant="beam" size={40} />,
+        displayName: displayNames[hash % displayNames.length],
+    };
 }
 
 export function CommentCard({ comment }: { comment: Comment }) {
-    const [Identicon, displayName] = randomContents(comment.user.id);
+    const { icon, displayName } = randomContents(comment.user.id);
 
     return (
         <Group gap="sm" align="start">
-            {comment.user.IconURL ? (
-                <MantineAvater src={comment.user.IconURL} alt="Icon" />
-            ) : (
-                Identicon
-            )}
+            {comment.user.IconURL ? <MantineAvater src={comment.user.IconURL} alt="Icon" /> : icon}
 
             <Box>
                 <Group gap="sm" mb="xs">
@@ -103,9 +99,9 @@ export function NewCommentCard({ songID }: { songID: string }) {
     let randomIdenticon, randomDisplayName;
     if (userInfo) {
         randomIdenticon = <Avatar radius="xl" />;
-        [randomIdenticon, randomDisplayName] = randomContents(userInfo.id);
+        ({ icon: randomIdenticon, displayName: randomDisplayName } = randomContents(userInfo.id));
     } else {
-        [randomIdenticon, randomDisplayName] = randomContents("guest");
+        ({ icon: randomIdenticon, displayName: randomDisplayName } = randomContents("guest"));
     }
 
     let displayIcon, displayName;

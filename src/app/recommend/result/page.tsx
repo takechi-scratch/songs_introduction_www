@@ -26,7 +26,7 @@ async function getRecommendedSongs(
         return null;
     }
 
-    const randomPickCount = Math.ceil(maxResults / 10);
+    // const randomPickCount = Math.ceil(maxResults / 10);
 
     const preferenceScores: { [key: string]: number } = {};
     const preferenceSongs: { [key: string]: Song } = {};

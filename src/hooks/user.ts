@@ -29,7 +29,7 @@ export function useMyUserInfo() {
 
     useEffect(() => {
         loadUser();
-    }, [authUser]);
+    }, [authUser, loadUser]);
 
     return { user, loading, error, refetch: () => loadUser() };
 }

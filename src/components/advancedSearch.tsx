@@ -17,7 +17,7 @@ import {
     Alert,
     Switch,
 } from "@mantine/core";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 // Do this once in your application root file
