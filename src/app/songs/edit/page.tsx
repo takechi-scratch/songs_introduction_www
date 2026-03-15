@@ -60,7 +60,6 @@ function InfoTabs() {
     const { song: beforeSong } = useSong(paramID ?? null);
     // console.log("beforeSong:", beforeSong);
 
-    const { user } = useAuth();
     const userRole = useUserRole();
 
     const [playerID, setPlayerID] = useState(paramID ?? "");
@@ -128,7 +127,7 @@ function InfoTabs() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [beforeSong]);
 
-    if (!user || userRole === "user") {
+    if (!(userRole === "admin" || userRole === "editor")) {
         return (
             <>
                 <Text mb="md">曲の追加・編集は現在編集者のみが行えます。</Text>

@@ -43,13 +43,19 @@ export default function CreatePlaylistButton({
     const description = `「MIMIさん全曲紹介」のおすすめ曲診断で、好みに合いそうな曲をピックアップしました！`;
 
     return (
-        <WarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
+        <WarningTip
+            warning={
+                userRole === "guest" || userRole === "user-temp"
+                    ? "ログインすると利用できます"
+                    : null
+            }
+        >
             <Button
                 fullWidth
                 color="red"
                 variant="light"
                 loading={loadingPlaylist}
-                disabled={userRole === "guest"}
+                disabled={userRole === "guest" || userRole === "user-temp"}
                 onClick={() => create(title, description)}
                 mb="md"
             >

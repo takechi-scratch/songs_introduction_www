@@ -63,13 +63,19 @@ function ActionButtons({
             >
                 {slotsActive ? "ルーレットを閉じる" : "検索結果でルーレットを回す"}
             </Button>
-            <WarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
+            <WarningTip
+                warning={
+                    userRole === "guest" || userRole === "user-temp"
+                        ? "ログインすると利用できます"
+                        : null
+                }
+            >
                 <Button
                     fullWidth
                     color="red"
                     variant="light"
                     loading={loadingPlaylist}
-                    disabled={userRole === "guest"}
+                    disabled={userRole === "guest" || userRole === "user-temp"}
                     onClick={() => createFromSearchParams(searchParams)}
                 >
                     検索結果から再生リストを作成
