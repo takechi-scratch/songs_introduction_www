@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import SongPreferenceQuestion from "@/components/songPreferenceQuestion";
+import Link from "next/link";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -42,6 +43,9 @@ function Start({ startCallback }: { startCallback?: () => void }) {
             <Text>質問の結果をもとに、あなたへおすすめの曲を紹介します！</Text>
             <Button size="lg" radius="md" onClick={startCallback}>
                 診断を始める
+            </Button>
+            <Button component={Link} href="/recommend/all-ranking" variant="subtle" color="gray">
+                あなたの全曲ランキングを作る
             </Button>
         </Flex>
     );
