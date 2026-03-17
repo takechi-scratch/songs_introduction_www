@@ -20,8 +20,8 @@ export default function CardsList({ songs }: { songs: (Song | SongWithScore | nu
             >
                 {songs
                     .slice((pageIndex - 1) * songsPerPage, pageIndex * songsPerPage)
-                    .map((song) => {
-                        return <Card key={song ? song.id : Math.random()} song={song} />;
+                    .map((song, index) => {
+                        return <Card key={song ? song.id : `placeholder-${index}`} song={song} />;
                     })}
             </SimpleGrid>
             <Center m="lg">

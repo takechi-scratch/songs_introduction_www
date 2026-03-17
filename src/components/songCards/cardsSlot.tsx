@@ -106,7 +106,7 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                 withControls={false}
             >
                 {songsInCarousel.map((song, index) => (
-                    <Carousel.Slide key={song ? song.id : Math.random()}>
+                    <Carousel.Slide key={song ? song.id : `placeholder-${index}`}>
                         <SongCard
                             song={song}
                             isHighLighted={selectedSongIndex === index && isHighlighted}

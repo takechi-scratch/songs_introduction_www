@@ -27,8 +27,8 @@ export default function SongsCarousel({
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", skipSnaps: true }}
             >
-                {songs.map((song) => (
-                    <Carousel.Slide key={song ? song.id : Math.random()}>
+                {songs.map((song, index) => (
+                    <Carousel.Slide key={song ? song.id : `placeholder-${index}`}>
                         <SongCard song={song} displayScore={displayScore} />
                     </Carousel.Slide>
                 ))}
