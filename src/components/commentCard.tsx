@@ -2,7 +2,7 @@
 
 import {
     Text,
-    Avatar as MantineAvater,
+    Avatar as MantineAvatar,
     Group,
     Box,
     HoverCard,
@@ -17,57 +17,30 @@ import { Comment } from "@/lib/interaction/types";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { IconUserQuestion } from "@tabler/icons-react";
+import { IconEdit, IconTrash, IconUserQuestion } from "@tabler/icons-react";
 import { useState } from "react";
-import { postComment } from "@/lib/interaction/api";
+import { deleteComment, postComment, updateComment } from "@/lib/interaction/api";
 import { useRouter } from "next/navigation";
 import { refreshComments } from "@/lib/refresh";
 import { loginWithAnonymous } from "@/lib/auth/firebase";
-
-const names = [
-    "Mary Baker",
-    "Amelia Earhart",
-    "Mary Roebling",
-    "Sarah Winnemucca",
-    "Margaret Brent",
-    "Lucy Stone",
-    "Mary Edwards",
-    "Margaret Chase",
-    "Mahalia Jackson",
-    "Maya Angelou",
-];
-
-const colorTypes = [
-    ["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"],
-    ["#b1e6d1", "#77b1a9", "#3d7b80", "#270a33", "#451a3e"],
-    ["#fff4ce", "#d0deb8", "#ffa492", "#ff7f81", "#ff5c71"],
-];
-
-const displayNames = ["うさぎ", "フランスパン", "ラベンダー", "ハート", "紅茶", "桜"];
-
-function randomContents(name: string) {
-    const hash = Array.from(name).reduce(
-        (acc, char, i) => acc + char.charCodeAt(0) * (i + 1),
-        3131
-    );
-
-    const colorType = colorTypes[hash % colorTypes.length];
-    const iconName = names[hash % names.length];
-
-    return {
-        icon: <Avatar name={iconName} colors={colorType} variant="beam" size={40} />,
-        displayName: displayNames[hash % displayNames.length],
-    };
-}
+import { useDisclosure } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
+import randomContents from "./guestAvatar";
 
 export function CommentCard({ comment }: { comment: Comment }) {
     const { icon, displayName } = randomContents(comment.user.id);
+    const { user, userInfo } = useAuth();
+    const isGuest = user?.providerData.length === 0;
+
+    const [editMode, { toggle: toggleEditMode, close: closeEditMode }] = useDisclosure(false);
+    const [editedContent, setEditedContent] = useState(comment.content);
+    const router = useRouter();
 
     return (
         <Group gap="sm" align="start">
-            {comment.user.IconURL ? <MantineAvater src={comment.user.IconURL} alt="Icon" /> : icon}
+            {comment.user.IconURL ? <MantineAvatar src={comment.user.IconURL} alt="Icon" /> : icon}
 
-            <Box>
+            <Box style={{ flex: 1 }}>
                 <Group gap="sm" mb="xs">
                     <Text>{comment.user.displayName || "匿名 " + displayName}</Text>
                     <HoverCard width={250} shadow="sm" position="right">
@@ -84,9 +57,71 @@ export function CommentCard({ comment }: { comment: Comment }) {
                             <Text size="sm">更新：{formatDateTime(comment.updatedAt)}</Text>
                         </HoverCard.Dropdown>
                     </HoverCard>
+                    {userInfo && !isGuest && userInfo.id === comment.user.id && (
+                        <>
+                            <IconEdit
+                                size={18}
+                                opacity={0.6}
+                                onClick={toggleEditMode}
+                                style={{ cursor: "pointer" }}
+                            />
+                            <IconTrash
+                                color="red"
+                                size={18}
+                                opacity={0.6}
+                                onClick={() =>
+                                    modals.openConfirmModal({
+                                        children: "コメントを削除してもよいですか？",
+                                        labels: { confirm: "削除する", cancel: "キャンセル" },
+                                        confirmProps: { color: "red" },
+                                        onConfirm: async () => {
+                                            await deleteComment(comment.id);
+                                            await refreshComments(comment.songID);
+                                            router.refresh();
+                                        },
+                                    })
+                                }
+                                style={{ cursor: "pointer" }}
+                            />
+                        </>
+                    )}
                 </Group>
 
-                <MantineMarkdown text={comment.content} />
+                {editMode ? (
+                    <>
+                        <Textarea
+                            placeholder="コメントを編集..."
+                            minRows={3}
+                            mb="xs"
+                            w="100%"
+                            autosize
+                            maw={500}
+                            value={editedContent}
+                            onChange={(event) => setEditedContent(event.currentTarget.value)}
+                        />
+                        <Button
+                            size="sm"
+                            mb="xs"
+                            onClick={async () => {
+                                if (editedContent.trim() === "") {
+                                    closeEditMode();
+                                    return;
+                                }
+                                await updateComment(comment.id, editedContent);
+                                await refreshComments(comment.songID);
+                                closeEditMode();
+                                router.refresh();
+                            }}
+                        >
+                            送信する
+                        </Button>
+                        <Button size="sm" mb="xs" color="gray" onClick={closeEditMode} ml="xs">
+                            キャンセル
+                        </Button>
+                    </>
+                ) : (
+                    <MantineMarkdown text={comment.content} />
+                )}
             </Box>
         </Group>
     );
@@ -107,7 +142,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
     let displayIcon, displayName;
     if (!userInfo) {
         // 投稿後にアイコン・表示名が決定する
-        displayIcon = <MantineAvater alt="Icon" />;
+        displayIcon = <MantineAvatar alt="Icon" />;
     } else if (!linkedUser) {
         // アカウント連携するとアイコン表示可能
         displayIcon = randomIdenticon;
@@ -117,7 +152,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
         displayIcon = randomIdenticon;
         displayName = randomDisplayName;
     } else {
-        displayIcon = <MantineAvater src={userInfo.IconURL} alt="Icon" />;
+        displayIcon = <MantineAvatar src={userInfo.IconURL} alt="Icon" />;
         displayName = userInfo.displayName || "匿名";
     }
 
@@ -155,7 +190,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
                 <Group gap="sm" mb="xs">
                     <Text>{displayName}</Text>
                     {linkedUser && (
-                        <Anchor ml="md" component={Link} href="/settings/profile" size="sm">
+                        <Anchor ml="md" component={Link} href="/settings/" size="sm">
                             ユーザー設定
                         </Anchor>
                     )}
@@ -167,7 +202,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
                     minRows={3}
                     mb="xs"
                     autosize
-                    w="50%"
+                    w="100%"
                     maw={500}
                     value={content}
                     onChange={(event) => setContent(event.currentTarget.value)}
