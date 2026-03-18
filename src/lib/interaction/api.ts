@@ -58,6 +58,33 @@ export async function updateMyUserInfo(data: UpdateUser): Promise<User> {
     }
 }
 
+export async function fetchMyComments(): Promise<Comment[]> {
+    if ((await getCurrentUserRole()) === "guest") {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/me/comments/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${await getCurrentUserToken()}`,
+            },
+            cache: "no-store",
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: Comment[] = await response.json();
+        return result;
+    } catch (error) {
+        console.error(`Failed to fetch my comments:`, error);
+        throw error;
+    }
+}
+
 export async function fetchCommentsBySongID(songID: string): Promise<Comment[]> {
     try {
         const response = await fetch(
