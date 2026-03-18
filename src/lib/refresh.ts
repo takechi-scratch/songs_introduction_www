@@ -12,3 +12,7 @@ export async function refreshHomePage() {
 export async function refreshComments(songID: string) {
     revalidateTag("comments-" + songID);
 }
+
+export async function refreshAllComments() {
+    revalidateTag("comments");
+}

@@ -67,7 +67,7 @@ export async function fetchCommentsBySongID(songID: string): Promise<Comment[]> 
                 headers: {
                     "Content-Type": "application/json",
                 },
-                next: { tags: [`comments-${songID}`] },
+                next: { tags: [`comments-${songID}`, "comments"] },
             }
         );
 

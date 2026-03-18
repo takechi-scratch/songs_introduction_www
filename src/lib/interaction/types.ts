@@ -1,12 +1,12 @@
 export interface User {
     id: string;
-    displayName: string;
+    displayName: string | null;
     IconURL: string | null;
     useProvidedIcon: boolean;
 }
 
 export interface UpdateUser {
-    displayName: string;
+    displayName: string | null;
     useProvidedIcon: boolean;
 }
 

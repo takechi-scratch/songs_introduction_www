@@ -3,15 +3,32 @@
 import MyAppShell from "@/components/appshell/myAppshell";
 import randomContents from "@/components/guestAvatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { Alert, Avatar, Box, Button, Group, Paper, Stack, Title } from "@mantine/core";
+import { updateMyUserInfo } from "@/lib/interaction/api";
+import { refreshAllComments } from "@/lib/refresh";
+import {
+    Alert,
+    Avatar,
+    Box,
+    Button,
+    Group,
+    Paper,
+    Stack,
+    Text,
+    TextInput,
+    Title,
+} from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconRefresh, IconUserQuestion } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function SettingsPage() {
     const { userInfo, user } = useAuth();
     const isGuest = user?.providerData.length === 0;
+    const [editedUserInfo, setEditedUserInfo] = useState<typeof userInfo>(null);
+    const activeUserInfo = editedUserInfo ?? userInfo;
 
-    if (!userInfo || isGuest) {
+    if (!activeUserInfo || isGuest) {
         return (
             <MyAppShell>
                 <Title order={1} mb="md">
@@ -28,12 +45,12 @@ export default function SettingsPage() {
         );
     }
 
+    const { icon: randomIcon, displayName: randomDisplayName } = randomContents(activeUserInfo.id);
     let displayIcon;
-    if (!userInfo.useProvidedIcon) {
-        // 設定からアイコンを表示可能
-        displayIcon = randomContents(userInfo.id).icon;
+    if (!activeUserInfo.useProvidedIcon) {
+        displayIcon = randomIcon;
     } else {
-        displayIcon = <Avatar src={userInfo.IconURL} alt="Icon" />;
+        displayIcon = <Avatar src={activeUserInfo.IconURL || user?.photoURL} alt="Icon" />;
     }
 
     return (
@@ -42,17 +59,22 @@ export default function SettingsPage() {
                 ユーザー設定
             </Title>
             <Paper shadow="xs" p="md" mb="md" radius="md">
-                <Title order={2} mb="sm">
+                <Title order={2} mb="md">
                     プロフィール
                 </Title>
-                <Group gap="md">
+                <Group gap="md" mb="md" style={{ maxWidth: 500 }}>
                     <Group>
                         <Stack align="center" gap="xs">
                             {displayIcon}
                             <Button
                                 variant="outline"
                                 size="xs"
-                                onClick={() => alert("アイコンの変更機能は現在開発中です。")}
+                                onClick={() =>
+                                    setEditedUserInfo({
+                                        ...activeUserInfo,
+                                        useProvidedIcon: !activeUserInfo.useProvidedIcon,
+                                    })
+                                }
                             >
                                 <IconRefresh size={16} />
                                 変更
@@ -60,10 +82,45 @@ export default function SettingsPage() {
                         </Stack>
                     </Group>
                     <Box style={{ flex: 1 }}>
-                        <Title order={3}>表示名:</Title>
-                        <span>{userInfo?.displayName || "未設定"}</span>
+                        <TextInput
+                            label="表示名"
+                            description="最大30文字まで"
+                            placeholder={"匿名" + randomDisplayName}
+                            value={activeUserInfo.displayName || ""}
+                            onChange={(event) =>
+                                setEditedUserInfo({
+                                    ...activeUserInfo,
+                                    displayName: event.currentTarget.value || null,
+                                })
+                            }
+                        />
                     </Box>
                 </Group>
+                <Button
+                    fullWidth
+                    mb="lg"
+                    onClick={async () => {
+                        await updateMyUserInfo(activeUserInfo);
+                        notifications.show({
+                            title: "ユーザー情報を更新しました",
+                            message: "ユーザー情報の更新が完了しました。",
+                            color: "green",
+                        });
+                        refreshAllComments();
+                    }}
+                    style={{ maxWidth: 500 }}
+                >
+                    変更を保存
+                </Button>
+                <Text size="sm">
+                    アイコンは、デフォルトアイコンか、連携したアカウントのアイコンを選べます。
+                </Text>
+                <Text size="sm" mb="md">
+                    表示名は自由につけられますが、個人情報や不適切な内容を含むものは避けてください。
+                </Text>
+                <Text c="dimmed" size="sm">
+                    ユーザーID: {activeUserInfo.id}
+                </Text>
             </Paper>
         </MyAppShell>
     );

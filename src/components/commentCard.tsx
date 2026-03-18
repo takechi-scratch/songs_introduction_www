@@ -26,19 +26,33 @@ import { loginWithAnonymous } from "@/lib/auth/firebase";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import randomContents from "./guestAvatar";
+import { useUserRole } from "@/hooks/auth";
 
 export function CommentCard({ comment }: { comment: Comment }) {
     const { icon, displayName } = randomContents(comment.user.id);
     const { user, userInfo } = useAuth();
     const isGuest = user?.providerData.length === 0;
+    const userRole = useUserRole();
+    const isMine = userInfo && !isGuest && userInfo.id === comment.user.id;
 
     const [editMode, { toggle: toggleEditMode, close: closeEditMode }] = useDisclosure(false);
     const [editedContent, setEditedContent] = useState(comment.content);
     const router = useRouter();
 
+    const displayIcon = comment.user.IconURL ? (
+        <MantineAvatar src={comment.user.IconURL} alt="Icon" />
+    ) : (
+        icon
+    );
     return (
         <Group gap="sm" align="start">
-            {comment.user.IconURL ? <MantineAvatar src={comment.user.IconURL} alt="Icon" /> : icon}
+            {isMine ? (
+                <Link href="/settings/" style={{ textDecoration: "none" }}>
+                    {displayIcon}
+                </Link>
+            ) : (
+                displayIcon
+            )}
 
             <Box style={{ flex: 1 }}>
                 <Group gap="sm" mb="xs">
@@ -57,34 +71,35 @@ export function CommentCard({ comment }: { comment: Comment }) {
                             <Text size="sm">更新：{formatDateTime(comment.updatedAt)}</Text>
                         </HoverCard.Dropdown>
                     </HoverCard>
-                    {userInfo && !isGuest && userInfo.id === comment.user.id && (
-                        <>
-                            <IconEdit
-                                size={18}
-                                opacity={0.6}
-                                onClick={toggleEditMode}
-                                style={{ cursor: "pointer" }}
-                            />
-                            <IconTrash
-                                color="red"
-                                size={18}
-                                opacity={0.6}
-                                onClick={() =>
-                                    modals.openConfirmModal({
-                                        children: "コメントを削除してもよいですか？",
-                                        labels: { confirm: "削除する", cancel: "キャンセル" },
-                                        confirmProps: { color: "red" },
-                                        onConfirm: async () => {
-                                            await deleteComment(comment.id);
-                                            await refreshComments(comment.songID);
-                                            router.refresh();
-                                        },
-                                    })
-                                }
-                                style={{ cursor: "pointer" }}
-                            />
-                        </>
-                    )}
+                    {isMine ||
+                        (userRole === "admin" && (
+                            <>
+                                <IconEdit
+                                    size={18}
+                                    opacity={0.6}
+                                    onClick={toggleEditMode}
+                                    style={{ cursor: "pointer" }}
+                                />
+                                <IconTrash
+                                    color="red"
+                                    size={18}
+                                    opacity={0.6}
+                                    onClick={() =>
+                                        modals.openConfirmModal({
+                                            children: "コメントを削除してもよいですか？",
+                                            labels: { confirm: "削除する", cancel: "キャンセル" },
+                                            confirmProps: { color: "red" },
+                                            onConfirm: async () => {
+                                                await deleteComment(comment.id);
+                                                await refreshComments(comment.songID);
+                                                router.refresh();
+                                            },
+                                        })
+                                    }
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </>
+                        ))}
                 </Group>
 
                 {editMode ? (
