@@ -1,4 +1,4 @@
-import { formatDate, formatDateTime } from "./date";
+import { formatDateTime } from "./date";
 import { Comment } from "./interaction/types";
 
 export function downloadComments(comments: Comment[], type: "csv" | "json") {
@@ -27,9 +27,12 @@ export function downloadComments(comments: Comment[], type: "csv" | "json") {
     const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`;
+
     const a = document.createElement("a");
     a.href = url;
-    a.download = `mimi_introduction_comments.${formatDate(new Date().getTime())}.${type}`;
+    a.download = `mimi_introduction_comments_${formattedDate}.${type}`;
     a.click();
 
     URL.revokeObjectURL(url);
