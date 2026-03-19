@@ -40,7 +40,9 @@ function MyCommentCard({ comment, song }: { comment: Comment; song: Song }) {
     return (
         <Box style={{ flex: 1 }}>
             <Group gap="sm" mb="xs">
-                <Anchor href={`/songs/${song.id}`}>{song.title}</Anchor>
+                <Anchor href={`/songs/${song.id}`} component={Link}>
+                    {song.title}
+                </Anchor>
                 <HoverCard width={250} shadow="sm" position="right">
                     <HoverCard.Target>
                         <Text size="sm" opacity={0.6}>

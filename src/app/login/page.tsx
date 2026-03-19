@@ -19,6 +19,7 @@ import { notifications } from "@mantine/notifications";
 import { useColorMode } from "@/contexts/ThemeContext";
 import Image from "next/image";
 import { useUserRole } from "@/hooks/auth";
+import { modals } from "@mantine/modals";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -153,14 +154,38 @@ export default function LoginPage() {
                     <Button
                         color="orange"
                         ml="lg"
-                        onClick={async () => {
-                            await logout();
-                            router.push("/");
-                        }}
+                        onClick={() =>
+                            modals.openConfirmModal({
+                                title: "ゲストアカウントを削除",
+                                children:
+                                    "投稿したコメントが削除され、元に戻せなくなります。本当に削除しますか？",
+                                labels: { confirm: "削除する", cancel: "キャンセル" },
+                                confirmProps: { color: "red" },
+                                onConfirm: async () => {
+                                    await logout();
+                                    notifications.show({
+                                        title: "ゲストアカウントを削除しました",
+                                        message: "またのご利用をお待ちしております。",
+                                        color: "green",
+                                    });
+                                    router.push("/");
+                                },
+                            })
+                        }
                     >
                         ゲストアカウントを削除
                     </Button>
                 </Flex>
+                <Text mt="lg" size="sm" c="dimmed">
+                    連携先のアカウントでログインしたことがある場合、自動で引き継ぐことはできません。
+                </Text>
+                <Text size="sm" c="dimmed">
+                    コメントなどのデータをまとめる処理をいたしますので、
+                    <Anchor href="/contact" component={Link}>
+                        お問い合わせ
+                    </Anchor>
+                    からご連絡をお願いいたします。
+                </Text>
             </>
         );
     } else if (user) {

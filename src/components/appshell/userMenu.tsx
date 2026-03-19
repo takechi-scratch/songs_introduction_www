@@ -111,19 +111,28 @@ export default function UserMenu() {
                     </Menu.Item>
                 )}
                 {userRole !== "guest" && userRole !== "user-temp" && (
-                    <Menu.Item
-                        color="red"
-                        leftSection={<IconLogout size={14} />}
-                        onClick={async () => {
-                            await logout();
-                            notifications.show({
-                                title: "ログアウトしました",
-                                message: "またのご利用をお待ちしております。",
-                            });
-                        }}
-                    >
-                        ログアウト
-                    </Menu.Item>
+                    <>
+                        <Menu.Item
+                            href="/settings"
+                            component={Link}
+                            leftSection={<IconUserCog size={14} />}
+                        >
+                            ユーザー設定
+                        </Menu.Item>
+                        <Menu.Item
+                            color="red"
+                            leftSection={<IconLogout size={14} />}
+                            onClick={async () => {
+                                await logout();
+                                notifications.show({
+                                    title: "ログアウトしました",
+                                    message: "またのご利用をお待ちしております。",
+                                });
+                            }}
+                        >
+                            ログアウト
+                        </Menu.Item>
+                    </>
                 )}
                 <Menu.Item
                     href="/contact"

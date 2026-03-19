@@ -10,6 +10,7 @@ import {
     Button,
     Anchor,
     Alert,
+    List,
 } from "@mantine/core";
 import MantineMarkdown from "./markdown";
 import Avatar from "boring-avatars";
@@ -252,7 +253,12 @@ export function NewCommentCard({ songID }: { songID: string }) {
                         <Anchor href="/login/" component={Link} size="sm">
                             アカウント連携
                         </Anchor>
-                        をすると、アイコン・表示名の変更や、コメントの編集・削除ができるようになります！
+                        をすると、
+                        <List size="sm" mt="xs">
+                            <List.Item>アイコン・名前を変えられます！</List.Item>
+                            <List.Item>コメントの編集・削除ができます！</List.Item>
+                            <List.Item>URL付きのコメントも送れます！</List.Item>
+                        </List>
                     </Alert>
                 )}
             </Box>

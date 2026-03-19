@@ -195,9 +195,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </Title>
             <Paper p="md" radius="md" shadow="xs">
                 <Alert color="green" icon={<IconFlaskFilled />} mb="md">
-                    <Text size="sm">
-                        コメント機能は現在ベータ版として公開しています。予告なく仕様変更やデータのリセットが行われる可能性がありますのでご了承ください。
-                    </Text>
+                    <Text size="sm">コメント機能は現在ベータ版として公開しています。</Text>
                     <Text size="sm">
                         不適切なコメントを見つけたら、
                         <Anchor href="/contact" component={Link}>
