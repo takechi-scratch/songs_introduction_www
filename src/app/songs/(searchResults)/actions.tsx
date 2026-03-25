@@ -100,7 +100,11 @@ export default function Actions({
             <Text size="sm" ta="right" m="md">
                 検索結果: {songs.length}曲
             </Text>
-            {slotsActive ? <SongsSlot songs={songs} /> : <CardsList songs={songs} />}
+            {slotsActive ? (
+                <SongsSlot songs={songs} key={songs.toString()} />
+            ) : (
+                <CardsList songs={songs} key={songs.toString()} />
+            )}
         </>
     );
 }
