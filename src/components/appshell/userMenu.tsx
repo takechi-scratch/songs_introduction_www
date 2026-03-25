@@ -56,7 +56,7 @@ export default function UserMenu() {
                         : "未ログイン"}
                 </Menu.Item>
 
-                {user && userRole !== "user" && (
+                {user && (userRole === "editor" || userRole === "admin") && (
                     <>
                         <Menu.Divider />
                         <Menu.Label>編集者用</Menu.Label>
