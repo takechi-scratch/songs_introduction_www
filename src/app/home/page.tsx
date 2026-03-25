@@ -1,95 +1,101 @@
-"use client";
-
+import MyAppShell from "@/components/appshell/myAppshell";
+import { Button, Divider, Flex, Text, Title } from "@mantine/core";
+import KoeLoopWidget from "@/components/feedbackWidget";
+import { PinnedAnnouncements } from "@/components/announcements/manager";
+import { Song, SongWithScore } from "@/lib/songs/types";
+import SongsSection from "./songsSection";
 import Link from "next/link";
+import { IconMusicHeart, IconPlaylist } from "@tabler/icons-react";
+import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
+import FadeInUp from "./fadeInUp";
 
-export default function Home() {
+export default async function HomePage() {
+    let latestSongsData: Song[] | undefined;
+    let colaborationSongsData: SongWithScore[] | undefined;
+
+    try {
+        // 並列実行で待機時間を短縮
+        [latestSongsData, colaborationSongsData] = await Promise.all([
+            fetchAllSongs(),
+            advancedSearchForSongs({ filter: { publishedType: 0 } }),
+        ]);
+    } catch (error) {
+        console.error("Error fetching songs data:", error);
+    }
+
     return (
-        <main className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white">
-            {/* ===== Hero Section ===== */}
-            <section className="text-center px-6 py-24">
-                <h1 className="text-5xl font-bold mb-6">MIMIさんの全曲を、まとめて。</h1>
-                <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
-                    すべての楽曲を一覧・検索・再生。 あなたのお気に入りの1曲を見つけよう。
-                </p>
-                <p className="text-lg text-gray-300 mb-10 mx-auto">
-                    ※このページはテスト用として生成AIによって作成されました。
-                </p>
+        <MyAppShell>
+            <Title order={1} mb="md">
+                旧トップページ
+            </Title>
+            <PinnedAnnouncements />
 
-                <div className="flex justify-center gap-4 flex-wrap">
-                    <Link
-                        href="/songs"
-                        className="bg-pink-500 hover:bg-pink-600 px-8 py-3 rounded-full text-lg font-semibold transition"
-                    >
-                        全曲を見る
-                    </Link>
+            <SongsSection
+                latestSongsData={latestSongsData}
+                colaborationSongsData={colaborationSongsData}
+            />
 
-                    <Link
-                        href="/playlist"
-                        className="bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full text-lg font-semibold transition"
-                    >
-                        再生リストへ
-                    </Link>
+            <Flex
+                mt="md"
+                mb="xl"
+                mx="md"
+                gap={{ base: "md", sm: "xl" }}
+                justify="center"
+                direction={{ base: "column", sm: "row" }}
+            >
+                <Button href="/songs/" color="orange.7" size="xl" radius="lg" component={Link}>
+                    <IconPlaylist size={20} style={{ marginRight: 8 }} />
+                    すべての曲を見る
+                </Button>
+                <Button href="/recommend" color="green" size="xl" radius="lg" component={Link}>
+                    <IconMusicHeart size={20} style={{ marginRight: 8 }} />
+                    おすすめの曲診断
+                </Button>
+            </Flex>
 
-                    <Link
-                        href="/random"
-                        className="border border-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-black transition"
-                    >
-                        ランダム再生
-                    </Link>
-                </div>
-            </section>
+            <Title order={2} mt="lg">
+                フィードバック・機能投票
+            </Title>
+            <KoeLoopWidget />
 
-            {/* ===== Popular Songs ===== */}
-            <section className="px-6 py-16 bg-black/30 backdrop-blur">
-                <h2 className="text-3xl font-bold text-center mb-10">人気曲ピックアップ</h2>
-
-                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    {[
-                        { title: "春を待つ", url: "https://youtu.be/xxxxx" },
-                        { title: "花に風", url: "https://youtu.be/yyyyy" },
-                        { title: "君の夜をくれ", url: "https://youtu.be/zzzzz" },
-                    ].map((song, i) => (
-                        <a
-                            key={i}
-                            href={song.url}
-                            target="_blank"
-                            className="bg-white/10 rounded-2xl p-6 hover:bg-white/20 transition shadow-lg"
-                        >
-                            <div className="h-40 bg-gray-700 rounded-xl mb-4"></div>
-                            <h3 className="text-xl font-semibold">{song.title}</h3>
-                            <p className="text-sm text-gray-400 mt-2">YouTubeで再生 →</p>
-                        </a>
-                    ))}
-                </div>
-            </section>
-
-            {/* ===== Features ===== */}
-            <section className="px-6 py-20 text-center">
-                <h2 className="text-3xl font-bold mb-10">このサイトでできること</h2>
-
-                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto text-left">
-                    <div className="bg-white/5 p-6 rounded-2xl">
-                        <h3 className="text-xl font-semibold mb-3">🔎 曲を検索</h3>
-                        <p className="text-gray-400">タイトル・タグ・ボーカルで絞り込み可能。</p>
-                    </div>
-
-                    <div className="bg-white/5 p-6 rounded-2xl">
-                        <h3 className="text-xl font-semibold mb-3">🎵 似ている曲を探す</h3>
-                        <p className="text-gray-400">類似度ベースで新しい発見を。</p>
-                    </div>
-
-                    <div className="bg-white/5 p-6 rounded-2xl">
-                        <h3 className="text-xl font-semibold mb-3">▶ サビだけ再生</h3>
-                        <p className="text-gray-400">印象的な部分だけ連続再生。</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* ===== Footer ===== */}
-            <footer className="text-center text-gray-500 py-10 border-t border-white/10">
-                <p>© 2026 MIMI Songs Introduction</p>
-                <p className="mt-2">非公式ファンサイト</p>
-            </footer>
-        </main>
+            <Title order={2} mb="md" mt="md">
+                「MIMIさん全曲紹介」について
+            </Title>
+            <FadeInUp title="すべての曲を検索">
+                <Text>提供曲を含めた、YouTubeで聴けるほぼすべての曲が検索できます。</Text>
+            </FadeInUp>
+            <Divider my="xl" />
+            <FadeInUp title="お気に入りの曲を発見">
+                <Text>
+                    全曲の分析データをもとに、「似ている曲」を提案。新たなお気に入りの曲を発見できます。
+                </Text>
+            </FadeInUp>
+            <Title order={2} mb="md">
+                知っておいてほしいこと
+            </Title>
+            <FadeInUp title="さまざまな曲を発見するのが目的です">
+                <Text>
+                    このサイトは、MIMIさんのさまざまな曲を知ってもらうために作成しました。
+                    それぞれの曲に優劣をつけたり、MIMIさんの曲のスタイルを批判したりするといった意図はありません。
+                </Text>
+            </FadeInUp>
+            <Divider my="xl" />
+            <FadeInUp title="収益化はしていません">
+                <Text>
+                    このサイトは個人が趣味で運営しているものです。
+                    広告やアフィリエイトなどの収益化は一切行っていません。
+                </Text>
+            </FadeInUp>
+            <Divider my="xl" />
+            <FadeInUp title="生成AIを分析に使用することはありません">
+                <Text>
+                    生成AIはサイトのコーディングにのみ使用しています。
+                    分析データは全て製作者が手作業で作成したものです。
+                </Text>
+                <Text>
+                    また、楽曲の分析データをAIの入力として与えることもないよう注意しています。
+                </Text>
+            </FadeInUp>
+        </MyAppShell>
     );
 }

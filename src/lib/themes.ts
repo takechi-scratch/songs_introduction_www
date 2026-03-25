@@ -1,16 +1,22 @@
 export const ColorThemes = {
     auto: { value: "auto", label: "自動", mantineScheme: "auto" },
-    sky: {
-        value: "sky",
-        label: "静寂に咲く",
+    blue: {
+        value: "blue",
+        label: "ハナタバ",
         mantineScheme: "light",
-        background: { start: "#dbf3ff", end: "#c3d9eb" },
+        background: { start: "#e6f5fa", end: "#aedfee" },
     },
     teal: {
         value: "teal",
         label: "マシュマリー",
         mantineScheme: "light",
         background: { start: "#e6f5fa", end: "#8bbdc7" },
+    },
+    pink: {
+        value: "pink",
+        label: "花びら哀歌",
+        mantineScheme: "light",
+        background: { start: "#f8e3ec", end: "#e2b6c8" },
     },
     indigo: {
         value: "indigo",
@@ -21,4 +27,4 @@ export const ColorThemes = {
 } as const;
 
 export type ColorMode = (typeof ColorThemes)[keyof typeof ColorThemes]["value"];
-export const DefaultColorMode = { auto: "sky", light: "sky", dark: "indigo" } as const;
+export const DefaultColorMode = { auto: "blue", light: "blue", dark: "indigo" } as const;

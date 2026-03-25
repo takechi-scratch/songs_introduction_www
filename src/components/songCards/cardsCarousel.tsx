@@ -10,20 +10,29 @@ export default function SongsCarousel({
     songs,
     displayNotice = true,
     displayScore = null,
+    size = "normal",
 }: {
     songs: (Song | SongWithScore | null)[];
     displayNotice?: boolean;
     displayScore?: boolean | null;
+    size?: "normal" | "small";
 }) {
     if (displayScore === null) {
         displayScore = songs.every((song) => song && hasScore(song) && song.score !== null);
+    }
+
+    let slideSize;
+    if (size === "normal") {
+        slideSize = { base: "100%", sm: "33.33%", lg: "20%" };
+    } else {
+        slideSize = { base: "100%", sm: "50%", lg: "33.33%" };
     }
 
     return (
         <>
             <Carousel
                 height={380}
-                slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
+                slideSize={slideSize}
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", skipSnaps: true }}
             >

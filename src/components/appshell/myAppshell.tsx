@@ -152,7 +152,13 @@ export default function MyAppShell({
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                 >
-                    <Group align="center" justify="space-between" gap="xs" style={{ flex: 1 }}>
+                    <Group
+                        align="center"
+                        justify="space-between"
+                        gap="xs"
+                        mb={0}
+                        style={{ flex: 1 }}
+                    >
                         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
                             <Flex align="center">
                                 <Image

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-// import { Noto_Sans_JP } from "next/font/google";
+import { Noto_Sans_JP } from "next/font/google";
 
-// 将来的に移行予定
-// Noto_Sans_JP();
+const notoSansJP = Noto_Sans_JP();
 
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
@@ -51,7 +50,7 @@ export const metadata: Metadata = {
 };
 
 const theme = createTheme({
-    // fontFamily: "Noto Sans JP, Arial, sans-serif",
+    fontFamily: "Noto Sans JP, Arial, sans-serif",
 });
 
 export async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -66,7 +65,7 @@ export async function RootLayout({ children }: { children: React.ReactNode }) {
     const initialColorMode = toColorMode(cookieStore.get("colorMode")?.value);
 
     return (
-        <html lang="ja" {...mantineHtmlProps}>
+        <html lang="ja" {...mantineHtmlProps} className={notoSansJP.className}>
             <head>
                 <ColorSchemeScript defaultColorScheme="auto" />
             </head>
