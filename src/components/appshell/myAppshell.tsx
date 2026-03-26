@@ -188,7 +188,7 @@ export default function MyAppShell({
                             >
                                 <Anchor
                                     href="/songs"
-                                    c="green"
+                                    c="orange.8"
                                     mr="sm"
                                     component={Link}
                                     className="flex items-center"
