@@ -3,7 +3,7 @@
 import { data } from "./data";
 import { showNotification } from "@mantine/notifications";
 import MantineMarkdown from "@/components/markdown";
-import { Alert } from "@mantine/core";
+import { Alert, Paper, Stack } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 
 // 必ずuseEffect内で呼び出す！
@@ -12,7 +12,15 @@ export function noticeActiveAnnouncements() {
     const isDev = process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true";
 
     const rawShownAnnouncements = localStorage.getItem("shown_announcements") || "[]";
-    const shownAnnouncements: string[] = JSON.parse(rawShownAnnouncements);
+    let shownAnnouncements: string[] = [];
+    try {
+        const parsed = JSON.parse(rawShownAnnouncements);
+        shownAnnouncements = Array.isArray(parsed)
+            ? parsed.filter((item): item is string => typeof item === "string")
+            : [];
+    } catch {
+        shownAnnouncements = [];
+    }
 
     data.sort((a, b) => {
         if (a.pinnedToTop && !b.pinnedToTop) return -1;
@@ -56,18 +64,19 @@ export function PinnedAnnouncements() {
     );
 
     return (
-        <>
-            {pinnedAnnouncements.map((announcement) => (
-                <Alert
-                    key={announcement.id}
-                    title={announcement.title}
-                    icon={<IconInfoCircle />}
-                    mb="md"
-                    {...announcement.alertProps}
-                >
-                    <MantineMarkdown text={announcement.content} textSize="sm" />
-                </Alert>
-            ))}
-        </>
+        <Paper withBorder p="xs" mb="md" radius="md">
+            <Stack gap="md">
+                {pinnedAnnouncements.map((announcement) => (
+                    <Alert
+                        key={announcement.id}
+                        title={announcement.title}
+                        icon={<IconInfoCircle />}
+                        {...announcement.alertProps}
+                    >
+                        <MantineMarkdown text={announcement.content} textSize="sm" />
+                    </Alert>
+                ))}
+            </Stack>
+        </Paper>
     );
 }
