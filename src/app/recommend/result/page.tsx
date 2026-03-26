@@ -1,15 +1,15 @@
 import MyAppShell from "@/components/appshell/myAppshell";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { formatDateTime } from "@/lib/date";
-import { fetchNearestSongs } from "@/lib/songs/api";
+import { fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
 import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
-import { Alert, Anchor, Button, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Button, Image, Text, Title } from "@mantine/core";
 import { IconFlaskFilled } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
-import { PageProps } from "@/lib/utils";
+import { PageProps, shuffleArray } from "@/lib/utils";
 
 async function getRecommendedSongs(
     preferenceRankingParam: string,
@@ -25,8 +25,6 @@ async function getRecommendedSongs(
     ) {
         return null;
     }
-
-    // const randomPickCount = Math.ceil(maxResults / 10);
 
     const preferenceScores: { [key: string]: number } = {};
     const preferenceSongs: { [key: string]: Song } = {};
@@ -56,7 +54,18 @@ async function getRecommendedSongs(
         score: Math.pow(preferenceScores[key], 1 / (powerForEachScore + powerForRankingWeight)),
     }));
     recommendedSongs.sort((a, b) => b.score - a.score);
-    return recommendedSongs.slice(0, maxResults);
+
+    const randomPickCount = Math.ceil(maxResults / 10);
+    const allSongs = (await fetchAllSongs()).filter(
+        (song) => !(song.id in preferenceSongs || song.publishedType === -1)
+    );
+    shuffleArray(allSongs);
+    const randomlyPickedSongs = allSongs.slice(0, randomPickCount);
+
+    return [
+        ...recommendedSongs.slice(0, maxResults - randomPickCount),
+        ...randomlyPickedSongs.map((song) => ({ id: song.id, song, score: 0 })),
+    ];
 }
 
 export const generateMetadata = async ({ searchParams }: PageProps): Promise<Metadata> => {
@@ -120,9 +129,7 @@ async function RecommendResultPage(props: PageProps) {
         );
     }
 
-    const recommendedSongs = await getRecommendedSongs(preferenceRankingParam, 2, 5);
-    const recommendedSongs2 = await getRecommendedSongs(preferenceRankingParam, 3, 5);
-    const recommendedSongs3 = await getRecommendedSongs(preferenceRankingParam, 4, 5);
+    const recommendedSongs = await getRecommendedSongs(preferenceRankingParam, 3, 5);
     if (recommendedSongs === null) {
         return (
             <>
@@ -139,42 +146,28 @@ async function RecommendResultPage(props: PageProps) {
 
     return (
         <>
-            <Text mb="md">{name} さんへおすすめの曲はこちら！</Text>
+            <Text mb="md">{name} さんにおすすめの曲はこちら！</Text>
 
-            <Title order={2} mb="sm">
-                パターン1
-            </Title>
             <SongsCarousel songs={recommendedSongs} displayScore={false} />
-
-            <Title order={2} mb="sm">
-                パターン2
-            </Title>
-            <SongsCarousel
-                songs={recommendedSongs2 ?? []}
-                displayNotice={false}
-                displayScore={false}
-            />
-
-            <Title order={2} mb="sm">
-                パターン3
-            </Title>
-            <SongsCarousel
-                songs={recommendedSongs3 ?? []}
-                displayNotice={false}
-                displayScore={false}
-            />
 
             <Text mb="md">診断日時: {formatDateTime(Number(timestamp) / 1000)}</Text>
             <CreatePlaylistButton songs={recommendedSongs} name={name} />
             <Button
                 component="a"
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${name} さんへのおすすめ曲はこちら！\n#MIMIさん全曲紹介\n${baseURL}?${paramsInURL}`)}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${name} さんにおすすめの曲はこちら！\n#MIMIさん全曲紹介\n${baseURL}?${paramsInURL}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 color="gray"
                 mr="md"
             >
-                Xでシェア
+                <Image
+                    src={"/assets/x-logo-white.png"}
+                    alt="Twitterロゴ"
+                    width={16}
+                    height={16}
+                    mr={6}
+                />
+                シェア
             </Button>
         </>
     );
@@ -184,14 +177,6 @@ export default async function RecommendPage(props: PageProps) {
     return (
         <MyAppShell>
             <Title mb="md">診断結果</Title>
-            <Alert mb="lg" radius="md" color="green" icon={<IconFlaskFilled />}>
-                <Text size="sm">この機能は現在テスト中です。</Text>
-                <Text size="sm">
-                    診断アルゴリズムを比較するため、おすすめ曲の候補を複数表示しています。
-                    どのおすすめが最もあなたに合っているか、
-                    <Link href="/contact">お問い合わせ</Link>でぜひ教えてください！
-                </Text>
-            </Alert>
             <Suspense fallback={<Text>結果を読み込み中...</Text>}>
                 <RecommendResultPage searchParams={props.searchParams} />
             </Suspense>
@@ -201,6 +186,11 @@ export default async function RecommendPage(props: PageProps) {
             <Anchor component={Link} href="/docs/analysis/recommend">
                 診断の仕組み（詳しい情報）
             </Anchor>
+            <Alert mt="lg" color="green" icon={<IconFlaskFilled />}>
+                <Text size="sm">
+                    診断アルゴリズムをよりよいものにするため、好きになった曲・あまり好みではなかった曲をシェアしていただけると嬉しいです！
+                </Text>
+            </Alert>
         </MyAppShell>
     );
 }
