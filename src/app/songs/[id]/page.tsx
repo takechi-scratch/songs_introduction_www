@@ -101,7 +101,12 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 
     return (
         <MyAppShell>
-            <Title mb="lg">曲ID: {song.id}</Title>
+            <Title order={1} size="h2" mb="lg" visibleFrom="sm">
+                {song.title}
+            </Title>
+            <Title order={1} size="h3" mb="lg" hiddenFrom="sm">
+                {song.title}
+            </Title>
             {song.publishedType === -1 && (
                 <Alert
                     variant="light"
@@ -140,28 +145,6 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                         </Suspense>
                     </div>
                     <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
-                        <Button
-                            component="a"
-                            href={`https://www.youtube.com/watch?v=${song.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="red"
-                        >
-                            YouTubeで聴く
-                        </Button>
-                        <Button
-                            component="a"
-                            href={`https://open.spotify.com/search/${encodeURIComponent(
-                                song.title
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="teal"
-                        >
-                            Spotifyで検索
-                        </Button>
                         <Anchor href="/" component={Link}>
                             ホームに戻る
                         </Anchor>

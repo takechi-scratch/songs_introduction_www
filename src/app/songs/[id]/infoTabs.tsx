@@ -2,6 +2,7 @@
 
 import {
     Alert,
+    Anchor,
     Badge,
     Box,
     Button,
@@ -40,9 +41,9 @@ function valueFormatter(value: number) {
 export default function InfoTabs({ song }: { song: Song }) {
     let publishedType = "";
     if (song.publishedType === 1) {
-        publishedType = "オリジナル曲";
+        publishedType = "オリジナル曲（MIMIさんのチャンネルで公開）";
     } else if (song.publishedType === 0) {
-        publishedType = "提供曲（他チャンネル）";
+        publishedType = "提供曲（他チャンネルで公開）";
     } else if (song.publishedType === -1) {
         publishedType = "仮掲載（先行公開・予想など）";
     } else {
@@ -121,8 +122,18 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={140}>タイトル</Table.Th>
-                            <Table.Td>{song.title}</Table.Td>
+                            <Table.Th w={140}>URL</Table.Th>
+                            <Table.Td>
+                                <Anchor
+                                    size="sm"
+                                    href={`https://www.youtube.com/watch?v=${song.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    component={Link}
+                                >
+                                    https://www.youtube.com/watch?v={song.id}
+                                </Anchor>
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
@@ -385,9 +396,19 @@ export default function InfoTabs({ song }: { song: Song }) {
                     補足・メモ
                 </Title>
                 {song.comment ? <MantineMarkdown text={song.comment} /> : <Text m="sm">なし</Text>}
+                <Divider my="md" />
+                <Button
+                    component="a"
+                    href={`https://open.spotify.com/search/${encodeURIComponent(song.title)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="filled"
+                    color="teal"
+                >
+                    Spotifyで検索
+                </Button>
                 {userRole === "admin" && (
                     <>
-                        <Divider my="md" />
                         <Button component={Link} href={`/songs/edit?id=${song.id}`} color="blue">
                             データの編集
                         </Button>
