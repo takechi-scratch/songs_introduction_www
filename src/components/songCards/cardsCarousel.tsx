@@ -10,31 +10,40 @@ export default function SongsCarousel({
     songs,
     displayNotice = true,
     displayScore = null,
+    size = "normal",
 }: {
     songs: (Song | SongWithScore | null)[];
     displayNotice?: boolean;
     displayScore?: boolean | null;
+    size?: "normal" | "small";
 }) {
     if (displayScore === null) {
         displayScore = songs.every((song) => song && hasScore(song) && song.score !== null);
+    }
+
+    let slideSize;
+    if (size === "normal") {
+        slideSize = { base: "100%", sm: "33.33%", lg: "20%" };
+    } else {
+        slideSize = { base: "100%", sm: "50%", lg: "33.33%" };
     }
 
     return (
         <>
             <Carousel
                 height={380}
-                slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
+                slideSize={slideSize}
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", skipSnaps: true }}
             >
-                {songs.map((song) => (
-                    <Carousel.Slide key={song ? song.id : Math.random()}>
+                {songs.map((song, index) => (
+                    <Carousel.Slide key={song ? song.id : `placeholder-${index}`}>
                         <SongCard song={song} displayScore={displayScore} />
                     </Carousel.Slide>
                 ))}
             </Carousel>
             {displayNotice && displayScore && (
-                <Text size="sm" c="gray.8" mb="md">
+                <Text size="sm" opacity={0.6} mb="md">
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>
             )}

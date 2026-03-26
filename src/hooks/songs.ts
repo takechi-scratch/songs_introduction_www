@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { advancedSearchForSongs, fetchNearestSongs, fetchSongById } from "@/lib/songs/api";
+import {
+    advancedSearchForSongs,
+    fetchNearestSongs,
+    fetchSongById,
+    getSampleSongs as fetchSampleSongs,
+} from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { SongSearchParams } from "@/lib/search/search";
+import { SongSampleParams, SongSearchParams } from "@/lib/search/search";
 import { shuffleArray } from "@/lib/utils";
 
 export function useAdvancedSearch(searchParams: SongSearchParams, random: boolean = false) {
@@ -91,4 +96,29 @@ export function useNearestSongs(id: string, limit: number = 10) {
     }, [id, limit]);
 
     return { songs, loading, error, refetch: () => loadNearestSongs(id, limit) };
+}
+
+export function useSampleSongs(params: SongSampleParams) {
+    const [songs, setSongs] = useState<Song[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    async function loadSampleSongs(params: SongSampleParams) {
+        try {
+            setLoading(true);
+            const data = await fetchSampleSongs(params);
+            setSongs(data);
+            setError(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Unknown error");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadSampleSongs(params);
+    }, [params]);
+
+    return { songs, loading, error, refetch: () => loadSampleSongs(params) };
 }

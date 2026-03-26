@@ -1,7 +1,7 @@
 "use client";
 
 import AdminOnlyComponent from "@/components/adminOnly";
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Button, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
@@ -84,7 +84,7 @@ function ServiceAccountPage() {
             <Button color="orange" onClick={handleStartAuth} mb="md">
                 認証・トークンを更新
             </Button>
-            <Text mb="md" c="dimmed" size="sm">
+            <Text mb="md" opacity={0.6} size="sm">
                 ※2分以内に認証を完了させてください。
             </Text>
         </>

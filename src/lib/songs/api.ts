@@ -1,7 +1,7 @@
 import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
 import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
-import { refreshHomePage, refreshSongPage } from "./refresh";
-import { SongSearchParams } from "../search/search";
+import { refreshHomePage, refreshSongPage } from "../refresh";
+import { SongSampleParams, SongSearchParams } from "../search/search";
 import { shuffleArray } from "../utils";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -197,6 +197,30 @@ export async function upsertLyricsVector(data: UpsertLyricsVec[]): Promise<void>
         await Promise.all([...data.map((item) => refreshSongPage(item.id)), refreshHomePage()]);
     } catch (error) {
         console.error(`Failed to upsert lyrics vectors:`, error);
+        throw error;
+    }
+}
+
+export async function getSampleSongs(params: SongSampleParams): Promise<Song[]> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/songs-sample/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(params),
+            next: { tags: ["songs-all"] },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
+        }
+
+        const result: Song[] = await response.json();
+
+        return result;
+    } catch (error) {
+        console.error(`Failed to search songs with params ${JSON.stringify(params)}:`, error);
         throw error;
     }
 }

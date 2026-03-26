@@ -8,45 +8,57 @@ import { notifications } from "@mantine/notifications";
 import { IconPlaylistX, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
 
-export function confirmModal(isMany: boolean = false, inValidSongs: (Song | SongWithScore)[] = []) {
+export function confirmModal(
+    isMany: boolean = false,
+    inValidSongs: (Song | SongWithScore)[] = [],
+    valid: boolean = true
+): Promise<boolean> {
+    let children;
+    if (!valid) {
+        children = <Text size="sm">すべての曲が仮掲載のため、再生リストを作成できません。</Text>;
+    } else {
+        children = (
+            <List size="sm" spacing="xs">
+                {isMany && (
+                    <List.Item>曲数が多いため、操作に時間がかかる場合があります。</List.Item>
+                )}
+                {inValidSongs.length > 0 && valid && (
+                    <List.Item>
+                        以下の曲は仮掲載のため、再生リストには含まれません。
+                        <List size="sm">
+                            {inValidSongs.map((song) => (
+                                <List.Item key={song.id}>
+                                    <Link
+                                        href={`/songs/${song.id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {hasScore(song) ? song.song.title : song.title}
+                                    </Link>
+                                </List.Item>
+                            ))}
+                        </List>
+                    </List.Item>
+                )}
+                <List.Item>
+                    作成した再生リストは、
+                    <Link href="https://www.youtube.com/@songs-introduction">
+                        「MIMIさん全曲紹介」のチャンネル
+                    </Link>
+                    で公開されます。
+                </List.Item>
+            </List>
+        );
+    }
+
     return new Promise<boolean>((resolve) => {
         modals.openConfirmModal({
             title: "確認",
-            children: (
-                <List size="sm" spacing="xs">
-                    {isMany && (
-                        <List.Item>曲数が多いため、操作に時間がかかる場合があります。</List.Item>
-                    )}
-                    {inValidSongs.length > 0 && (
-                        <List.Item>
-                            以下の曲は仮掲載のため、再生リストには含まれません。
-                            <List size="sm">
-                                {inValidSongs.map((song) => (
-                                    <List.Item key={song.id}>
-                                        <Link
-                                            href={`/songs/${song.id}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {hasScore(song) ? song.song.title : song.title}
-                                        </Link>
-                                    </List.Item>
-                                ))}
-                            </List>
-                        </List.Item>
-                    )}
-                    <List.Item>
-                        作成した再生リストは、
-                        <Link href="https://www.youtube.com/@songs-introduction">
-                            「MIMIさん全曲紹介」のチャンネル
-                        </Link>
-                        で公開されます。
-                    </List.Item>
-                </List>
-            ),
+            children: children,
             labels: { confirm: "作成", cancel: "キャンセル" },
             onConfirm: () => resolve(true),
             onCancel: () => resolve(false),
+            confirmProps: { disabled: !valid },
         });
     });
 }

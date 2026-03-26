@@ -10,7 +10,7 @@ export default function WarningTip({
     if (!warning) return children;
 
     return (
-        <Tooltip label={warning}>
+        <Tooltip label={warning} events={{ hover: true, focus: true, touch: true }}>
             <div>{children}</div>
         </Tooltip>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { loginWithEmailAndPassword } from "@/lib/auth/firebase";
 import { TextInput, PasswordInput, Button, Title, Alert, Anchor, Divider } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";

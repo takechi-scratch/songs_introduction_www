@@ -1,11 +1,10 @@
-import MyAppShell from "@/components/appshell";
-import { Alert, Anchor, Button, Flex, Text, Title } from "@mantine/core";
+import MyAppShell from "@/components/appshell/myAppshell";
+import { Alert, Anchor, Box, Divider, Flex, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import {
-    advancedSearchForSongs,
     fetchAllSongs,
     fetchNearestSongs,
     fetchSongById,
@@ -16,7 +15,9 @@ import { Metadata } from "next";
 import "@mantine/charts/styles.css";
 import InfoTabs from "./infoTabs";
 import { Suspense } from "react";
-import { hasLyrics } from "@/lib/musicValues";
+import { CommentCard, NewCommentCard } from "@/components/commentCard";
+import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import rison from "rison";
 
 export const generateMetadata = async ({
     params,
@@ -71,20 +72,11 @@ export const generateMetadata = async ({
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;
 
-    let song, nearestSongs, nearestLyricsSongs;
+    let song, nearestSongs;
     try {
         song = await fetchSongById(id);
         if (scoreCanBeCalculated(song)) {
-            // 並列実行で待機時間を短縮
-            const promises = [
-                fetchNearestSongs(id),
-                hasLyrics(song)
-                    ? advancedSearchForSongs({
-                          nearest: { targetSongID: id, parameters: { lyricsVector: 1.0 } },
-                      })
-                    : Promise.resolve(undefined),
-            ];
-            [nearestSongs, nearestLyricsSongs] = await Promise.all(promises);
+            nearestSongs = await fetchNearestSongs(id);
         }
     } catch (error) {
         console.error("Error fetching song data:", error);
@@ -105,9 +97,16 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
         );
     }
 
+    const comments = await fetchCommentsBySongID(id);
+
     return (
         <MyAppShell>
-            <Title mb="lg">曲ID: {song.id}</Title>
+            <Title order={1} size="h2" mb="lg" visibleFrom="sm">
+                {song.title}
+            </Title>
+            <Title order={1} size="h3" mb="lg" hiddenFrom="sm">
+                {song.title}
+            </Title>
             {song.publishedType === -1 && (
                 <Alert
                     variant="light"
@@ -146,41 +145,21 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                         </Suspense>
                     </div>
                     <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
-                        <Button
-                            component="a"
-                            href={`https://www.youtube.com/watch?v=${song.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="red"
-                        >
-                            YouTubeで聴く
-                        </Button>
-                        <Button
-                            component="a"
-                            href={`https://open.spotify.com/search/${encodeURIComponent(
-                                song.title
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="teal"
-                        >
-                            Spotifyで検索
-                        </Button>
                         <Anchor href="/" component={Link}>
                             ホームに戻る
                         </Anchor>
                     </Flex>
                 </div>
-                <InfoTabs song={song} />
+                <Paper p="md" radius="md" shadow="sm" withBorder style={{ flex: 1 }}>
+                    <InfoTabs song={song} />
+                </Paper>
             </Flex>
 
             <Flex mb="md" mt="xl" gap="xl" align="end">
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
                     <Anchor
-                        href={`/songs/?params=nearest:(targetSongID:'${song.id}')`}
+                        href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID: song.id } })}`}
                         component={Link}
                     >
                         高度な条件で探す
@@ -189,19 +168,32 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             </Flex>
 
             {nearestSongs ? (
-                <NearestSongsCarousel songs={nearestSongs} displayNotice={!nearestLyricsSongs} />
+                <NearestSongsCarousel songs={nearestSongs} />
             ) : (
                 <Text>分析データが不足しているため、似ている曲を算出できません。</Text>
             )}
 
-            {nearestLyricsSongs && (
-                <>
-                    <Title mt="xl" order={2}>
-                        歌詞が似ている曲
-                    </Title>
-                    <NearestSongsCarousel songs={nearestLyricsSongs} />
-                </>
-            )}
+            <Title mb="md" mt="xl" order={2}>
+                コメント
+            </Title>
+            <Paper p="md" radius="md" shadow="xs">
+                <NewCommentCard songID={song.id} />
+
+                {comments.length > 0 ? (
+                    comments.map((comment) => (
+                        <Box key={comment.id}>
+                            <Divider my="sm" />
+                            <CommentCard comment={comment} />
+                        </Box>
+                    ))
+                ) : (
+                    <>
+                        <Text mb="lg">
+                            この曲にはまだコメントがありません。最初のコメントを投稿しましょう！
+                        </Text>
+                    </>
+                )}
+            </Paper>
         </MyAppShell>
     );
 }
@@ -211,6 +203,5 @@ export async function generateStaticParams() {
     return songs.map((song) => ({ id: song.id }));
 }
 
-// バックエンドからの曲の直接追加用
-// TODO: 曲一覧のrevalidateエンドポイントの作成
-export const dynamicParams = true;
+// バックエンドで曲を直接追加したら、管理者ページからRevalidteを行う
+export const dynamicParams = false;

@@ -1,11 +1,13 @@
 "use client";
 
-import { Code, Divider, Table, Text, Title } from "@mantine/core";
+import { Anchor, Code, Divider, Table, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
 
 export default function MantineMarkdown({
     text,
@@ -19,17 +21,28 @@ export default function MantineMarkdown({
             remarkPlugins={[remarkGfm, remarkBreaks]}
             components={{
                 a: ({ href, children, ...props }) => {
-                    if (!href || href?.startsWith("http")) {
+                    if (!href || (href?.startsWith("http") && !href.startsWith(BASE_URL))) {
                         return (
-                            <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                            <Anchor
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer nofollow"
+                                style={{ wordBreak: "break-all" }}
+                                {...props}
+                            >
                                 {children}
-                            </a>
+                            </Anchor>
                         );
                     } else {
                         return (
-                            <Link href={href} {...props}>
+                            <Anchor
+                                component={Link}
+                                href={href}
+                                style={{ wordBreak: "break-all" }}
+                                {...props}
+                            >
                                 {children}
-                            </Link>
+                            </Anchor>
                         );
                     }
                 },

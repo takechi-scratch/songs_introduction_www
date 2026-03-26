@@ -6,6 +6,8 @@ import {
     AuthProvider,
     signInWithRedirect,
     signInWithEmailAndPassword,
+    signInAnonymously,
+    linkWithPopup,
 } from "firebase/auth";
 
 // Import the functions you need from the SDKs you need
@@ -64,6 +66,8 @@ export async function getCurrentUserRole(): Promise<string> {
         return "admin";
     } else if (idTokenResult?.claims.editor === true) {
         return "editor";
+    } else if (idTokenResult?.signInProvider === "anonymous") {
+        return "user-temp";
     } else {
         return "user";
     }
@@ -100,6 +104,27 @@ export async function loginWithProvider(provider: AuthProvider): Promise<User> {
 export function loginWithProviderRedirect(provider: AuthProvider): Promise<void> {
     const auth = getAuth();
     return signInWithRedirect(auth, provider);
+}
+
+export async function loginWithAnonymous(): Promise<User> {
+    const auth = getAuth();
+    const result = await signInAnonymously(auth);
+    return result.user;
+}
+
+export async function linkAnonymousAccountWithProvider(provider: AuthProvider): Promise<User> {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error("No user is currently signed in.");
+    }
+    if (!user.isAnonymous) {
+        throw new Error("Current user is not anonymous.");
+    }
+
+    // TODO: すでにユーザーが存在する場合はエラーになり、ユーザーデータを統合する必要がある
+    const result = await linkWithPopup(user, provider);
+    return result.user;
 }
 
 // ログアウト関数

@@ -41,5 +41,5 @@
 ### GitHubリポジトリ
 - フロントエンド: https://github.com/takechi-scratch/songs_introduction_www
 - バックエンド: https://github.com/takechi-scratch/songs_introduction_backend
-- 歌詞分析: 公開準備中
+- 歌詞分析: https://github.com/takechi-scratch/lyrics2vec
 - 歌詞検索アプリ: 公開準備中（著作権保護のため、歌詞のテキストデータは非公開）

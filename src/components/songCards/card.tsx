@@ -1,4 +1,6 @@
-import { Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
+"use client";
+
+import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import Link from "next/link";
@@ -44,7 +46,10 @@ export default function SongCard({
         hoverData = (
             <>
                 {song.publishedType === -1 && (
-                    <Tooltip label="仮掲載中（不正確な可能性あり）">
+                    <Tooltip
+                        label="仮掲載中（不正確な可能性あり）"
+                        events={{ hover: true, focus: true, touch: true }}
+                    >
                         <IconCalendarClock color="#ffa94d" />
                     </Tooltip>
                 )}
@@ -71,12 +76,16 @@ export default function SongCard({
             href={`/songs/${song.id}/`}
         >
             <Card.Section>
-                <Image
-                    src={song.thumbnailURL || null}
-                    h={200}
-                    alt={`${song.title}のサムネイル`}
-                    fit="contain"
-                />
+                <AspectRatio ratio={16 / 9}>
+                    <Image
+                        src={song.thumbnailURL || null}
+                        alt={`${song.title}のサムネイル`}
+                        fit="cover"
+                        h="100%"
+                        w="100%"
+                        style={{ objectPosition: "center" }}
+                    />
+                </AspectRatio>
             </Card.Section>
 
             <Group justify="flex-end" mt="xs">

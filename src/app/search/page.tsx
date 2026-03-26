@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Title, Text, Anchor } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -17,7 +17,7 @@ function SearchPage() {
 
 export default function Page() {
     return (
-        <MyAppShell>
+        <MyAppShell wrapInPaper>
             <Title order={2} mb="md">
                 詳細検索
             </Title>

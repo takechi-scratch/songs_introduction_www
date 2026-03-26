@@ -20,15 +20,15 @@ export default function CardsList({ songs }: { songs: (Song | SongWithScore | nu
             >
                 {songs
                     .slice((pageIndex - 1) * songsPerPage, pageIndex * songsPerPage)
-                    .map((song) => {
-                        return <Card key={song ? song.id : Math.random()} song={song} />;
+                    .map((song, index) => {
+                        return <Card key={song ? song.id : `placeholder-${index}`} song={song} />;
                     })}
             </SimpleGrid>
             <Center m="lg">
                 <Pagination total={pages} onChange={setPageIndex} />
             </Center>
             {songs.every((song) => song && hasScore(song) && song.score !== null) && (
-                <Text size="sm" c="gray.8" mb="md">
+                <Text size="sm" opacity={0.6} mb="md">
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>
             )}

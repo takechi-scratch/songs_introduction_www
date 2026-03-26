@@ -14,9 +14,13 @@ import {
     IconUserCog,
     IconFileMusic,
     IconRefresh,
+    IconCopyleft,
+    IconMessageChatbot,
+    IconUserQuestion,
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import ColorModeMenu from "./colorModeMenu";
 
 export default function UserMenu() {
     const { user } = useAuth();
@@ -25,6 +29,8 @@ export default function UserMenu() {
     let userImage;
     if (user === null) {
         userImage = <IconUserFilled color="#868e96" width={32} height={32} />;
+    } else if (userRole === "user-temp") {
+        userImage = <IconUserQuestion color="#1c79d6" width={32} height={32} />;
     } else if (user?.photoURL === null) {
         userImage = <IconUserCheck color="#1c79d6" width={32} height={32} />;
     } else {
@@ -40,13 +46,17 @@ export default function UserMenu() {
     }
 
     return (
-        <Menu shadow="md" width={250}>
+        <Menu shadow="md" width={250} position="bottom-end" closeOnItemClick={false}>
             <Menu.Target>{userImage}</Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item>{user ? `${user.email} (${userRole})` : "未ログイン"}</Menu.Item>
+                <Menu.Item>
+                    {user
+                        ? `${user.displayName || user.email || user.uid} (${userRole})`
+                        : "未ログイン"}
+                </Menu.Item>
 
-                {user && userRole !== "user" && (
+                {user && (userRole === "editor" || userRole === "admin") && (
                     <>
                         <Menu.Divider />
                         <Menu.Label>編集者用</Menu.Label>
@@ -90,26 +100,55 @@ export default function UserMenu() {
 
                 <Menu.Divider />
                 <Menu.Label>メニュー</Menu.Label>
-                {user ? (
-                    <Menu.Item
-                        color="red"
-                        // component={UnstyledButton}
-                        leftSection={<IconLogout size={14} />}
-                        onClick={async () => {
-                            await logout();
-                            notifications.show({
-                                title: "ログアウトしました",
-                                message: "またのご利用をお待ちしております。",
-                            });
-                        }}
-                    >
-                        ログアウト
-                    </Menu.Item>
-                ) : (
+                {userRole === "guest" && (
                     <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
                         ログイン
                     </Menu.Item>
                 )}
+                {userRole === "user-temp" && (
+                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                        アカウント連携
+                    </Menu.Item>
+                )}
+                {userRole !== "guest" && userRole !== "user-temp" && (
+                    <>
+                        <Menu.Item
+                            href="/settings"
+                            component={Link}
+                            leftSection={<IconUserCog size={14} />}
+                        >
+                            ユーザー設定
+                        </Menu.Item>
+                        <Menu.Item
+                            color="red"
+                            leftSection={<IconLogout size={14} />}
+                            onClick={async () => {
+                                await logout();
+                                notifications.show({
+                                    title: "ログアウトしました",
+                                    message: "またのご利用をお待ちしております。",
+                                });
+                            }}
+                        >
+                            ログアウト
+                        </Menu.Item>
+                    </>
+                )}
+                <Menu.Item
+                    href="/contact"
+                    component={Link}
+                    leftSection={<IconMessageChatbot size={14} />}
+                >
+                    お問い合わせ・機能提案
+                </Menu.Item>
+                <Menu.Item
+                    href="/docs/credits"
+                    component={Link}
+                    leftSection={<IconCopyleft size={14} />}
+                >
+                    クレジット
+                </Menu.Item>
+                <ColorModeMenu submenu />
             </Menu.Dropdown>
         </Menu>
     );

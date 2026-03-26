@@ -1,31 +1,25 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
-import ReactPlayer from "react-player";
-import { useAdvancedSearch } from "@/hooks/songs";
-import { Song } from "@/lib/songs/types";
+import MyAppShell from "@/components/appshell/myAppshell";
+import { useSampleSongs } from "@/hooks/songs";
 import {
-    Alert,
     Button,
+    Center,
     Checkbox,
     Divider,
     Flex,
     Paper,
-    Progress,
     Radio,
     SegmentedControl,
     Stack,
     Text,
     TextInput,
     Title,
-    Tooltip,
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { IconFlaskFilled } from "@tabler/icons-react";
+import SongPreferenceQuestion from "@/components/songPreferenceQuestion";
 import Link from "next/link";
-import { estimateComparisons } from "@/lib/utils";
-import { SongSearchParams } from "@/lib/search/search";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -39,6 +33,8 @@ const songsPeriod = {
 interface TestSettings {
     name: string;
     limit: number;
+    includeRequestedSongs?: boolean;
+    publishedAfter?: number;
 }
 
 function Start({ startCallback }: { startCallback?: () => void }) {
@@ -48,27 +44,22 @@ function Start({ startCallback }: { startCallback?: () => void }) {
             <Button size="lg" radius="md" onClick={startCallback}>
                 診断を始める
             </Button>
+            <Button component={Link} href="/recommend/all-ranking" variant="subtle" color="gray">
+                あなたの全曲ランキングを作る
+            </Button>
         </Flex>
     );
 }
 
 function Prepare({
-    searchParams,
-    setSearchParams,
     proceedCallback,
     settings,
     setSettings,
 }: {
-    searchParams: SongSearchParams;
-    setSearchParams: (params: SongSearchParams) => void;
     proceedCallback?: () => void;
     settings: TestSettings;
     setSettings: (settings: TestSettings) => void;
 }) {
-    if (!searchParams.filter) {
-        return <Text>検索条件が正しく初期化されていません。前の画面に戻ってください。</Text>;
-    }
-
     return (
         <Flex direction="column" gap="lg" align="center">
             <Text>まず、いくつかの質問に答えてください。</Text>
@@ -82,7 +73,7 @@ function Prepare({
 
                 <Stack gap={0}>
                     <Text size="sm">診断の質問数</Text>
-                    <Text size="xs" c="dimmed" mb="xs">
+                    <Text size="xs" opacity={0.6} mb="xs">
                         右に行くほど正確に診断できますが、時間がかかります。
                     </Text>
                     <SegmentedControl
@@ -101,14 +92,11 @@ function Prepare({
                 <Radio.Group
                     name="startFrom"
                     label="MIMIさんの楽曲で、知っているのはいつ頃からですか？"
-                    value={String(searchParams.filter.publishedAfter || "")}
+                    value={String(settings.publishedAfter || "")}
                     onChange={(value) =>
-                        setSearchParams({
-                            ...searchParams,
-                            filter: {
-                                ...searchParams.filter,
-                                publishedAfter: Number(value),
-                            },
+                        setSettings({
+                            ...settings,
+                            publishedAfter: value ? Number(value) : undefined,
                         })
                     }
                 >
@@ -121,14 +109,11 @@ function Prepare({
                 <Divider />
                 <Checkbox
                     label="提供曲も質問に含める"
-                    checked={searchParams.filter.publishedType !== 1}
+                    checked={settings.includeRequestedSongs}
                     onChange={(e) =>
-                        setSearchParams({
-                            ...searchParams,
-                            filter: {
-                                ...searchParams.filter,
-                                publishedType: e.currentTarget.checked ? undefined : 1,
-                            },
+                        setSettings({
+                            ...settings,
+                            includeRequestedSongs: e.currentTarget.checked,
                         })
                     }
                 />
@@ -140,159 +125,24 @@ function Prepare({
     );
 }
 
-type SongsBetter = Map<string, Set<string>>;
-
 function Choice({
-    songs,
-    navigateToResults,
+    settings,
     backToPrepare,
 }: {
-    songs: Song[];
-    navigateToResults: (sortedSongIDs: string[]) => void;
+    settings: TestSettings;
     backToPrepare: () => void;
 }) {
-    const [comparisons, setComparisons] = useState<SongsBetter>(new Map());
-    const [currentPair, setCurrentPair] = useState<[Song, Song] | null>(null);
-
-    const [sortedSongs, validAnswersCount] = useMemo(() => {
-        console.log("Current comparisons:", comparisons);
-        if (songs.length === 0) return [[], 0];
-        let count = 0;
-
-        try {
-            return [
-                songs.toSorted((a, b) => {
-                    const aBetterThanB = comparisons.get(b.id)?.has(a.id) ?? false;
-                    const bBetterThanA = comparisons.get(a.id)?.has(b.id) ?? false;
-
-                    if (aBetterThanB) {
-                        count += 1;
-                        return -1; // Aの方が良い
-                    } else if (bBetterThanA) {
-                        count += 1;
-                        return 1; // Bの方が良い
-                    } else {
-                        setCurrentPair([a, b]);
-                        throw new Error("Comparison needed");
-                    }
-                }),
-                count,
-            ];
-        } catch {
-            return [null, count];
-        }
-    }, [songs, comparisons]);
-
-    const progress = (validAnswersCount / estimateComparisons(songs.length)) * 100;
-    // console.log(estimateComparisons(songs.length));
-    // console.log(songs.length * Math.log2(songs.length));
-
-    function handleChoice(better: Song, worse: Song) {
-        setComparisons((prev) => {
-            const newMap = new Map(prev);
-            if (!newMap.has(worse.id)) {
-                newMap.set(worse.id, new Set());
-            }
-            newMap.get(worse.id)?.add(better.id);
-            return newMap;
-        });
-        setCurrentPair(null);
-    }
-
-    if (songs.length === 0) {
-        return <Text>曲が読み込まれていません。前の画面に戻ってください。</Text>;
-    }
-
-    if (sortedSongs) {
-        navigateToResults(sortedSongs.map((song) => song.id));
-        return <Text>診断が完了しました。結果を読み込み中...</Text>;
-    }
-
-    if (!currentPair) {
-        return <Text>次の曲を読み込み中...</Text>;
-    }
-
-    const [songA, songB] = currentPair;
-
-    return (
-        <Stack gap="lg" align="center">
-            <Text size="lg" fw={500}>
-                どちらの曲が好きですか？
-            </Text>
-
-            <Tooltip
-                label={`${validAnswersCount} / ${estimateComparisons(songs.length)} （予測のため、質問回数は前後します）`}
-            >
-                <Progress radius="md" size="lg" value={Math.min(progress, 100)} w="100%" />
-            </Tooltip>
-
-            <Flex gap="md" direction={{ base: "column", sm: "row" }} w="100%">
-                <Paper
-                    withBorder
-                    bg="red.0"
-                    p="md"
-                    onClick={() => handleChoice(songA, songB)}
-                    style={{ flex: 1 }}
-                >
-                    <Flex direction="column" gap="md" align="center">
-                        <Text>{songA.title}</Text>
-                        <ReactPlayer
-                            src={`https://www.youtube.com/watch?v=${songA.id}`}
-                            controls
-                            fallback={
-                                <div style={{ width: "100%", aspectRatio: "16/9" }}>Loading...</div>
-                            }
-                        />
-                    </Flex>
-                </Paper>
-                <Paper
-                    withBorder
-                    bg="blue.0"
-                    p="md"
-                    onClick={() => handleChoice(songB, songA)}
-                    style={{ flex: 1 }}
-                >
-                    <Flex direction="column" gap="md" align="center">
-                        <Text>{songB.title}</Text>
-                        <ReactPlayer
-                            src={`https://www.youtube.com/watch?v=${songB.id}`}
-                            controls
-                            fallback={
-                                <div style={{ width: "100%", aspectRatio: "16/9" }}>Loading...</div>
-                            }
-                        />
-                    </Flex>
-                </Paper>
-            </Flex>
-
-            <Button variant="subtle" onClick={backToPrepare} color="orange">
-                設定に戻る
-            </Button>
-        </Stack>
-    );
-}
-
-export default function RecommendPage() {
-    const [settings, setSettings] = useState<TestSettings>({ name: "ゲスト", limit: 8 });
-    const [status, setStatus] = useState<status>("start");
-    const [searchParams, setSearchParams] = useState<SongSearchParams>({
-        filter: {
-            publishedAfter: Math.min(...Object.values(songsPeriod)),
-            publishedType: 1,
-        },
-    });
-
-    const { songs: fetchedSongs, refetch: refetchSongs } = useAdvancedSearch(searchParams, true);
-    const sampleSongs = useMemo(() => {
-        const filteredSongs = fetchedSongs
-            .filter((song) => song !== null && song.score === null)
-            .map((song) => song?.song);
-        return filteredSongs.slice(0, settings.limit) as Song[];
-    }, [fetchedSongs, settings.limit]);
-
+    const songSearchParams = useMemo(() => {
+        return {
+            filter: {
+                publishedAfter: settings?.publishedAfter,
+                publishedType: settings?.includeRequestedSongs ? undefined : 1,
+            },
+            limit: settings.limit,
+        };
+    }, [settings]);
+    const { songs } = useSampleSongs(songSearchParams);
     const router = useRouter();
-
-    // console.log("Sample songs for recommendation:", sampleSongs);
 
     function navigateToResults(sortedSongIDs: string[]) {
         router.push(
@@ -303,20 +153,40 @@ export default function RecommendPage() {
     }
 
     return (
+        <>
+            <SongPreferenceQuestion
+                songs={songs}
+                completedCallback={(sortedSongs) =>
+                    navigateToResults(sortedSongs.map((song) => song.id))
+                }
+            />
+
+            <Center>
+                <Button mt="lg" variant="subtle" onClick={backToPrepare} color="orange">
+                    設定に戻る
+                </Button>
+            </Center>
+        </>
+    );
+}
+
+export default function RecommendPage() {
+    const [settings, setSettings] = useState<TestSettings>({
+        name: "ゲスト",
+        limit: 8,
+        publishedAfter: Math.min(...Object.values(songsPeriod)),
+        includeRequestedSongs: false,
+    });
+    const [status, setStatus] = useState<status>("start");
+
+    return (
         <MyAppShell>
             <Title mb="xl">おすすめ曲診断</Title>
-            <Alert mb="lg" radius="md" color="green" icon={<IconFlaskFilled />}>
-                この機能は現在テスト中です。気づいた点・改善してほしい点があれば、お気軽に
-                <Link href="/contact">お問い合わせ</Link>から教えてください！
-            </Alert>
             <Paper shadow="md" radius="md" p="lg">
                 {status === "start" && <Start startCallback={() => setStatus("prepare")} />}
                 {status === "prepare" && (
                     <Prepare
-                        searchParams={searchParams}
-                        setSearchParams={setSearchParams}
                         proceedCallback={() => {
-                            refetchSongs();
                             setStatus("choice");
                         }}
                         settings={settings}
@@ -324,11 +194,7 @@ export default function RecommendPage() {
                     />
                 )}
                 {status === "choice" && (
-                    <Choice
-                        songs={sampleSongs}
-                        navigateToResults={navigateToResults}
-                        backToPrepare={() => setStatus("prepare")}
-                    />
+                    <Choice settings={settings} backToPrepare={() => setStatus("prepare")} />
                 )}
             </Paper>
         </MyAppShell>

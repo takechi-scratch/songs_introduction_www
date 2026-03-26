@@ -47,3 +47,9 @@ export interface SongSearchParams {
     order?: (typeof SortableKeys)[keyof typeof SortableKeys];
     asc?: boolean;
 }
+
+export interface SongSampleParams {
+    filter?: SongFilters;
+    limit?: number;
+    includeInstSongs?: boolean;
+}

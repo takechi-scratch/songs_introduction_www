@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { Suspense } from "react";
 import SearchBar from "./searchBar";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { AdvancedSearch } from "@/components/advancedSearch";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,14 +25,12 @@ function SearchSideBar() {
 
 // childrenではサーバー側で曲が取得され、actionsに渡される
 export default function SearchShell({ children }: { children: React.ReactNode }) {
-    const isLargeScreen = useMediaQuery("(min-width: 48em)");
     const [advancedSearchOpened, { toggle: toggleOpened }] = useDisclosure();
 
     return (
         <>
             <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>
                 <SearchBar
-                    isLargeScreen={isLargeScreen}
                     advancedSearchOpened={advancedSearchOpened}
                     toggleAdvancedSearch={toggleOpened}
                 />
@@ -51,8 +49,8 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                 {/* TODO: Asideのアニメーション */}
                 <AppShellAside
                     p="md"
-                    style={{ zIndex: 0 }}
-                    display={isLargeScreen ? undefined : "none"}
+                    style={{ zIndex: 0, backgroundColor: "transparent" }}
+                    visibleFrom="sm"
                 >
                     <Group gap="md" mb="md" align="center">
                         <Text size="lg" fw={700}>

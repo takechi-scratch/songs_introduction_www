@@ -2,11 +2,12 @@
 
 import {
     Alert,
+    Anchor,
     Badge,
-    Blockquote,
     Box,
     Button,
     Collapse,
+    Divider,
     Flex,
     Grid,
     HoverCard,
@@ -23,38 +24,26 @@ import {
     IconHelpHexagon,
     IconInfoCircle,
     IconRosetteDiscountCheckFilled,
-    ReactNode,
 } from "@tabler/icons-react";
 import { Song } from "@/lib/songs/types";
 import { DonutChart } from "@mantine/charts";
-import Image from "next/image";
 import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
 import CreatorBadges from "@/components/creatorBadges";
-import MantineMarkdown from "@/components/markdown";
 import { useDisclosure } from "@mantine/hooks";
+import MantineMarkdown from "@/components/markdown";
+import rison from "rison";
 
 function valueFormatter(value: number) {
     return `${(value * 100).toFixed(0)}%`;
 }
 
-function Comment({ text, author, icon }: { text: string; author: string; icon: ReactNode }) {
-    return (
-        <Blockquote color="blue" m="md" icon={icon} style={{ maxWidth: 500 }}>
-            <MantineMarkdown text={text} />
-            <Text size="sm" c="gray.8" mt="sm">
-                — {author}
-            </Text>
-        </Blockquote>
-    );
-}
-
 export default function InfoTabs({ song }: { song: Song }) {
     let publishedType = "";
     if (song.publishedType === 1) {
-        publishedType = "オリジナル曲";
+        publishedType = "オリジナル曲（MIMIさんのチャンネルで公開）";
     } else if (song.publishedType === 0) {
-        publishedType = "提供曲（他チャンネル）";
+        publishedType = "提供曲（他チャンネルで公開）";
     } else if (song.publishedType === -1) {
         publishedType = "仮掲載（先行公開・予想など）";
     } else {
@@ -93,10 +82,6 @@ export default function InfoTabs({ song }: { song: Song }) {
         displayedModulationTimes = `${song.modulationTimes}回`;
     }
 
-    const takechiIcon = (
-        <Image src="/assets/takechi.svg" alt="製作者takechiのアイコン" width={32} height={32} />
-    );
-
     const userRole = useUserRole();
 
     let lyricsStatus: "あり" | "なし" | "不明";
@@ -130,15 +115,25 @@ export default function InfoTabs({ song }: { song: Song }) {
             <Tabs.Panel value="basicInfo">
                 <Flex mb="sm" gap="sm" align="center">
                     <Title order={4}>動画データ</Title>
-                    <Text size="sm" c="gray.8">
+                    <Text size="sm" opacity={0.6}>
                         （YouTube Data APIより取得）
                     </Text>
                 </Flex>
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={140}>タイトル</Table.Th>
-                            <Table.Td>{song.title}</Table.Td>
+                            <Table.Th w={140}>動画URL</Table.Th>
+                            <Table.Td>
+                                <Anchor
+                                    size="sm"
+                                    href={`https://www.youtube.com/watch?v=${song.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    component={Link}
+                                >
+                                    https://www.youtube.com/watch?v={song.id}
+                                </Anchor>
+                            </Table.Td>
                         </Table.Tr>
 
                         <Table.Tr>
@@ -240,7 +235,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                         variant="light"
                                         color={mainChordColor}
                                         component={Link}
-                                        href={`/songs/?params=filter:(mainChord:'${encodeURIComponent(song.mainChord)}')`}
+                                        href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
                                         style={{ cursor: "pointer" }}
                                     >
                                         {song.mainChord}
@@ -258,7 +253,12 @@ export default function InfoTabs({ song }: { song: Song }) {
                     </Table.Tbody>
                 </Table>
 
-                <Flex direction="row" gap="xl" style={{ alignItems: "flex-start" }} mb="md">
+                <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    gap="xl"
+                    style={{ alignItems: "flex-start" }}
+                    mb="md"
+                >
                     {/* Divで囲んだところは縦方向の並びになる */}
                     <div>
                         {chordData !== null ? (
@@ -302,7 +302,7 @@ export default function InfoTabs({ song }: { song: Song }) {
 
             <Tabs.Panel value="lyrics">
                 <Flex mb="md" gap="sm" align="center">
-                    <Title order={4}>{"歌詞"}</Title>
+                    <Title order={4}>歌詞</Title>
                     <Text>{lyricsStatus}</Text>
                     {lyricsStatus === "あり" &&
                         (song.lyricsOfficiallyReleased ? (
@@ -338,8 +338,19 @@ export default function InfoTabs({ song }: { song: Song }) {
                         )}`}
                         target="_blank"
                         mb="md"
+                        mr="md"
                     >
                         Googleで歌詞を検索
+                    </Button>
+                )}
+
+                {lyricsStatus !== "なし" && (
+                    <Button
+                        component={Link}
+                        href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
+                        mb="md"
+                    >
+                        歌詞が似ている曲を見る
                     </Button>
                 )}
 
@@ -381,18 +392,32 @@ export default function InfoTabs({ song }: { song: Song }) {
             </Tabs.Panel>
 
             <Tabs.Panel value="others">
-                <Title order={4} mb="xl">
-                    コメント
+                <Title order={4} mb="md">
+                    補足・メモ
                 </Title>
-                {song.comment ? (
-                    <Comment text={song.comment} author="takechi" icon={takechiIcon} />
-                ) : (
-                    <Text m="sm">なし</Text>
-                )}
+                {song.comment ? <MantineMarkdown text={song.comment} /> : <Text m="sm">なし</Text>}
+                <Divider my="md" />
+                <Button
+                    component="a"
+                    href={`https://open.spotify.com/search/${encodeURIComponent(song.title)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="filled"
+                    color="teal"
+                >
+                    Spotifyで検索
+                </Button>
                 {userRole === "admin" && (
-                    <Button component={Link} href={`/songs/edit?id=${song.id}`} color="blue">
-                        データの編集
-                    </Button>
+                    <>
+                        <Button
+                            ml="md"
+                            component={Link}
+                            href={`/songs/edit?id=${song.id}`}
+                            color="blue"
+                        >
+                            データの編集
+                        </Button>
+                    </>
                 )}
             </Tabs.Panel>
         </Tabs>

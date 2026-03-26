@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { Title, Text } from "@mantine/core";
 import { List, ListItem } from "@mantine/core";

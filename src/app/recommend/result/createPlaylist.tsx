@@ -22,7 +22,7 @@ export default function CreatePlaylistButton({
     const notificationID = useRef<string | null>(null);
     const { loadingPlaylist, validSongs, inValidSongs, create } = usePlaylistManager(
         songs,
-        async () => await confirmModal(validSongs.length > 30, inValidSongs),
+        async () => await confirmModal(validSongs.length > 30, inValidSongs, validSongs.length > 0),
         () => {
             const id = notifications.show({
                 loading: true,
@@ -43,17 +43,23 @@ export default function CreatePlaylistButton({
     const description = `「MIMIさん全曲紹介」のおすすめ曲診断で、好みに合いそうな曲をピックアップしました！`;
 
     return (
-        <WarningTip warning={userRole === "guest" ? "ログインすると利用できます" : null}>
+        <WarningTip
+            warning={
+                userRole === "guest" || userRole === "user-temp"
+                    ? "ログインすると利用できます"
+                    : null
+            }
+        >
             <Button
                 fullWidth
                 color="red"
                 variant="light"
                 loading={loadingPlaylist}
-                disabled={userRole === "guest"}
+                disabled={userRole === "guest" || userRole === "user-temp"}
                 onClick={() => create(title, description)}
                 mb="md"
             >
-                診断結果から再生リストを作成（パターン1）
+                診断結果から再生リストを作成
             </Button>
         </WarningTip>
     );

@@ -1,4 +1,4 @@
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { Title, Alert } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
 
@@ -36,12 +36,15 @@ export const metadata: Metadata = {
         type: "website",
     },
     twitter: {
-        card: "summary_large_image",
+        card: "summary",
         title: title,
         description: description,
         images: [imageUrl],
     },
     robots: { index: false },
+    alternates: {
+        canonical: "https://mimi.takechi.cloud/songs",
+    },
 };
 
 async function MainPage(props: PageProps) {

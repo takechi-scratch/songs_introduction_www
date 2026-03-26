@@ -1,6 +1,6 @@
 "use client";
 
-import MyAppShell from "@/components/appshell";
+import MyAppShell from "@/components/appshell/myAppshell";
 import { useDocsFile } from "@/hooks/docs";
 import MarkdownDocs from "./markdownDocs";
 import { use } from "react";
@@ -15,7 +15,7 @@ export default function DocsPage({ params }: { params: Promise<{ path: string[] 
     const GitHubRepositoryURL = process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL;
 
     return (
-        <MyAppShell>
+        <MyAppShell wrapInPaper>
             {docs ? (
                 <MarkdownDocs docs={docs || "loading..."} error={null} />
             ) : (

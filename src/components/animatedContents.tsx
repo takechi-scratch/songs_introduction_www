@@ -1,11 +1,26 @@
 "use client";
 
-import { Flex, Title } from "@mantine/core";
+import { alpha, Anchor, Box, Card, Group, Text, Title } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRef } from "react";
 
-export function FadeInUp({ children, title }: { children: React.ReactNode; title: string }) {
+export function FadeInUp({
+    title,
+    icon,
+    description,
+    backgroundColor,
+    href,
+}: {
+    title: string;
+    icon: React.ReactNode;
+    description: string;
+    backgroundColor?: string;
+    href?: string;
+}) {
     const ref = useRef<HTMLDivElement>(null);
+    const { hovered, ref: hoverRef } = useHover();
 
     return (
         <motion.div
@@ -14,13 +29,45 @@ export function FadeInUp({ children, title }: { children: React.ReactNode; title
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true, amount: 0.3 }}
-            className="mb-16"
-            style={{ height: 200 }}
+            style={{ flex: 1 }}
         >
-            <Flex align="center" direction="column" justify="center" style={{ height: "100%" }}>
-                <Title order={2}>{title}</Title>
-                {children}
-            </Flex>
+            <Card
+                shadow={href ? "sm" : undefined}
+                withBorder={href ? undefined : true}
+                p={0}
+                radius="md"
+                component={href ? Link : undefined}
+                href={href || "#"}
+                style={{ height: "100%" }}
+            >
+                <Box
+                    ref={hoverRef}
+                    w="100%"
+                    h="100%"
+                    bg={
+                        backgroundColor
+                            ? alpha(backgroundColor, href && hovered ? 0.4 : 0.2)
+                            : undefined
+                    }
+                    p="lg"
+                >
+                    <Group mb="sm" align="flex-start">
+                        {icon}
+                        {href ? (
+                            <Anchor component={Title} order={2} mb={0}>
+                                {title}
+                            </Anchor>
+                        ) : (
+                            <Title order={2} mb={0}>
+                                {title}
+                            </Title>
+                        )}
+                    </Group>
+                    {description.split(/\n/g).map((line, i) => (
+                        <Text key={i}>{line}</Text>
+                    ))}
+                </Box>
+            </Card>
         </motion.div>
     );
 }
