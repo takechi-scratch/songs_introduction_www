@@ -59,7 +59,7 @@ export default function CreatePlaylistButton({
                 onClick={() => create(title, description)}
                 mb="md"
             >
-                診断結果から再生リストを作成（パターン1）
+                診断結果から再生リストを作成
             </Button>
         </WarningTip>
     );
