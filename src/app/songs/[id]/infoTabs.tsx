@@ -122,7 +122,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 <Table variant="vertical" layout="fixed" withTableBorder mb="md">
                     <Table.Tbody>
                         <Table.Tr>
-                            <Table.Th w={140}>URL</Table.Th>
+                            <Table.Th w={140}>動画URL</Table.Th>
                             <Table.Td>
                                 <Anchor
                                     size="sm"

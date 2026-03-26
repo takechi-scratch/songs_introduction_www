@@ -508,7 +508,7 @@ export function AdvancedSearch({
             >
                 <Accordion.Item value="filter">
                     <Accordion.Control icon={<IconFilter color="#82c91e" />}>
-                        <Title order={3} fw={300}>
+                        <Title order={2} size="h3" fw={500}>
                             絞り込み
                         </Title>
                     </Accordion.Control>
@@ -521,7 +521,7 @@ export function AdvancedSearch({
                 </Accordion.Item>
                 <Accordion.Item value="nearest">
                     <Accordion.Control icon={<IconDatabaseStar color="#228be6" />}>
-                        <Title order={3} fw={300}>
+                        <Title order={2} size="h3" fw={500}>
                             似ている曲
                         </Title>
                     </Accordion.Control>

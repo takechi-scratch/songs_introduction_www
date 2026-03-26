@@ -1,27 +1,14 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import {
-    Alert,
-    Button,
-    Flex,
-    Grid,
-    GridCol,
-    Group,
-    Image,
-    Paper,
-    Stack,
-    Text,
-    Title,
-} from "@mantine/core";
+import { Alert, Anchor, Flex, Grid, GridCol, Image, Paper, Text, Title } from "@mantine/core";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import SongsSection from "./songsSection";
+import { SongsNearestSection, SongsSearchSection } from "./songsSection";
 import Link from "next/link";
 import {
     IconCurrencyYenOff,
     IconFlaskFilled,
     IconHeart,
-    IconInfoCircle,
     IconMusicHeart,
     IconPlaylist,
     IconRobotOff,
@@ -43,6 +30,18 @@ export default async function HomePage() {
         console.error("Error fetching songs data:", error);
     }
 
+    const targetSongID = "7xht3kQO_TM";
+    const targetSongTitle = "ハナタバ";
+    let nearestSongsData: SongWithScore[] | undefined;
+
+    try {
+        nearestSongsData = await advancedSearchForSongs({
+            nearest: { targetSongID },
+        });
+    } catch (error) {
+        console.error("Error fetching nearest songs data:", error);
+    }
+
     return (
         <MyAppShell>
             <PinnedAnnouncements />
@@ -61,7 +60,6 @@ export default async function HomePage() {
             <Grid mb="md">
                 <GridCol span={{ base: 12, sm: 6 }} p="md">
                     <Text
-                        // size={{ base: "xl", sm: "2xl" }}
                         fw={700}
                         style={{ fontSize: "clamp(20px, 3vw, 45px)" }}
                         ta="left"
@@ -83,9 +81,9 @@ export default async function HomePage() {
                         次のお気に入りを見つけよう。
                     </Text>
                     <Text mt="xl">
-                        ボカロP「MIMI」さんが公開しているすべての曲を検索できるサイトです。
+                        ボカロP「MIMI」さんが公開しているすべての曲を見られるサイトです。
                         <br />
-                        曲の分析データをもとにしたおすすめ機能も充実。あなたにぴったりの曲がきっと見つかります！
+                        曲の分析データをもとにしたおすすめ機能も充実。あなたにぴったりの曲が、きっと見つかる。
                     </Text>
                 </GridCol>
 
@@ -106,19 +104,54 @@ export default async function HomePage() {
                 </GridCol>
             </Grid>
 
-            <SongsSection
-                latestSongsData={latestSongsData}
-                colaborationSongsData={colaborationSongsData}
-            />
+            <Grid mb="md">
+                <GridCol span={{ base: 12, sm: 4 }} p="md">
+                    <Title order={2} mb="md">
+                        MIMIさんの「全曲」を紹介。
+                    </Title>
+                    <Text>
+                        YouTubeで視聴できる150曲以上の曲を、すべて掲載しています。提供曲を探し回る必要はありません。
+                    </Text>
+                    <Text>
+                        また、曲のタイトルはもちろん、ボーカルや曲のキーなど、さまざまな条件から検索できます。
+                    </Text>
+                </GridCol>
+                <GridCol span={{ base: 12, sm: 8 }} p="md">
+                    <SongsSearchSection
+                        latestSongsData={latestSongsData}
+                        colaborationSongsData={colaborationSongsData}
+                    />
+                </GridCol>
+            </Grid>
+
+            <Grid mb="md">
+                <GridCol span={{ base: 12, sm: 4 }} p="md">
+                    <Title order={2} mb="md">
+                        「似ている曲」から好きな曲を発見。
+                    </Title>
+                    <Text>
+                        掲載しているすべての曲には、手作業で作成した分析データがついています。
+                        このデータをもとに、その曲と「似ている曲」を確認できます。
+                    </Text>
+                    <Text>似ている曲をたどっていけば、新しいお気に入りの曲に出会えるかも。</Text>
+                </GridCol>
+                <GridCol span={{ base: 12, sm: 8 }} p="md">
+                    <SongsNearestSection
+                        targetSongID={targetSongID}
+                        targetSongTitle={targetSongTitle}
+                        nearestSongsData={nearestSongsData}
+                    />
+                </GridCol>
+            </Grid>
 
             <Title order={2} mb="md" mt="md">
                 「MIMIさん全曲紹介」の機能
             </Title>
             <Flex gap="md" direction={{ base: "column", sm: "row" }} mb="xl">
                 <FadeInUp
-                    title="すべての曲を検索"
+                    title="曲一覧"
                     description={
-                        "提供曲を含めた、150以上の曲を掲載。提供曲を探す手間はかかりません。\nまた、検索した曲でルーレットを回したり、YouTubeの再生リストを作ることもできます！"
+                        "すべての曲を確認・検索できます。\nまた、検索した曲でルーレットを回したり、YouTubeの再生リストを作ったりもできます！"
                     }
                     icon={<IconPlaylist size={40} color="#fd7e14" />}
                     backgroundColor="#fd7e14"
@@ -156,6 +189,9 @@ export default async function HomePage() {
                     icon={<IconRobotOff size={40} color="#1c7ed6" />}
                 />
             </Flex>
+            <Anchor component={Link} href="/home" mb="xl">
+                旧トップページへ
+            </Anchor>
         </MyAppShell>
     );
 }

@@ -51,22 +51,20 @@ export function FadeInUp({
                     }
                     p="lg"
                 >
-                    <Group mb="sm">
+                    <Group mb="sm" align="flex-start">
                         {icon}
                         {href ? (
-                            <Anchor component={Title} order={2} style={{ flex: 1 }}>
+                            <Anchor component={Title} order={2} mb={0}>
                                 {title}
                             </Anchor>
                         ) : (
-                            <Title order={2} style={{ flex: 1 }}>
+                            <Title order={2} mb={0}>
                                 {title}
                             </Title>
                         )}
                     </Group>
                     {description.split(/\n/g).map((line, i) => (
-                        <Text key={i} mb="xs">
-                            {line}
-                        </Text>
+                        <Text key={i}>{line}</Text>
                     ))}
                 </Box>
             </Card>
