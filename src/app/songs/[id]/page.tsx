@@ -1,9 +1,9 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Alert, Anchor, Box, Button, Divider, Flex, Paper, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Box, Divider, Flex, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import { IconAlertTriangle, IconExclamationCircle, IconFlaskFilled } from "@tabler/icons-react";
+import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import {
     fetchAllSongs,
     fetchNearestSongs,
@@ -177,16 +177,6 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 コメント
             </Title>
             <Paper p="md" radius="md" shadow="xs">
-                <Alert color="green" icon={<IconFlaskFilled />} mb="md">
-                    <Text size="sm">コメント機能は現在ベータ版として公開しています。</Text>
-                    <Text size="sm">
-                        不適切なコメントを見つけたら、
-                        <Anchor href="/contact" component={Link}>
-                            お問い合わせ
-                        </Anchor>
-                        からご報告をお願いいたします。
-                    </Text>
-                </Alert>
                 <NewCommentCard songID={song.id} />
 
                 {comments.length > 0 ? (

@@ -1,5 +1,17 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Alert, Anchor, Flex, Grid, GridCol, Image, Paper, Text, Title } from "@mantine/core";
+import {
+    Alert,
+    Anchor,
+    Divider,
+    Flex,
+    Grid,
+    GridCol,
+    Group,
+    Image,
+    Paper,
+    Text,
+    Title,
+} from "@mantine/core";
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import { Song, SongWithScore } from "@/lib/songs/types";
@@ -45,18 +57,6 @@ export default async function HomePage() {
     return (
         <MyAppShell>
             <PinnedAnnouncements />
-            <Alert
-                icon={<IconFlaskFilled />}
-                title="このサイトはベータ版です"
-                color="green"
-                mb="lg"
-            >
-                <Text>
-                    サイトデザインの変更・おすすめ曲診断などの新機能を予定しています。ご意見があれば「お問い合わせ」でお気軽にご連絡ください。
-                </Text>
-                <Text>アップデートは3月下旬～4月上旬ごろの予定です！</Text>
-            </Alert>
-
             <Grid mb="md">
                 <GridCol span={{ base: 12, sm: 6 }} p="md">
                     <Text
@@ -103,7 +103,6 @@ export default async function HomePage() {
                     </Paper>
                 </GridCol>
             </Grid>
-
             <Grid mb="md">
                 <GridCol span={{ base: 12, sm: 4 }} p="md">
                     <Title order={2} mb="md">
@@ -123,7 +122,6 @@ export default async function HomePage() {
                     />
                 </GridCol>
             </Grid>
-
             <Grid mb="md">
                 <GridCol span={{ base: 12, sm: 4 }} p="md">
                     <Title order={2} mb="md">
@@ -143,7 +141,6 @@ export default async function HomePage() {
                     />
                 </GridCol>
             </Grid>
-
             <Title order={2} mb="md" mt="md">
                 「MIMIさん全曲紹介」の機能
             </Title>
@@ -189,9 +186,15 @@ export default async function HomePage() {
                     icon={<IconRobotOff size={40} color="#1c7ed6" />}
                 />
             </Flex>
-            <Anchor component={Link} href="/home" mb="xl">
-                旧トップページへ
-            </Anchor>
+            <Divider mb="xl" />
+            <Group gap="xl">
+                <Anchor component={Link} href="/contact">
+                    お問い合わせ・ご意見
+                </Anchor>
+                <Anchor component={Link} href="/home">
+                    旧トップページへ
+                </Anchor>
+            </Group>
         </MyAppShell>
     );
 }

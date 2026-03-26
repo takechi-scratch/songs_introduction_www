@@ -75,6 +75,14 @@ export const data: Announcement[] = [
         pinnedToTop: true,
     },
     {
+        id: "feature_005",
+        title: "春の大型アップデート！",
+        content:
+            "UIの改善や、さまざまな機能の追加が行われました！\n詳しい内容は[こちらのお知らせ](/docs/announcements/feature_005)をご覧ください！",
+        expiresDate: 1774969200,
+        pinnedToTop: true,
+    },
+    {
         id: "survey_001",
         title: "お知らせ",
         content:

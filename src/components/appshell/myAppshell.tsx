@@ -173,7 +173,6 @@ export default function MyAppShell({
                                 </Text>
                             </Flex>
                         </Link>
-                        <Badge color="green">BETA</Badge>
                         {process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true" && (
                             <Badge color="orange">DEV</Badge>
                         )}
