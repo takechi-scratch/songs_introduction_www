@@ -64,11 +64,10 @@ function MyCommentCard({ comment, song }: { comment: Comment; song: Song }) {
 export default function SettingsPage({ songs }: { songs: Song[] }) {
     const { userInfo, user } = useAuth();
     const isGuest = user?.providerData.length === 0;
-    const [editedUserInfo, setEditedUserInfo] = useState<typeof userInfo>(null);
-    const activeUserInfo = editedUserInfo ?? userInfo;
+    const [editedUserInfo, setEditedUserInfo] = useState<typeof userInfo>(userInfo);
     const { comments } = useMyComments();
 
-    if (!activeUserInfo || isGuest) {
+    if (!userInfo || !editedUserInfo || isGuest) {
         return (
             <MyAppShell>
                 <Title order={1} mb="md">
@@ -85,12 +84,12 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
         );
     }
 
-    const { icon: randomIcon, displayName: randomDisplayName } = randomContents(activeUserInfo.id);
+    const { icon: randomIcon, displayName: randomDisplayName } = randomContents(userInfo.id);
     let displayIcon;
-    if (!activeUserInfo.useProvidedIcon) {
+    if (!editedUserInfo?.useProvidedIcon) {
         displayIcon = randomIcon;
     } else {
-        displayIcon = <Avatar src={activeUserInfo.IconURL || user?.photoURL} alt="Icon" />;
+        displayIcon = <Avatar src={editedUserInfo.IconURL || user?.photoURL} alt="Icon" />;
     }
 
     // console.log(userInfo);
@@ -115,8 +114,8 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                                 size="xs"
                                 onClick={() =>
                                     setEditedUserInfo({
-                                        ...activeUserInfo,
-                                        useProvidedIcon: !activeUserInfo.useProvidedIcon,
+                                        ...editedUserInfo,
+                                        useProvidedIcon: !editedUserInfo?.useProvidedIcon,
                                     })
                                 }
                             >
@@ -130,10 +129,10 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                             label="表示名"
                             description="最大30文字まで"
                             placeholder={"匿名" + randomDisplayName}
-                            value={activeUserInfo.displayName || ""}
+                            value={userInfo.displayName || ""}
                             onChange={(event) =>
                                 setEditedUserInfo({
-                                    ...activeUserInfo,
+                                    ...editedUserInfo,
                                     displayName: event.currentTarget.value || null,
                                 })
                             }
@@ -144,7 +143,7 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                     fullWidth
                     mb="lg"
                     onClick={async () => {
-                        await updateMyUserInfo(activeUserInfo);
+                        await updateMyUserInfo(editedUserInfo);
                         notifications.show({
                             title: "ユーザー情報を更新しました",
                             message: "ユーザー情報の更新が完了しました。",
@@ -163,7 +162,7 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                     表示名は自由につけられますが、個人情報や不適切な内容を含むものは避けてください。
                 </Text>
                 <Text c="dimmed" size="sm">
-                    ユーザーID: {activeUserInfo.id}
+                    ユーザーID: {userInfo.id}
                 </Text>
             </Paper>
             <Paper shadow="xs" p="md" mb="md" radius="md">
