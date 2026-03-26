@@ -1,6 +1,6 @@
 "use client";
 
-import { alpha, Box, Card, Flex, Group, Text, Title } from "@mantine/core";
+import { alpha, Anchor, Box, Card, Group, Text, Title } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -32,9 +32,10 @@ export function FadeInUp({
             style={{ flex: 1 }}
         >
             <Card
-                shadow="sm"
+                shadow={href ? "sm" : undefined}
+                withBorder={href ? undefined : true}
                 p={0}
-                radius="lg"
+                radius="md"
                 component={href ? Link : undefined}
                 href={href || "#"}
                 style={{ height: "100%" }}
@@ -43,14 +44,24 @@ export function FadeInUp({
                     ref={hoverRef}
                     w="100%"
                     h="100%"
-                    bg={alpha(backgroundColor || "#fff", href && hovered ? 0.4 : 0.2)}
+                    bg={
+                        backgroundColor
+                            ? alpha(backgroundColor, href && hovered ? 0.4 : 0.2)
+                            : undefined
+                    }
                     p="lg"
                 >
                     <Group mb="sm">
                         {icon}
-                        <Title order={2} style={{ flex: 1 }}>
-                            {title}
-                        </Title>
+                        {href ? (
+                            <Anchor component={Title} order={2} style={{ flex: 1 }}>
+                                {title}
+                            </Anchor>
+                        ) : (
+                            <Title order={2} style={{ flex: 1 }}>
+                                {title}
+                            </Title>
+                        )}
                     </Group>
                     {description.split(/\n/g).map((line, i) => (
                         <Text key={i} mb="xs">
