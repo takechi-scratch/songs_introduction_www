@@ -191,6 +191,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
     }
 
     const [content, setContent] = useState("");
+    const [sending, setSending] = useState(false);
     const router = useRouter();
     async function handlePostComment() {
         if (content.trim() === "") {
@@ -202,10 +203,12 @@ export function NewCommentCard({ songID }: { songID: string }) {
             user = await loginWithAnonymous();
         }
 
+        setSending((state) => !state);
         await postComment(songID, content, user);
         await refreshComments(songID);
 
         setContent("");
+        setSending((state) => !state);
         router.refresh();
     }
 
@@ -240,7 +243,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
                 <Text size="sm" c="dimmed" mb="xs">
                     **太字**、- 箇条書き などのマークダウン記法が使えます。
                 </Text>
-                <Button mb="xs" onClick={handlePostComment}>
+                <Button mb="xs" onClick={handlePostComment} loading={sending}>
                     コメントを投稿
                 </Button>
                 {!userInfo && (
