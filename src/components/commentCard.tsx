@@ -19,7 +19,7 @@ import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { IconEdit, IconTrash, IconUserQuestion } from "@tabler/icons-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { deleteComment, postComment, updateComment } from "@/lib/interaction/api";
 import { useRouter } from "next/navigation";
 import { refreshComments } from "@/lib/refresh";
@@ -198,6 +198,20 @@ export function NewCommentCard({ songID }: { songID: string }) {
         router.refresh();
     }
 
+    const placeholderMessage = useMemo(() => {
+        const messages = [
+            "コメントを入力...",
+            "感想を一言で表すと...",
+            "初めてこの曲を聴いた時のことを思い出してみてください...",
+            "この曲の第一印象はどうでしたか？",
+            "この曲を誰かにおすすめするなら、どう紹介しますか？",
+            "歌詞の一番好きなところはどこですか？",
+            "曲でぐっと惹きつけられる部分はどこですか？",
+            "どんな場面で聴きたい曲ですか？",
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+    }, []);
+
     return (
         <Group gap="sm" align="start" mb="md">
             {displayIcon}
@@ -211,9 +225,7 @@ export function NewCommentCard({ songID }: { songID: string }) {
                     )}
                 </Group>
                 <Textarea
-                    placeholder={
-                        "コメントを入力...\nマークダウン記法に対応（**太字**、- 箇条書き など）"
-                    }
+                    placeholder={placeholderMessage}
                     minRows={3}
                     mb="xs"
                     autosize
@@ -222,6 +234,9 @@ export function NewCommentCard({ songID }: { songID: string }) {
                     value={content}
                     onChange={(event) => setContent(event.currentTarget.value)}
                 />
+                <Text size="sm" c="dimmed" mb="xs">
+                    **太字**、- 箇条書き などのマークダウン記法が使えます。
+                </Text>
                 <Button mb="xs" onClick={handlePostComment}>
                     コメントを投稿
                 </Button>

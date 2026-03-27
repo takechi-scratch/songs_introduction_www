@@ -25,7 +25,7 @@ import {
     IconPlaylist,
     IconRobotOff,
 } from "@tabler/icons-react";
-import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
+import { advancedSearchForSongs, fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
 import NextImage from "next/image";
 
 export default async function HomePage() {
@@ -47,9 +47,7 @@ export default async function HomePage() {
     let nearestSongsData: SongWithScore[] | undefined;
 
     try {
-        nearestSongsData = await advancedSearchForSongs({
-            nearest: { targetSongID },
-        });
+        nearestSongsData = await fetchNearestSongs(targetSongID, 10);
     } catch (error) {
         console.error("Error fetching nearest songs data:", error);
     }
