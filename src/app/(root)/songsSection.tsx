@@ -64,6 +64,7 @@ export function SongsSearchSection({
             </Flex>
             <SongsCarousel
                 songs={showColaborationSongs ? colaborationSongsData : latestSongsData}
+                key={String(showColaborationSongs)}
                 size="small"
             />
         </>
