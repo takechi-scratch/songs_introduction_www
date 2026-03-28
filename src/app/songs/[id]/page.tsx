@@ -18,6 +18,7 @@ import { Suspense } from "react";
 import { CommentCard, NewCommentCard } from "@/components/commentCard";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
 import rison from "rison";
+import CommentSection from "./commentSection";
 
 export const generateMetadata = async ({
     params,
@@ -176,24 +177,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             <Title mb="md" mt="xl" order={2}>
                 コメント
             </Title>
-            <Paper p="md" radius="md" shadow="xs">
-                <NewCommentCard songID={song.id} />
-
-                {comments.length > 0 ? (
-                    comments.map((comment) => (
-                        <Box key={comment.id}>
-                            <Divider my="sm" />
-                            <CommentCard comment={comment} />
-                        </Box>
-                    ))
-                ) : (
-                    <>
-                        <Text mb="lg">
-                            この曲にはまだコメントがありません。最初のコメントを投稿しましょう！
-                        </Text>
-                    </>
-                )}
-            </Paper>
+            <CommentSection songID={song.id} initialComments={comments} />
         </MyAppShell>
     );
 }

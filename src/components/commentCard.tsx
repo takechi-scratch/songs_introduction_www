@@ -153,7 +153,13 @@ export function CommentCard({ comment }: { comment: Comment }) {
     );
 }
 
-export function NewCommentCard({ songID }: { songID: string }) {
+export function NewCommentCard({
+    songID,
+    onCommentPosted,
+}: {
+    songID: string;
+    onCommentPosted?: (comment: Comment) => void;
+}) {
     const { user: authUser, userInfo } = useAuth();
     const linkedUser = authUser && authUser.providerData.length > 0;
 
@@ -192,7 +198,6 @@ export function NewCommentCard({ songID }: { songID: string }) {
 
     const [content, setContent] = useState("");
     const [sending, setSending] = useState(false);
-    const router = useRouter();
     async function handlePostComment() {
         if (content.trim() === "") {
             return;
@@ -204,12 +209,12 @@ export function NewCommentCard({ songID }: { songID: string }) {
         }
 
         setSending((state) => !state);
-        await postComment(songID, content, user);
-        await refreshComments(songID);
+        const comment = await postComment(songID, content, user);
+        refreshComments(songID);
 
         setContent("");
         setSending((state) => !state);
-        router.refresh();
+        onCommentPosted && onCommentPosted(comment);
     }
 
     const [placeholderMessage, setPlaceholderMessage] = useState("");
