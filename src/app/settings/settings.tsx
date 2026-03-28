@@ -8,7 +8,7 @@ import { useMyComments } from "@/hooks/interaction";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { downloadComments } from "@/lib/downloadComments";
 import { updateMyUserInfo } from "@/lib/interaction/api";
-import { Comment } from "@/lib/interaction/types";
+import { Comment, User } from "@/lib/interaction/types";
 import { refreshAllComments } from "@/lib/refresh";
 import { Song } from "@/lib/songs/types";
 import {
@@ -35,13 +35,14 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState, Fragment } from "react";
+import { User as FirebaseUser } from "firebase/auth";
 
-function MyCommentCard({ comment, song }: { comment: Comment; song: Song }) {
+function MyCommentCard({ comment, songTitle }: { comment: Comment; songTitle: string }) {
     return (
         <Box style={{ flex: 1 }}>
             <Group gap="sm" mb="xs">
-                <Anchor href={`/songs/${song.id}`} component={Link}>
-                    {song.title}
+                <Anchor href={`/songs/${comment.songID}`} component={Link}>
+                    {songTitle}
                 </Anchor>
                 <HoverCard width={250} shadow="sm" position="right">
                     <HoverCard.Target>
@@ -61,26 +62,28 @@ function MyCommentCard({ comment, song }: { comment: Comment; song: Song }) {
     );
 }
 
-export default function SettingsPage({ songs }: { songs: Song[] }) {
-    const { userInfo, user } = useAuth();
+function SettingsSection({
+    user,
+    userInfo,
+    myComments,
+}: {
+    user: FirebaseUser | null;
+    userInfo: User | null;
+    myComments: { comment: Comment; songTitle: string }[];
+}) {
     const isGuest = user?.providerData.length === 0;
     const [editedUserInfo, setEditedUserInfo] = useState<typeof userInfo>(userInfo);
-    const { comments } = useMyComments();
+    const comments = myComments.map(({ comment }) => comment);
 
     if (!userInfo || !editedUserInfo || isGuest) {
         return (
-            <MyAppShell>
-                <Title order={1} mb="md">
-                    ユーザー設定
-                </Title>
-                <Paper shadow="xs" p="md" mb="md" radius="md">
-                    <Alert icon={<IconUserQuestion size={24} />}>
-                        ユーザー設定を変更するには、
-                        <Link href="/login">{userInfo ? "アカウント連携" : "ログイン"}</Link>
-                        してください。
-                    </Alert>
-                </Paper>
-            </MyAppShell>
+            <Paper shadow="xs" p="md" mb="md" radius="md">
+                <Alert icon={<IconUserQuestion size={24} />}>
+                    ユーザー設定を変更するには、
+                    <Link href="/login">{userInfo ? "アカウント連携" : "ログイン"}</Link>
+                    してください。
+                </Alert>
+            </Paper>
         );
     }
 
@@ -92,15 +95,8 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
         displayIcon = <Avatar src={editedUserInfo.IconURL || user?.photoURL} alt="Icon" />;
     }
 
-    // console.log(userInfo);
-    // console.log(editedUserInfo);
-    // console.log(user?.photoURL);
-
     return (
-        <MyAppShell>
-            <Title order={1} mb="md">
-                ユーザー設定
-            </Title>
+        <>
             <Paper shadow="xs" p="md" mb="md" radius="md">
                 <Title order={2} mb="md">
                     プロフィール
@@ -169,17 +165,19 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                 <Title order={2} mb="md">
                     コメント履歴
                 </Title>
-                {comments ? (
-                    comments.map((comment: Comment) => (
-                        <Fragment key={comment.id}>
-                            <MyCommentCard
-                                key={comment.id}
-                                comment={comment}
-                                song={songs.find((song) => song.id === comment.songID)!}
-                            />
-                            <Divider my="md" />
-                        </Fragment>
-                    ))
+                {myComments ? (
+                    myComments.map(
+                        ({ comment, songTitle }: { comment: Comment; songTitle: string }) => (
+                            <Fragment key={comment.id}>
+                                <MyCommentCard
+                                    key={comment.id}
+                                    comment={comment}
+                                    songTitle={songTitle}
+                                />
+                                <Divider my="md" />
+                            </Fragment>
+                        )
+                    )
                 ) : (
                     <Text>コメントを読み込み中...</Text>
                 )}
@@ -204,6 +202,34 @@ export default function SettingsPage({ songs }: { songs: Song[] }) {
                     </Button>
                 </Group>
             </Paper>
+        </>
+    );
+}
+
+export default function SettingsPage({ songs }: { songs: Song[] }) {
+    const { userInfo, user } = useAuth();
+    const { comments } = useMyComments();
+
+    console.log(userInfo);
+    console.log(user?.photoURL);
+
+    return (
+        <MyAppShell>
+            <SettingsSection
+                key={`${user?.uid || "guest"} + ${userInfo?.id || "guest"}`}
+                user={user}
+                userInfo={userInfo}
+                myComments={
+                    comments
+                        ? comments.map((comment) => ({
+                              comment,
+                              songTitle:
+                                  songs.find((song) => song.id === comment.songID)?.title ||
+                                  "不明な曲",
+                          }))
+                        : []
+                }
+            />
         </MyAppShell>
     );
 }
