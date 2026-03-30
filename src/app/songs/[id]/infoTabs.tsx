@@ -130,6 +130,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     component={Link}
+                                    style={{ wordBreak: "break-all" }}
                                 >
                                     https://www.youtube.com/watch?v={song.id}
                                 </Anchor>

@@ -36,6 +36,8 @@ import {
 import Link from "next/link";
 import { useState, Fragment } from "react";
 import { User as FirebaseUser } from "firebase/auth";
+import { validateDisplayName } from "@/lib/interaction/validate";
+import { useUserRole } from "@/hooks/auth";
 
 function MyCommentCard({ comment, songTitle }: { comment: Comment; songTitle: string }) {
     return (
@@ -74,6 +76,7 @@ function SettingsSection({
     const isGuest = user?.providerData.length === 0;
     const [editedUserInfo, setEditedUserInfo] = useState<typeof userInfo>(userInfo);
     const comments = myComments.map(({ comment }) => comment);
+    const isAdmin = useUserRole() === "admin";
 
     if (!userInfo || !editedUserInfo || isGuest) {
         return (
@@ -101,36 +104,39 @@ function SettingsSection({
                 <Title order={2} mb="md">
                     プロフィール
                 </Title>
-                <Group gap="md" mb="md" style={{ maxWidth: 500 }}>
-                    <Group>
-                        <Stack align="center" gap="xs">
-                            {displayIcon}
-                            <Button
-                                variant="outline"
-                                size="xs"
-                                onClick={() =>
-                                    setEditedUserInfo({
-                                        ...editedUserInfo,
-                                        useProvidedIcon: !editedUserInfo?.useProvidedIcon,
-                                    })
-                                }
-                            >
-                                <IconRefresh size={16} />
-                                変更
-                            </Button>
-                        </Stack>
-                    </Group>
+                <Group gap="md" mb="md" align="flex-start" style={{ maxWidth: 500 }}>
+                    <Stack align="center" gap="xs">
+                        {displayIcon}
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            onClick={() =>
+                                setEditedUserInfo({
+                                    ...editedUserInfo,
+                                    useProvidedIcon: !editedUserInfo?.useProvidedIcon,
+                                })
+                            }
+                        >
+                            <IconRefresh size={16} />
+                            変更
+                        </Button>
+                    </Stack>
                     <Box style={{ flex: 1 }}>
                         <TextInput
-                            label="表示名"
-                            description="最大30文字まで"
+                            label="名前"
+                            description="最大30文字"
                             placeholder={"匿名" + randomDisplayName}
-                            value={userInfo.displayName || ""}
+                            value={editedUserInfo.displayName || ""}
                             onChange={(event) =>
                                 setEditedUserInfo({
                                     ...editedUserInfo,
                                     displayName: event.currentTarget.value || null,
                                 })
+                            }
+                            error={validateDisplayName(editedUserInfo.displayName || "", isAdmin)}
+                            withErrorStyles={
+                                validateDisplayName(editedUserInfo.displayName || "", isAdmin) !==
+                                null
                             }
                         />
                     </Box>
@@ -139,6 +145,8 @@ function SettingsSection({
                     fullWidth
                     mb="lg"
                     onClick={async () => {
+                        if (validateDisplayName(editedUserInfo.displayName || "", isAdmin) !== null)
+                            return;
                         await updateMyUserInfo(editedUserInfo);
                         notifications.show({
                             title: "ユーザー情報を更新しました",
