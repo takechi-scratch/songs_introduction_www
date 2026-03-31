@@ -80,6 +80,7 @@ export async function RootLayout({ children }: { children: React.ReactNode }) {
                         </AuthProvider>
                     </ModalsProvider>
                 </MantineProvider>
+                ;
             </body>
         </html>
     );
