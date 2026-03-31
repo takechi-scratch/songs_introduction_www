@@ -64,19 +64,21 @@ export function PinnedAnnouncements() {
     );
 
     return (
-        <Paper withBorder p="xs" mb="md" radius="md">
-            <Stack gap="md">
-                {pinnedAnnouncements.map((announcement) => (
-                    <Alert
-                        key={announcement.id}
-                        title={announcement.title}
-                        icon={<IconInfoCircle />}
-                        {...announcement.alertProps}
-                    >
-                        <MantineMarkdown text={announcement.content} textSize="sm" />
-                    </Alert>
-                ))}
-            </Stack>
-        </Paper>
+        pinnedAnnouncements.length > 0 && (
+            <Paper withBorder p="xs" mb="md" radius="md">
+                <Stack gap="md">
+                    {pinnedAnnouncements.map((announcement) => (
+                        <Alert
+                            key={announcement.id}
+                            title={announcement.title}
+                            icon={<IconInfoCircle />}
+                            {...announcement.alertProps}
+                        >
+                            <MantineMarkdown text={announcement.content} textSize="sm" />
+                        </Alert>
+                    ))}
+                </Stack>
+            </Paper>
+        )
     );
 }
