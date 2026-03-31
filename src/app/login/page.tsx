@@ -50,7 +50,13 @@ export default function LoginPage() {
     if (userRole === "guest") {
         LoginMenu = (
             <>
-                <Flex align="center" justify="center" direction="row" m="md" gap="md">
+                <Flex
+                    align="center"
+                    justify="center"
+                    direction={{ base: "column", sm: "row" }}
+                    m="md"
+                    gap="md"
+                >
                     <GoogleSignInButton
                         onClick={async () => {
                             const user = await loginWithProvider(googleProvider);
@@ -115,7 +121,13 @@ export default function LoginPage() {
                 <Text>
                     アカウント連携をすることで、コメントなどをそのまま引き継ぐことができます！
                 </Text>
-                <Flex align="center" justify="center" direction="row" m="md" gap="md">
+                <Flex
+                    align="center"
+                    justify="center"
+                    direction={{ base: "column", sm: "row" }}
+                    m="md"
+                    gap="md"
+                >
                     <GoogleSignInButton
                         onClick={async () => {
                             const linkedUser =
@@ -153,7 +165,8 @@ export default function LoginPage() {
                     </Button>
                     <Button
                         color="orange"
-                        ml="lg"
+                        ml={{ base: 0, sm: "lg" }}
+                        mt={{ base: "md", sm: 0 }}
                         onClick={() =>
                             modals.openConfirmModal({
                                 title: "ゲストアカウントを削除",

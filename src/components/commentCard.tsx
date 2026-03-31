@@ -21,7 +21,6 @@ import Link from "next/link";
 import { IconEdit, IconTrash, IconUserQuestion } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { deleteComment, postComment, updateComment } from "@/lib/interaction/api";
-import { useRouter } from "next/navigation";
 import { refreshComments } from "@/lib/refresh";
 import { loginWithAnonymous } from "@/lib/auth/firebase";
 import { getHotkeyHandler, useDisclosure } from "@mantine/hooks";
@@ -40,7 +39,17 @@ const messages = [
     "どんな場面で聴きたい曲ですか？",
 ];
 
-export function CommentCard({ comment }: { comment: Comment }) {
+export function CommentCard<IDType extends unknown>({
+    id,
+    comment,
+    onCommentEdited,
+    onCommentDeleted,
+}: {
+    id: IDType;
+    comment: Comment;
+    onCommentEdited?: (id: IDType, comment: Comment) => void;
+    onCommentDeleted?: (id: IDType) => void;
+}) {
     const { icon, displayName } = randomContents(comment.user.id);
     const { user, userInfo } = useAuth();
     const isGuest = user?.providerData.length === 0;
@@ -49,13 +58,28 @@ export function CommentCard({ comment }: { comment: Comment }) {
 
     const [editMode, { toggle: toggleEditMode, close: closeEditMode }] = useDisclosure(false);
     const [editedContent, setEditedContent] = useState(comment.content);
-    const router = useRouter();
+    const [sending, setSending] = useState(false);
 
     const displayIcon = comment.user.IconURL ? (
         <MantineAvatar src={comment.user.IconURL} alt="Icon" />
     ) : (
         icon
     );
+
+    async function handleEditComment() {
+        setSending((state) => !state);
+        if (editedContent.trim() === "") {
+            closeEditMode();
+            setSending((state) => !state);
+            return;
+        }
+        await updateComment(comment.id, editedContent);
+        await refreshComments(comment.songID);
+        closeEditMode();
+        setSending((state) => !state);
+        onCommentEdited && onCommentEdited(id, { ...comment, content: editedContent });
+    }
+
     return (
         <Group gap="sm" align="start">
             {isMine ? (
@@ -103,7 +127,7 @@ export function CommentCard({ comment }: { comment: Comment }) {
                                         onConfirm: async () => {
                                             await deleteComment(comment.id);
                                             await refreshComments(comment.songID);
-                                            router.refresh();
+                                            onCommentDeleted && onCommentDeleted(id);
                                         },
                                     })
                                 }
@@ -124,21 +148,9 @@ export function CommentCard({ comment }: { comment: Comment }) {
                             maw={500}
                             value={editedContent}
                             onChange={(event) => setEditedContent(event.currentTarget.value)}
+                            onKeyDown={getHotkeyHandler([["mod+Enter", handleEditComment]])}
                         />
-                        <Button
-                            size="sm"
-                            mb="xs"
-                            onClick={async () => {
-                                if (editedContent.trim() === "") {
-                                    closeEditMode();
-                                    return;
-                                }
-                                await updateComment(comment.id, editedContent);
-                                await refreshComments(comment.songID);
-                                closeEditMode();
-                                router.refresh();
-                            }}
-                        >
+                        <Button size="sm" mb="xs" onClick={handleEditComment} loading={sending}>
                             送信する
                         </Button>
                         <Button size="sm" mb="xs" color="gray" onClick={closeEditMode} ml="xs">
@@ -203,12 +215,13 @@ export function NewCommentCard({
             return;
         }
 
+        setSending((state) => !state);
+
         let user;
         if (!authUser) {
             user = await loginWithAnonymous();
         }
 
-        setSending((state) => !state);
         const comment = await postComment(songID, content, user);
         refreshComments(songID);
 

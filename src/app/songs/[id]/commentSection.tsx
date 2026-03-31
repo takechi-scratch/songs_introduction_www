@@ -24,10 +24,23 @@ export default function CommentSection({
             />
 
             {comments.length > 0 ? (
-                comments.map((comment) => (
+                comments.map((comment, i) => (
                     <Box key={comment.id}>
                         <Divider my="sm" />
-                        <CommentCard comment={comment} />
+                        <CommentCard
+                            id={i}
+                            comment={comment}
+                            onCommentEdited={(id, comment) => {
+                                setComments((prev) => {
+                                    const newComments = [...prev];
+                                    newComments[id] = comment;
+                                    return newComments;
+                                });
+                            }}
+                            onCommentDeleted={(id) => {
+                                setComments((prev) => prev.filter((_, index) => index !== id));
+                            }}
+                        />
                     </Box>
                 ))
             ) : (
