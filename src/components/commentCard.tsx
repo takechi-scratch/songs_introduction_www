@@ -39,7 +39,7 @@ const messages = [
     "どんな場面で聴きたい曲ですか？",
 ];
 
-export function CommentCard<IDType extends unknown>({
+export function CommentCard<IDType>({
     id,
     comment,
     onCommentEdited,
