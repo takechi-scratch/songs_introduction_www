@@ -167,7 +167,6 @@ export default function MyAppShell({
                                     width={40}
                                     height={40}
                                     style={{ marginRight: 8 }}
-                                    className="spin"
                                 />
                                 <Text size="lg" fw={700} style={{ margin: 0 }}>
                                     MIMIさん全曲紹介
