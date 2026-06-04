@@ -35,7 +35,7 @@
 - フィードバック・機能投票: [KoeLoop](https://koeloop.dev/ja/)
 - 利用規約などのテンプレート: [Webサイトの利用規約](https://kiyaku.jp/)
 
-## 制作
+## 製作
 - [takechi](https://takechi.f5.si/)
 
 ### GitHubリポジトリ

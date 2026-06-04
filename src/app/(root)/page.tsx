@@ -79,7 +79,15 @@ export default async function HomePage() {
                         次のお気に入りを見つけよう。
                     </Text>
                     <Text mt="xl">
-                        ボカロP「MIMI」さんが公開しているすべての曲を見られるサイトです。
+                        ボカロPの「
+                        <Anchor
+                            href="https://www.youtube.com/@MIMI"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            MIMI
+                        </Anchor>
+                        」さんが公開しているすべての曲を聴けるサイトです。
                         <br />
                         曲の分析データをもとにしたおすすめ機能も充実。あなたにぴったりの曲が、きっと見つかる。
                     </Text>
@@ -87,7 +95,6 @@ export default async function HomePage() {
 
                 <GridCol span={{ base: 12, sm: 6 }}>
                     <Paper radius="md" p="xs" mt="md" mb="xl">
-                        {/* TODO: 画像は差し替え予定 */}
                         <Image
                             src="/assets/detail-screenshot.png"
                             radius="md"
@@ -127,7 +134,7 @@ export default async function HomePage() {
                     </Title>
                     <Text>
                         掲載しているすべての曲には、手作業で作成した分析データがついています。
-                        このデータをもとに、その曲と「似ている曲」を確認できます。
+                        このデータをもとに、その曲に「似ている曲」を確認できます。
                     </Text>
                     <Text>似ている曲をたどっていけば、新しいお気に入りの曲に出会えるかも。</Text>
                 </GridCol>
@@ -179,7 +186,7 @@ export default async function HomePage() {
                 <FadeInUp
                     title="分析に生成AIは使用しません"
                     description={
-                        "分析データは全て製作者が手作業で作成したものです。また、楽曲の分析データをAIの入力として与えることもないよう注意しています。\nただし、サイトのコーディングでは一部生成AIを使用することがあります。"
+                        "分析データは全て製作者が手作業で作成したものです。また、楽曲の分析データをAIの入力として与えることもないよう注意しています。\nただし、サイトのコーディングには一部生成AIを使用することがあります。"
                     }
                     icon={<IconRobotOff size={40} color="#1c7ed6" />}
                 />

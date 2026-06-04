@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Noto_Sans_JP } from "next/font/google";
+import { cookies } from "next/headers";
 
 const notoSansJP = Noto_Sans_JP({ subsets: ["latin"] });
 
@@ -10,9 +10,9 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "./globals.css";
 
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps, createTheme } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ColorModeProvider } from "@/contexts/ThemeContext";

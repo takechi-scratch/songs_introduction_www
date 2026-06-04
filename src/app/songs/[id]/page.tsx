@@ -1,24 +1,23 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Alert, Anchor, Box, Divider, Flex, Paper, Text, Title } from "@mantine/core";
-import Link from "next/link";
-import ReactPlayer from "react-player";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import {
     fetchAllSongs,
     fetchNearestSongs,
     fetchSongById,
     scoreCanBeCalculated,
 } from "@/lib/songs/api";
+import { Alert, Anchor, Flex, Paper, Text, Title } from "@mantine/core";
+import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import { Metadata } from "next";
+import Link from "next/link";
+import ReactPlayer from "react-player";
 
-import "@mantine/charts/styles.css";
-import InfoTabs from "./infoTabs";
-import { Suspense } from "react";
-import { CommentCard, NewCommentCard } from "@/components/commentCard";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import "@mantine/charts/styles.css";
+import { Suspense } from "react";
 import rison from "rison";
 import CommentSection from "./commentSection";
+import InfoTabs from "./infoTabs";
 
 export const generateMetadata = async ({
     params,
