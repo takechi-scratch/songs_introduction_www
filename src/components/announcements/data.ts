@@ -6,6 +6,7 @@ interface Announcement {
     title: string;
     content: string;
     expiresDate: number;
+    releaseDate?: number;
     pinnedToTop: boolean;
     onlyInDev?: boolean;
     notificationProps?: Omit<NotificationData, "title" | "message">;
@@ -89,5 +90,20 @@ export const data: Announcement[] = [
             "現在、機械的に分析データを作成することについてご意見を募集しています。\n[ご意見はこちら(X)](https://x.com/takechi_scratch/status/1986981649213759768)",
         expiresDate: 1763910000,
         pinnedToTop: false,
+    },
+    {
+        id: "memorial_001",
+        title: "MIMIさん活動10周年おめでとうございます！",
+        content:
+            "記念イベントとして、MIMIさんの曲をオンラインで同時視聴する会を行っています！ぜひ来てください！\n[同時視聴会ページ](/music-share/)",
+        releaseDate: 1780930800,
+        expiresDate: 1781017200,
+        pinnedToTop: true,
+        notificationProps: {
+            color: "pink",
+        },
+        alertProps: {
+            color: "pink",
+        },
     },
 ];

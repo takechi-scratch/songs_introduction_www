@@ -1,10 +1,10 @@
 "use client";
 
-import { data } from "./data";
-import { showNotification } from "@mantine/notifications";
 import MantineMarkdown from "@/components/markdown";
 import { Alert, Paper, Stack } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { data } from "./data";
 
 // 必ずuseEffect内で呼び出す！
 export function noticeActiveAnnouncements() {
@@ -35,6 +35,7 @@ export function noticeActiveAnnouncements() {
 
         if (
             announcement.expiresDate > currentTimeStamp &&
+            !(announcement.releaseDate && announcement.releaseDate > currentTimeStamp) &&
             !shownAnnouncements.includes(announcement.id)
         ) {
             showNotification({
@@ -60,6 +61,7 @@ export function PinnedAnnouncements() {
         (announcement) =>
             announcement.pinnedToTop &&
             announcement.expiresDate > currentTimeStamp &&
+            !(announcement.releaseDate && announcement.releaseDate > currentTimeStamp) &&
             (!announcement.onlyInDev || process.env.NEXT_PUBLIC_IS_DEVELOPMENT === "true")
     );
 
