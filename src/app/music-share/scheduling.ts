@@ -37,6 +37,7 @@ export function createTestSchedule(allSongs: Song[]): SharingSchedule {
 }
 
 const description = `
+【※非公式のイベントです！】
 MIMIさんの初投稿から10周年を記念して、みんなで一緒に曲を聴こうという会です。
 調べてみたら全曲合わせて8時間弱かかるみたいなので、前日から全曲を3周流すことにしました！
 
