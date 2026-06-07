@@ -11,6 +11,7 @@ import {
     Button,
     Card,
     Divider,
+    ScrollArea,
     Table,
     TableTbody,
     TableTd,
@@ -191,27 +192,29 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
             <Title order={2} mt="md" mb="md">
                 曲一覧
             </Title>
-            <Table mb="md">
-                <TableThead>
-                    <TableTr>
-                        <TableTh>時刻</TableTh>
-                        <TableTh>動画ID</TableTh>
-                        <TableTh>タイトル</TableTh>
-                    </TableTr>
-                </TableThead>
-                <TableTbody>
-                    {songs.map((s, index) => (
-                        <TableTr
-                            key={index}
-                            style={{ fontWeight: index === songIndex ? "bold" : "normal" }}
-                        >
-                            <TableTd>{formatTime(s.startDate)}</TableTd>
-                            <TableTd>{s.id}</TableTd>
-                            <TableTd>{s.title}</TableTd>
+            <ScrollArea h={500} type="always">
+                <Table mb="md">
+                    <TableThead>
+                        <TableTr>
+                            <TableTh>時刻</TableTh>
+                            {/* <TableTh>動画ID</TableTh> */}
+                            <TableTh>タイトル</TableTh>
                         </TableTr>
-                    ))}
-                </TableTbody>
-            </Table>
+                    </TableThead>
+                    <TableTbody>
+                        {songs.map((s, index) => (
+                            <TableTr
+                                key={index}
+                                style={{ fontWeight: index === songIndex ? "bold" : "normal" }}
+                            >
+                                <TableTd>{formatTime(s.startDate)}</TableTd>
+                                {/* <TableTd>{s.id}</TableTd> */}
+                                <TableTd>{s.title}</TableTd>
+                            </TableTr>
+                        ))}
+                    </TableTbody>
+                </Table>
+            </ScrollArea>
             <Anchor href="/" component={Link}>
                 ホームに戻る
             </Anchor>
