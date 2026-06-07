@@ -21,6 +21,16 @@ export const formatDate = (timestamp: number) => {
     }).format(date);
 };
 
+export const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return new Intl.DateTimeFormat("ja-JP", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: "Asia/Tokyo",
+    }).format(date);
+};
+
 export const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;

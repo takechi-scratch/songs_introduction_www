@@ -92,6 +92,36 @@ export const data: Announcement[] = [
         pinnedToTop: false,
     },
     {
+        id: "memorial_001_advanced",
+        title: "明日でMIMIさん活動10周年！",
+        content:
+            "記念イベントとして、MIMIさんの曲をオンラインで同時視聴する会を行います！詳しくは[こちらのページ](/music-share/)へ。",
+        releaseDate: 1780844400,
+        expiresDate: 1780920000,
+        pinnedToTop: true,
+        notificationProps: {
+            color: "pink",
+        },
+        alertProps: {
+            color: "pink",
+        },
+    },
+    {
+        id: "memorial_001",
+        title: "MIMIさん活動10周年おめでとうございます！",
+        content:
+            "記念イベントとして、MIMIさんの曲をオンラインで同時視聴する会を行っています！ぜひ来てください！\n[同時視聴会ページ](/music-share/)",
+        releaseDate: 1780920000,
+        expiresDate: 1781017200,
+        pinnedToTop: true,
+        notificationProps: {
+            color: "pink",
+        },
+        alertProps: {
+            color: "pink",
+        },
+    },
+    {
         id: "memorial_001",
         title: "MIMIさん活動10周年おめでとうございます！",
         content:

@@ -4,5 +4,5 @@ import Playlist from "./playlist";
 export default async function Page() {
     const songs = await fetchAllSongs();
 
-    return <Playlist rawSongs={songs} />;
+    return <Playlist allSongs={songs} />;
 }
