@@ -85,7 +85,7 @@ function Player({
     function onStateChange(event: YouTubeEvent) {
         const player = playerRef.current;
         if (!player) return;
-        const idx = (player as any).getPlaylistIndex?.();
+        const idx = player.getPlaylistIndex?.();
         if (typeof idx === "number") setSongIndex(idx);
     }
 
