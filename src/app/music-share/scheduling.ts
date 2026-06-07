@@ -36,6 +36,26 @@ export function createTestSchedule(allSongs: Song[]): SharingSchedule {
     };
 }
 
+const description = `
+MIMIさんの初投稿から10周年を記念して、みんなで一緒に曲を聴こうという会です。
+調べてみたら全曲合わせて8時間弱かかるみたいなので、前日から全曲を3周流すことにしました！
+
+## スケジュール
+MIMIさんのオリジナル曲&提供曲を古い順に再生
+- 6月8日(月)21:12～  1周目
+- 6月9日(火)05:08～  2周目
+- 6月9日(火)13:14～  3周目
+
+- 6月9日(火)21:00～  ラピスラズリを同時視聴！（10年前の公開時刻と同じ！）
+- 終了後、翌0時まではランダムに選んだ曲を流します。
+
+## 注意事項
+- 途中参加・途中退出OKです！お好きなタイミングでご参加ください。
+- スケジュールは変更になる場合があります、ご了承ください。
+
+- 不具合があったら[たーけ](https://x.com/takechi_scratch)まで教えてください。
+`.trim();
+
 export function createScheduleInSpecialEvent(allSongs: Song[]): SharingSchedule {
     allSongs.sort((a, b) => a.publishedTimestamp - b.publishedTimestamp);
     const songDurationMap = new Map(allSongs.map((s) => [s.id, s.durationSeconds || 0]));
@@ -83,8 +103,7 @@ export function createScheduleInSpecialEvent(allSongs: Song[]): SharingSchedule 
 
     return {
         title: "MIMIさん活動開始10周年記念！同時視聴会",
-        description:
-            "【非公式】ラピスラズリの公開に合わせてみんなで聴こうという会です。当日はずっとMIMIさん全曲リストを流し続けています！",
+        description: description,
         startDate: startDate,
         endDate:
             songs[songs.length - 1].startDate +

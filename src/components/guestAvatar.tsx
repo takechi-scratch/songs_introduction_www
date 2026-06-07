@@ -21,7 +21,7 @@ const colorTypes = [
 
 const displayNames = ["うさぎ", "フランスパン", "ラベンダー", "ハート", "紅茶", "桜"];
 
-export default function randomContents(name: string) {
+export default function randomContents(name: string, size: number = 40) {
     const hash = Array.from(name).reduce(
         (acc, char, i) => acc + char.charCodeAt(0) * (i + 1),
         3131
@@ -31,7 +31,7 @@ export default function randomContents(name: string) {
     const iconName = names[hash % names.length];
 
     return {
-        icon: <Avatar name={iconName} colors={colorType} variant="beam" size={40} />,
+        icon: <Avatar name={iconName} colors={colorType} variant="beam" size={size} />,
         displayName: displayNames[hash % displayNames.length],
     };
 }

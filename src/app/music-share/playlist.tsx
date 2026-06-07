@@ -6,6 +6,8 @@ import { formatDateTime, formatTime } from "@/lib/date";
 import { Song } from "@/lib/songs/types";
 import {
     alpha,
+    Anchor,
+    Box,
     Button,
     Card,
     Divider,
@@ -19,9 +21,11 @@ import {
     Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
-import { createTestSchedule, SharingSchedule } from "./scheduling";
+// import Chat from "./chat";
+import { createScheduleInSpecialEvent, SharingSchedule } from "./scheduling";
 
 function Player({
     schedule,
@@ -36,7 +40,7 @@ function Player({
 }) {
     const songs = schedule.songs;
     const playerRef = useRef<YouTubePlayer | null>(null);
-    console.log(schedule);
+    // console.log(schedule);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -91,7 +95,7 @@ function Player({
 
     if (Date.now() / 1000 < schedule.startDate) {
         return (
-            <>
+            <Box>
                 <Card
                     shadow="sm"
                     padding="lg"
@@ -107,7 +111,7 @@ function Player({
                 <Button color="gray" mt="md" onClick={reRender}>
                     再読み込み
                 </Button>
-            </>
+            </Box>
         );
     }
 
@@ -164,7 +168,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
         return () => clearTimeout(timeout);
     }, []);
 
-    const schedule = createTestSchedule(allSongs);
+    const schedule = createScheduleInSpecialEvent(allSongs);
     const songs = schedule.songs;
 
     return (
@@ -179,12 +183,15 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                 key={String(k)}
                 reRender={reRender}
             />
+            {/* <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                <Chat />
+            </SimpleGrid> */}
             <Divider mt="xl" mb="lg" />
             <MantineMarkdown text={schedule.description} />
             <Title order={2} mt="md" mb="md">
                 曲一覧
             </Title>
-            <Table>
+            <Table mb="md">
                 <TableThead>
                     <TableTr>
                         <TableTh>時刻</TableTh>
@@ -205,6 +212,9 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                     ))}
                 </TableTbody>
             </Table>
+            <Anchor href="/" component={Link}>
+                ホームに戻る
+            </Anchor>
         </MyAppShell>
     );
 }
