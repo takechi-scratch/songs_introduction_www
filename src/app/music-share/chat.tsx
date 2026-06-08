@@ -113,22 +113,8 @@ export default function Chat() {
     const socketRef = useRef<WebSocket | null>(null);
     const viewportRef = useRef<HTMLDivElement | null>(null);
     const [inputValue, setInputValue] = useState("");
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            type: "info",
-            chatID: "",
-            timestamp: Date.now() / 1000,
-            content:
-                "ようこそ！曲の感想やバグ報告など、自由に書き込んでください！個人情報や勧誘などの送信は禁止です。",
-            author: {
-                id: "system",
-                displayName: "システム",
-                IconURL: "/icon-192x192.png",
-                useProvidedIcon: true,
-            },
-        },
-    ]);
-    // console.log(messages);
+    const [messages, setMessages] = useState<Message[]>([]);
+    console.log(messages);
 
     const onMessage = (event: MessageEvent<string>) => {
         const data = JSON.parse(event.data);
@@ -138,6 +124,23 @@ export default function Chat() {
             setMessages((prev) => prev.filter((msg) => msg.chatID !== data.chatID));
         } else if (data.type === "info") {
             setMessages((prev) => [...prev, data]);
+        } else if (data.type === "history") {
+            setMessages([
+                ...data.messages,
+                {
+                    type: "info",
+                    chatID: "",
+                    timestamp: Date.now() / 1000,
+                    content:
+                        "ようこそ！曲の感想やバグ報告など、自由に書き込んでください！個人情報や勧誘などの送信は禁止です。",
+                    author: {
+                        id: "system",
+                        displayName: "システム",
+                        IconURL: "/icon-192x192.png",
+                        useProvidedIcon: true,
+                    },
+                },
+            ]);
         }
     };
 
