@@ -11,6 +11,8 @@ import {
     Button,
     Card,
     Divider,
+    Group,
+    Image,
     ScrollArea,
     Table,
     TableTbody,
@@ -28,6 +30,8 @@ import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 // import Chat from "./chat";
 import { createScheduleInSpecialEvent, SharingSchedule } from "./scheduling";
 
+const MAX_QUEUEING_SONGS = 150;
+
 function Player({
     schedule,
     songIndex,
@@ -42,6 +46,7 @@ function Player({
     const songs = schedule.songs;
     const playerRef = useRef<YouTubePlayer | null>(null);
     // console.log(schedule);
+    const [startIndex, setStartIndex] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -64,45 +69,78 @@ function Player({
         { autoInvoke: true }
     );
 
+    function cueNextSongs(startIndex: number) {
+        const player = playerRef.current;
+        if (!player) return;
+        setStartIndex(startIndex);
+        player.cuePlaylist({
+            playlist: songs.map((s) => s.id).slice(startIndex, startIndex + MAX_QUEUEING_SONGS),
+        });
+        player.playVideo();
+    }
+
+    function findCurrentSongIndex(): number {
+        const now = Math.floor(Date.now() / 1000);
+
+        for (let i = 0; i < songs.length; i++) {
+            const song = songs[i];
+            if (song.startDate < now && now < (songs[i + 1]?.startDate || Infinity)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    function getPlaylistIndex() {
+        const player = playerRef.current;
+        if (!player) return 0;
+        return player.getPlaylistIndex() + startIndex;
+    }
+
     function adjustAndPlay(auto: boolean = false) {
         const player = playerRef.current;
         const now = Math.floor(Date.now() / 1000);
         if (!player) return;
-        for (let i = 0; i < songs.length; i++) {
-            const song = songs[i];
-            if (song.startDate < now && now < (songs[i + 1]?.startDate || Infinity)) {
-                if (
-                    auto &&
-                    player.getPlaylistIndex() === i &&
-                    Math.abs(now - song.startDate - player.getCurrentTime()) < 10
-                )
-                    break;
 
-                if (player.getPlaylistIndex() !== i) {
-                    player.playVideoAt(i);
-                    setTimeout(() => {
-                        player.seekTo(now - song.startDate, true);
-                    }, 200);
-                } else {
-                    player.seekTo(now - song.startDate, true);
-                }
-                break;
-            }
+        const i = findCurrentSongIndex();
+        const song = songs[i];
+        if (
+            auto &&
+            getPlaylistIndex() === i &&
+            Math.abs(now - song.startDate - player.getCurrentTime()) < 10
+        )
+            return;
+
+        if (!auto && i != startIndex) {
+            cueNextSongs(i);
         }
+
+        if (getPlaylistIndex() !== i) {
+            player.playVideoAt(i - startIndex);
+        }
+        setTimeout(() => {
+            player.seekTo(now - song.startDate, true);
+        }, 200);
+        return;
     }
 
     function onReady(event: YouTubeEvent) {
         playerRef.current = event.target;
-        event.target.cuePlaylist({
-            playlist: songs.map((s) => s.id),
-        });
+        cueNextSongs(findCurrentSongIndex());
     }
 
     function onStateChange(event: YouTubeEvent) {
         const player = playerRef.current;
         if (!player) return;
-        const idx = player.getPlaylistIndex?.();
+        const idx = getPlaylistIndex();
         if (typeof idx === "number") setSongIndex(idx);
+        if (event.data === 0) {
+            console.log("playlist index:", player.getPlaylistIndex());
+            if (player.getPlaylistIndex() === -1) {
+                adjustAndPlay(false);
+            }
+        }
     }
 
     if (Date.now() / 1000 < schedule.startDate) {
@@ -141,17 +179,39 @@ function Player({
 
     if (Date.now() / 1000 > schedule.endDate) {
         return (
-            <Card
-                shadow="sm"
-                padding="lg"
-                radius="md"
-                bg={alpha("var(--mantine-color-blue-3)", 0.4)}
-            >
-                <Text size="lg" ta="center" mb="md">
-                    イベントは終了しました。
-                </Text>
-                <Text ta="center">終了日時: {formatDateTime(schedule.endDate)}</Text>
-            </Card>
+            <Box>
+                <Card
+                    shadow="sm"
+                    padding="lg"
+                    radius="md"
+                    bg={alpha("var(--mantine-color-blue-3)", 0.4)}
+                >
+                    <Text size="lg" ta="center" mb="md">
+                        イベントは終了しました。
+                    </Text>
+                    <Text ta="center">終了日時: {formatDateTime(schedule.endDate)}</Text>
+                </Card>
+                <Group mt="md">
+                    <Text size="sm">感想をぜひ「#MIMIさん全曲紹介」でシェアしてね！</Text>
+                    <Button
+                        component="a"
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`\n#MIMIさん全曲紹介`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="gray"
+                        mr="md"
+                    >
+                        <Image
+                            src={"/assets/x-logo-white.png"}
+                            alt="Twitterロゴ"
+                            width={16}
+                            height={16}
+                            mr={6}
+                        />
+                        シェア
+                    </Button>
+                </Group>
+            </Box>
         );
     }
 
@@ -175,6 +235,26 @@ function Player({
             <Button mt="md" onClick={() => adjustAndPlay(false)}>
                 再生位置を合わせる
             </Button>
+            <Group mt="md">
+                <Text size="sm">感想をぜひ「#MIMIさん全曲紹介」でシェアしてね！</Text>
+                <Button
+                    component="a"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`\n#MIMIさん全曲紹介`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="gray"
+                    mr="md"
+                >
+                    <Image
+                        src={"/assets/x-logo-white.png"}
+                        alt="Twitterロゴ"
+                        width={16}
+                        height={16}
+                        mr={6}
+                    />
+                    シェア
+                </Button>
+            </Group>
         </>
     );
 }
