@@ -21,7 +21,7 @@ import {
     Text,
     Title,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useInterval } from "@mantine/hooks";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
@@ -52,6 +52,17 @@ function Player({
         }, 1000);
         return () => clearInterval(interval);
     }, []);
+
+    const [remainingTimeToStart, setRemainingTimeToStart] = useState(0);
+    useInterval(
+        () => {
+            setRemainingTimeToStart((prev) =>
+                Math.max(0, schedule.startDate - Math.floor(Date.now() / 1000))
+            );
+        },
+        1000,
+        { autoInvoke: true }
+    );
 
     function adjustAndPlay(auto: boolean = false) {
         const player = playerRef.current;
@@ -104,6 +115,18 @@ function Player({
                     bg={alpha("var(--mantine-color-blue-3)", 0.4)}
                     withBorder
                 >
+                    {remainingTimeToStart < 86400 && (
+                        <Text size="xl" fw={700} ta="center">
+                            {Math.floor(remainingTimeToStart / 3600)
+                                .toFixed(0)
+                                .padStart(2, "0")}
+                            :
+                            {Math.floor((remainingTimeToStart % 3600) / 60)
+                                .toString()
+                                .padStart(2, "0")}
+                            :{(remainingTimeToStart % 60).toString().padStart(2, "0")}
+                        </Text>
+                    )}
                     <Text size="lg" ta="center" mb="md" onClick={reRender}>
                         イベントはまだ開始されていません。
                     </Text>
