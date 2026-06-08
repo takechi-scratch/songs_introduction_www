@@ -1,7 +1,10 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
+import GoogleSignInButton from "@/components/signIn/google";
 import { useAuth } from "@/contexts/AuthContext";
+import { useColorMode } from "@/contexts/ThemeContext";
+import { useUserRole } from "@/hooks/auth";
 import {
     getCurrentUserToken,
     linkAnonymousAccountWithProvider,
@@ -9,17 +12,19 @@ import {
     loginWithProvider,
     logout,
 } from "@/lib/auth/firebase";
-import { Title, Button, Alert, Text, Anchor, Flex, Paper } from "@mantine/core";
-import { GoogleAuthProvider, TwitterAuthProvider, User } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { IconInfoCircle, IconUserFilled, IconUserQuestion } from "@tabler/icons-react";
-import Link from "next/link";
-import GoogleSignInButton from "@/components/signIn/google";
-import { notifications } from "@mantine/notifications";
-import { useColorMode } from "@/contexts/ThemeContext";
-import Image from "next/image";
-import { useUserRole } from "@/hooks/auth";
+import { Alert, Anchor, Button, Flex, Paper, Text, Title } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import {
+    IconInfoCircle,
+    IconShieldLockFilled,
+    IconUserFilled,
+    IconUserQuestion,
+} from "@tabler/icons-react";
+import { GoogleAuthProvider, TwitterAuthProvider, User } from "firebase/auth";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -227,7 +232,11 @@ export default function LoginPage() {
             <Title mb="lg">ログイン</Title>
 
             <Alert radius="md" mb="lg" icon={<IconUserFilled />}>
-                ログインすると、再生リストの作成・コメント（現在開発中）などができるようになります。
+                ログインすると、再生リストの作成・コメントなどができるようになります。
+            </Alert>
+
+            <Alert color="green" radius="md" mb="lg" icon={<IconShieldLockFilled />}>
+                アカウント情報は認証のみに使用しています。SNSのデータを取得したり、自動で投稿したりすることはありません。
             </Alert>
 
             <Alert color="orange" radius="md" mb="lg" icon={<IconInfoCircle />}>

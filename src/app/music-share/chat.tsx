@@ -3,10 +3,12 @@
 import randomContents from "@/components/guestAvatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
-import { getCurrentUserToken } from "@/lib/auth/firebase";
+import { getCurrentUserToken, loginWithAnonymous } from "@/lib/auth/firebase";
 import { formatTime } from "@/lib/date";
 import { User } from "@/lib/interaction/types";
 import {
+    Alert,
+    Anchor,
     Box,
     Button,
     Divider,
@@ -14,20 +16,21 @@ import {
     Group,
     Avatar as MantineAvatar,
     Paper,
+    ScrollArea,
     Text,
     TextInput,
     Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
-import { IconTrash } from "@tabler/icons-react";
+import { IconTrash, IconUserQuestion } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 interface Message {
-    type: "post" | "delete";
+    type: "post" | "delete" | "info";
     chatID: string;
     timestamp: number;
     author: User;
@@ -43,7 +46,7 @@ export function CommentCard<IDType>({
     chat: Message;
     onCommentDeleted: (id: IDType) => void;
 }) {
-    const { icon, displayName } = randomContents(chat.author.id, 30);
+    const { icon, displayName } = randomContents(chat.author.id, 26);
     const { user, userInfo } = useAuth();
     const isGuest = user?.providerData.length === 0;
     const userRole = useUserRole();
@@ -56,7 +59,7 @@ export function CommentCard<IDType>({
     );
 
     return (
-        <Group gap="sm" align="start">
+        <Group gap="xs" align="start">
             <Box style={{ flex: 1 }}>
                 <Group gap="sm" mb="xs">
                     {isMine ? (
@@ -70,10 +73,15 @@ export function CommentCard<IDType>({
                     <Text size="sm" opacity={0.6}>
                         {formatTime(chat.timestamp)}
                     </Text>
-                    <Text ml="sm" mr="auto">
+                    <Text
+                        ml="sm"
+                        mr="auto"
+                        c={chat.type === "info" ? "gray" : undefined}
+                        size={chat.type === "info" ? "sm" : "md"}
+                    >
                         {chat.content}
                     </Text>
-                    {userRole === "admin" && (
+                    {userRole === "admin" && chat.chatID && (
                         <IconTrash
                             color="red"
                             size={18}
@@ -98,29 +106,58 @@ export function CommentCard<IDType>({
 }
 
 export default function Chat() {
+    const { user: authUser, userInfo } = useAuth();
+    const linkedUser = authUser && authUser.providerData.length > 0;
+
     const [enabled, { toggle: toggleEnabled }] = useDisclosure(false);
     const socketRef = useRef<WebSocket | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const viewportRef = useRef<HTMLDivElement | null>(null);
+    const [inputValue, setInputValue] = useState("");
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            type: "info",
+            chatID: "",
+            timestamp: Date.now() / 1000,
+            content:
+                "ようこそ！曲の感想やバグ報告など、自由に書き込んでください！個人情報や勧誘などの送信は禁止です。",
+            author: {
+                id: "system",
+                displayName: "システム",
+                IconURL: "/icon-192x192.png",
+                useProvidedIcon: true,
+            },
+        },
+    ]);
     // console.log(messages);
 
     const onMessage = (event: MessageEvent<string>) => {
         const data = JSON.parse(event.data);
-        console.log("Received message:", data);
         if (data.type === "post") {
             setMessages((prev) => [...prev, data]);
-            console.log("Updated messages:", [...messages, data]);
         } else if (data.type === "delete") {
             setMessages((prev) => prev.filter((msg) => msg.chatID !== data.chatID));
+        } else if (data.type === "info") {
+            setMessages((prev) => [...prev, data]);
         }
     };
 
     async function onStartChat() {
-        const websocket = new WebSocket(
-            `${API_BASE_URL.replace(/^http/, "ws")}/share-chat/ws/?token=${await getCurrentUserToken()}`
-        );
+        if (!authUser) {
+            await loginWithAnonymous();
+        }
+
+        const websocket = new WebSocket(`${API_BASE_URL.replace(/^http/, "ws")}/share-chat/ws/`);
         socketRef.current = websocket;
         console.log("WebSocket connection established");
+
+        websocket.addEventListener("open", async () => {
+            socketRef.current?.send(
+                JSON.stringify({
+                    type: "auth",
+                    token: await getCurrentUserToken(),
+                })
+            );
+        });
 
         websocket.addEventListener("message", onMessage);
         toggleEnabled();
@@ -141,6 +178,20 @@ export default function Chat() {
         };
     }, [enabled]);
 
+    useEffect(() => {
+        if (enabled && viewportRef.current) {
+            try {
+                viewportRef.current.scrollTo({
+                    top: viewportRef.current.scrollHeight,
+                    behavior: "smooth",
+                });
+            } catch (e) {
+                // fallback
+                viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+            }
+        }
+    }, [messages, enabled]);
+
     if (!enabled) {
         return (
             <Paper shadow="sm" p="md" h="100%" radius="md" style={{ overflowY: "auto" }}>
@@ -148,7 +199,46 @@ export default function Chat() {
                     <Title order={2} mt="md" mb="md">
                         チャット
                     </Title>
-                    <Button onClick={onStartChat}>チャットをはじめる</Button>
+                    <Button onClick={onStartChat} mb="md">
+                        チャットをはじめる
+                    </Button>
+                    {!userInfo && (
+                        <Alert
+                            color="pink"
+                            title="ログインしていません"
+                            icon={<IconUserQuestion />}
+                            mb="xs"
+                            style={{ wordBreak: "break-all" }}
+                        >
+                            <Text size="sm">
+                                チャットに参加する際、ゲストアカウントが自動で作成されます。
+                            </Text>
+                            <Text size="sm">
+                                <Anchor
+                                    href="/login/"
+                                    component={Link}
+                                    size="sm"
+                                    style={{ display: "inline" }}
+                                >
+                                    ログイン
+                                </Anchor>
+                                すると、アイコン・名前を変えられるようになります！（後から連携することもできます）
+                            </Text>
+                        </Alert>
+                    )}
+                    {userInfo && !linkedUser && (
+                        <Alert
+                            color="pink"
+                            title="ゲストアカウントでログインしています"
+                            icon={<IconUserQuestion />}
+                            mb="xs"
+                        >
+                            <Anchor href="/login/" component={Link} size="sm">
+                                アカウント連携
+                            </Anchor>
+                            をすると、アイコン・名前を変えられるようになります！
+                        </Alert>
+                    )}
                 </Flex>
             </Paper>
         );
@@ -159,40 +249,47 @@ export default function Chat() {
             <Title order={2} mt="md" mb="md">
                 チャット
             </Title>
-            {messages.map((chat, i) => (
-                <Box key={chat.chatID}>
-                    <Divider my="sm" />
-                    <CommentCard
-                        id={i}
-                        chat={chat}
-                        onCommentDeleted={(id) => {
-                            setMessages((prev) => prev.filter((_, index) => index !== id));
-                        }}
-                    />
+            <ScrollArea h={400} viewportRef={viewportRef}>
+                <Box>
+                    {messages.map((chat, i) => (
+                        <Box key={chat.chatID || i}>
+                            <Divider my="xs" />
+                            <CommentCard
+                                id={i}
+                                chat={chat}
+                                onCommentDeleted={(id) => {
+                                    socketRef.current?.send(
+                                        JSON.stringify({ type: "delete", chatID: chat.chatID })
+                                    );
+                                    setMessages((prev) => prev.filter((_, index) => index !== id));
+                                }}
+                            />
+                        </Box>
+                    ))}
                 </Box>
-            ))}
-            <Group gap="sm" align="center" mt="sm" w="100%">
+            </ScrollArea>
+            <Group gap="sm" align="flex-start" mt="sm" w="100%">
                 <TextInput
-                    ref={inputRef}
                     style={{ flex: 1 }}
                     placeholder="メッセージを入力..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.currentTarget.value)}
+                    error={inputValue.length > 140 ? "140文字以内で入力してください" : false}
                     onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                        if (e.key === "Enter" && inputValue.trim() !== "") {
                             socketRef.current?.send(
-                                JSON.stringify({ type: "post", content: e.currentTarget.value })
+                                JSON.stringify({ type: "post", content: inputValue.trim() })
                             );
-                            e.currentTarget.value = "";
+                            setInputValue("");
                         }
                     }}
                 />
                 <Button
                     onClick={() => {
-                        if (!inputRef.current) return;
-                        if (inputRef.current.value.trim() === "") return;
                         socketRef.current?.send(
-                            JSON.stringify({ type: "post", content: inputRef.current.value })
+                            JSON.stringify({ type: "post", content: inputValue.trim() })
                         );
-                        inputRef.current.value = "";
+                        setInputValue("");
                     }}
                 >
                     送信

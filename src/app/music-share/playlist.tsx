@@ -14,6 +14,7 @@ import {
     Group,
     Image,
     ScrollArea,
+    SimpleGrid,
     Table,
     TableTbody,
     TableTd,
@@ -27,7 +28,7 @@ import { useDisclosure, useInterval } from "@mantine/hooks";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
-// import Chat from "./chat";
+import Chat from "./chat";
 import { createScheduleInSpecialEvent, SharingSchedule } from "./scheduling";
 
 const MAX_QUEUEING_SONGS = 150;
@@ -216,22 +217,25 @@ function Player({
     }
 
     return (
-        <>
-            <YouTube
-                videoId={songs[0].id}
-                opts={{
-                    width: "640",
-                    height: "360",
-                    playerVars: {
-                        autoplay: 1,
-                        // controls: 0,
-                        disablekb: 1,
-                    },
-                }}
-                onReady={onReady}
-                onPlay={() => adjustAndPlay(true)}
-                onStateChange={onStateChange}
-            />
+        <Box>
+            <div style={{ width: "100%", maxWidth: "640px", aspectRatio: "16/9" }}>
+                <YouTube
+                    videoId={songs[0].id}
+                    opts={{
+                        width: "100%",
+                        height: "100%",
+                        playerVars: {
+                            autoplay: 1,
+                            // controls: 0,
+                            disablekb: 1,
+                        },
+                    }}
+                    onReady={onReady}
+                    onPlay={() => adjustAndPlay(true)}
+                    onStateChange={onStateChange}
+                    style={{ width: "100%", height: "100%" }}
+                />
+            </div>
             <Button mt="md" onClick={() => adjustAndPlay(false)}>
                 再生位置を合わせる
             </Button>
@@ -255,7 +259,7 @@ function Player({
                     シェア
                 </Button>
             </Group>
-        </>
+        </Box>
     );
 }
 
@@ -280,16 +284,16 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
             <Title order={2} mb="md">
                 {schedule.title}
             </Title>
-            <Player
-                schedule={schedule}
-                songIndex={songIndex}
-                setSongIndex={setSongIndex}
-                key={String(k)}
-                reRender={reRender}
-            />
-            {/* <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                <Player
+                    schedule={schedule}
+                    songIndex={songIndex}
+                    setSongIndex={setSongIndex}
+                    key={String(k)}
+                    reRender={reRender}
+                />
                 <Chat />
-            </SimpleGrid> */}
+            </SimpleGrid>
             <Divider mt="xl" mb="lg" />
             <MantineMarkdown text={schedule.description} />
             <Title order={2} mt="md" mb="md">
