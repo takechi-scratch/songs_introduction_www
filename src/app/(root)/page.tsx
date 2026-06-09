@@ -1,6 +1,9 @@
+import { FadeInUp } from "@/components/animatedContents";
+import { PinnedAnnouncements } from "@/components/announcements/manager";
 import MyAppShell from "@/components/appshell/myAppshell";
+import { advancedSearchForSongs, fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
+import { Song, SongWithScore } from "@/lib/songs/types";
 import {
-    Alert,
     Anchor,
     Divider,
     Flex,
@@ -12,21 +15,16 @@ import {
     Text,
     Title,
 } from "@mantine/core";
-import { FadeInUp } from "@/components/animatedContents";
-import { PinnedAnnouncements } from "@/components/announcements/manager";
-import { Song, SongWithScore } from "@/lib/songs/types";
-import { SongsNearestSection, SongsSearchSection } from "./songsSection";
-import Link from "next/link";
 import {
     IconCurrencyYenOff,
-    IconFlaskFilled,
     IconHeart,
     IconMusicHeart,
     IconPlaylist,
     IconRobotOff,
 } from "@tabler/icons-react";
-import { advancedSearchForSongs, fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
 import NextImage from "next/image";
+import Link from "next/link";
+import { SongsNearestSection, SongsSearchSection } from "./songsSection";
 
 export default async function HomePage() {
     let latestSongsData: Song[] | undefined;
@@ -81,7 +79,7 @@ export default async function HomePage() {
                     <Text mt="xl">
                         ボカロPの「
                         <Anchor
-                            href="https://www.youtube.com/@MIMI"
+                            href="https://www.youtube.com/@MIMI...official"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
