@@ -20,6 +20,7 @@ import {
     IconHeart,
     IconMusicHeart,
     IconPlaylist,
+    IconRadio,
     IconRobotOff,
 } from "@tabler/icons-react";
 import NextImage from "next/image";
@@ -163,6 +164,15 @@ export default async function HomePage() {
                     icon={<IconMusicHeart size={40} color="#40c057" />}
                     backgroundColor="#40c057"
                     href="/recommend"
+                />
+                <FadeInUp
+                    title="音楽シェア"
+                    description={
+                        "楽曲を毎日ランダムに再生中です。みんなで聴きましょう！\nときどきイベントも開催しています！"
+                    }
+                    icon={<IconRadio size={40} color="#588dd3" />}
+                    backgroundColor="#588dd3"
+                    href="/music-share"
                 />
             </Flex>
             <Title order={2} mb="md">

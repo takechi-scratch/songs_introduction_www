@@ -5,6 +5,7 @@ import MantineMarkdown from "@/components/markdown";
 import { formatDateTime, formatTime } from "@/lib/date";
 import { Song } from "@/lib/songs/types";
 import {
+    Accordion,
     alpha,
     Anchor,
     Box,
@@ -13,6 +14,7 @@ import {
     Divider,
     Group,
     Image,
+    List,
     ScrollArea,
     SimpleGrid,
     Table,
@@ -29,7 +31,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import Chat from "./chat";
-import { createScheduleInSpecialEvent, SharingSchedule } from "./scheduling";
+import { createDailySchedule, pastEvents, SharingSchedule } from "./scheduling";
 
 const MAX_QUEUEING_SONGS = 150;
 
@@ -236,7 +238,23 @@ function Player({
                     style={{ width: "100%", height: "100%" }}
                 />
             </div>
-            <Button mt="md" onClick={() => adjustAndPlay(false)}>
+            <Button
+                mt="md"
+                color="teal"
+                component="a"
+                href={songs[songIndex] ? `/songs/${songs[songIndex].id}` : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                似ている曲・コメント
+            </Button>
+            <Button
+                mt="md"
+                ml="md"
+                color="blue"
+                variant="outline"
+                onClick={() => adjustAndPlay(false)}
+            >
                 再生位置を合わせる
             </Button>
             <Group mt="md">
@@ -276,15 +294,26 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
         return () => clearTimeout(timeout);
     }, []);
 
-    const schedule = createScheduleInSpecialEvent(allSongs);
+    const schedule = createDailySchedule(allSongs);
     const songs = schedule.songs;
 
     return (
         <MyAppShell>
-            <Title order={2} mb="md">
+            <Title order={1} mb="md">
                 {schedule.title}
             </Title>
-            <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            {schedule.chatEnabled ? (
+                <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                    <Player
+                        schedule={schedule}
+                        songIndex={songIndex}
+                        setSongIndex={setSongIndex}
+                        key={String(k)}
+                        reRender={reRender}
+                    />
+                    <Chat />
+                </SimpleGrid>
+            ) : (
                 <Player
                     schedule={schedule}
                     songIndex={songIndex}
@@ -292,19 +321,17 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                     key={String(k)}
                     reRender={reRender}
                 />
-                <Chat />
-            </SimpleGrid>
+            )}
             <Divider mt="xl" mb="lg" />
             <MantineMarkdown text={schedule.description} />
             <Title order={2} mt="md" mb="md">
                 曲一覧
             </Title>
-            <ScrollArea h={500} type="always">
+            <ScrollArea h={500} type="always" mb="lg">
                 <Table mb="md">
                     <TableThead>
                         <TableTr>
                             <TableTh>時刻</TableTh>
-                            {/* <TableTh>動画ID</TableTh> */}
                             <TableTh>タイトル</TableTh>
                         </TableTr>
                     </TableThead>
@@ -315,13 +342,54 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                                 style={{ fontWeight: index === songIndex ? "bold" : "normal" }}
                             >
                                 <TableTd>{formatTime(s.startDate)}</TableTd>
-                                {/* <TableTd>{s.id}</TableTd> */}
                                 <TableTd>{s.title}</TableTd>
                             </TableTr>
                         ))}
                     </TableTbody>
                 </Table>
             </ScrollArea>
+            <Divider my="lg" />
+            <Title order={2} mb="md">
+                お知らせ
+            </Title>
+            <List mb="md" withPadding>
+                <List.Item>
+                    途中参加・途中退出OKです！お好きなタイミングでご参加ください。
+                </List.Item>
+                <List.Item>
+                    再生時間は自動で調整されます。時間がずれている場合は、「再生位置を合わせる」ボタンを押してください。
+                </List.Item>
+                <List.Item mb="md">
+                    YouTubeの仕様上、数時間連続で再生するとリストが止まる場合があります。「再生位置を合わせる」ボタンを押すと、続きが再生されます。
+                </List.Item>
+                {schedule.chatEnabled && (
+                    <>
+                        <List.Item>
+                            チャットでは、曲の感想・MIMIさんについての雑談など、自由に書き込んでください！
+                        </List.Item>
+                        <List.Item>
+                            ただし、他の参加者が不快になるような内容や、個人情報、営業勧誘を送信することはお控えください。チャットを心地よい場所にするために、ご協力をお願いいたします。
+                        </List.Item>
+                    </>
+                )}
+            </List>
+            <Title order={2} mb="md">
+                過去のイベント
+            </Title>
+            <Accordion variant="separated" defaultValue="2024-06-01" radius="md" mb="md">
+                {pastEvents.map((event) => (
+                    <Accordion.Item value={event.title} key={event.title}>
+                        <Accordion.Control>{event.title}</Accordion.Control>
+                        <Accordion.Panel>
+                            <Text size="sm" c="gray" mb="md">
+                                日時: {formatDateTime(event.startDate)} -{" "}
+                                {formatDateTime(event.endDate)}
+                            </Text>
+                            <MantineMarkdown text={event.description} />
+                        </Accordion.Panel>
+                    </Accordion.Item>
+                ))}
+            </Accordion>
             <Anchor href="/" component={Link}>
                 ホームに戻る
             </Anchor>

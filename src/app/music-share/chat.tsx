@@ -168,16 +168,9 @@ export default function Chat() {
 
     useEffect(() => {
         if (!enabled) return;
-
-        function closeSocket() {
+        return () => {
             socketRef.current?.removeEventListener("message", onMessage);
             socketRef.current?.close();
-        }
-
-        window.addEventListener("beforeunload", closeSocket);
-
-        return () => {
-            window.removeEventListener("beforeunload", closeSocket);
         };
     }, [enabled]);
 
