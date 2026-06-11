@@ -31,7 +31,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import Chat from "./chat";
-import { createDailySchedule, pastEvents, SharingSchedule } from "./scheduling";
+import {
+    createDailySchedule,
+    createScheduleForAlbumShareing,
+    pastEvents,
+    SharingSchedule,
+} from "./scheduling";
 
 const MAX_QUEUEING_SONGS = 150;
 
@@ -61,7 +66,9 @@ function Player({
         return () => clearInterval(interval);
     }, []);
 
-    const [remainingTimeToStart, setRemainingTimeToStart] = useState(0);
+    const [remainingTimeToStart, setRemainingTimeToStart] = useState(
+        Math.max(0, schedule.startDate - Math.floor(Date.now() / 1000))
+    );
     useInterval(
         () => {
             setRemainingTimeToStart((prev) =>
@@ -282,8 +289,34 @@ function Player({
 }
 
 export default function Page({ allSongs }: { allSongs: Song[] }) {
+    const specialSchedule = createScheduleForAlbumShareing(allSongs);
+    const dailySchedule = createDailySchedule(allSongs);
+    let schedule = dailySchedule;
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (
+        specialSchedule.startDate - 3600 < currentTime &&
+        currentTime < specialSchedule.endDate + 1800
+    ) {
+        schedule = specialSchedule;
+    }
+
     const [songIndex, setSongIndex] = useState(-1);
     const [k, { toggle: reRender }] = useDisclosure(false);
+    const [chatEnabled, setChatEnabled] = useState(false);
+    useInterval(
+        () => {
+            const currentTime = Math.floor(Date.now() / 1000);
+            setChatEnabled(
+                Boolean(
+                    schedule.chatEnabled &&
+                    schedule.startDate - 3600 < currentTime &&
+                    currentTime < schedule.endDate + 1800
+                )
+            );
+        },
+        1000,
+        { autoInvoke: true }
+    );
 
     useEffect(() => {
         if (schedule.startDate < Math.floor(Date.now() / 1000)) return;
@@ -294,7 +327,6 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
         return () => clearTimeout(timeout);
     }, []);
 
-    const schedule = createDailySchedule(allSongs);
     const songs = schedule.songs;
 
     return (
@@ -302,7 +334,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
             <Title order={1} mb="md">
                 {schedule.title}
             </Title>
-            {schedule.chatEnabled ? (
+            {chatEnabled ? (
                 <SimpleGrid cols={{ base: 1, sm: 2 }}>
                     <Player
                         schedule={schedule}
@@ -362,7 +394,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                 <List.Item mb="md">
                     YouTubeの仕様上、数時間連続で再生するとリストが止まる場合があります。「再生位置を合わせる」ボタンを押すと、続きが再生されます。
                 </List.Item>
-                {schedule.chatEnabled && (
+                {chatEnabled && (
                     <>
                         <List.Item>
                             チャットでは、曲の感想・MIMIさんについての雑談など、自由に書き込んでください！

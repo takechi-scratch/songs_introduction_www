@@ -76,7 +76,65 @@ export function createDailySchedule(allSongs: Song[]): SharingSchedule {
     };
 }
 
-export function createScheduleInSpecialEvent(allSongs: Song[]): SharingSchedule {
+export function createScheduleForAlbumShareing(allSongs: Song[]): SharingSchedule {
+    const songsID = [
+        "SBlkzGiM5uE",
+        "QJaY60vjSxw",
+        "rzamOqbbBfQ",
+        "fztKqreP1pk",
+        "qtuX4cHk-vE",
+        "pPy1m0P3Uvg",
+        "vLigCJOcHOE",
+        "f6TytcA47rI",
+        "1gSMjPLRJik",
+        "7xht3kQO_TM",
+        "340OXvocRMM",
+        "ioW9iGDpQyw",
+        "YN6c7v9Mr1I",
+        "6Qy0Xw_wR0M",
+        "Mb9TWJm_5L4",
+        "Lah9p6KokM8",
+        "m-bvW4pKT68",
+        "TC80uw4HgCw",
+        "hMZOgUJwK_8",
+        "IxVFW1XIW7Q",
+        "jJh0o5KyH8w",
+        "2zyZqXvrIpk",
+    ];
+
+    const startDate = new Date("2026-06-12T21:30:00+09:00").getTime() / 1000;
+    let currentTime = startDate;
+
+    const songs: SharingSong[] = [];
+    for (const id of songsID) {
+        const song = allSongs.find((s) => s.id === id);
+        if (!song) {
+            continue;
+        }
+
+        songs.push({
+            id: song.id,
+            title: song.title,
+            startDate: currentTime,
+        });
+        currentTime += song.durationSeconds || 0;
+    }
+
+    return {
+        title: "10周年記念アルバムを一緒に聴く会",
+        description: [
+            "タイトルの通り、アルバムの曲を順番に再生します！一緒に聴いて、イチオシの曲を見つけましょう！",
+            "不具合があったら[@takechi_scratch](https://x.com/takechi_scratch)まで。",
+            "※開始1時間前～終了30分後の間は、イベント用スケジュールでの再生になっています。その後は、通常のランダム再生スケジュールに切り替わります。",
+        ].join("\n"),
+        startDate: startDate,
+        endDate: currentTime,
+        songs: songs,
+        chatEnabled: true,
+    };
+}
+
+export function createScheduleForSpecialEvent(allSongs: Song[]): SharingSchedule {
     allSongs.sort((a, b) => a.publishedTimestamp - b.publishedTimestamp);
     const songDurationMap = new Map(allSongs.map((s) => [s.id, s.durationSeconds || 0]));
     const songTitleMap = new Map(allSongs.map((s) => [s.id, s.title]));

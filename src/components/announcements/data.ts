@@ -121,4 +121,13 @@ export const data: Announcement[] = [
             color: "pink",
         },
     },
+    {
+        id: "event_001",
+        title: "アルバム曲の同時視聴会を実施中！",
+        content:
+            "10周年記念アルバムを一緒に聴く会です。ぜひ来てください！\n[同時視聴会ページ](/music-share/)",
+        releaseDate: 1781017200,
+        expiresDate: 1771599600,
+        pinnedToTop: true,
+    },
 ];
