@@ -41,7 +41,7 @@ export function createTestSchedule(allSongs: Song[]): SharingSchedule {
 }
 
 export function createDailySchedule(allSongs: Song[]): SharingSchedule {
-    const today = Math.floor((Date.now() + 3600 * 9) / 1000 / 86400);
+    const today = Math.floor((Date.now() / 1000 + 3600 * 9) / 86400);
     const startDate = today * 86400 - 3600 * 9;
     let currentTime = startDate;
 
