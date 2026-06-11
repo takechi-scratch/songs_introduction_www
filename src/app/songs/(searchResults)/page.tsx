@@ -1,15 +1,15 @@
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Title, Alert } from "@mantine/core";
+import { Alert, Title } from "@mantine/core";
 import { IconZoomExclamation } from "@tabler/icons-react";
 
 import { PageProps } from "@/lib/utils";
 
-import rison from "rison";
 import { SongSearchParams } from "@/lib/search/search";
 import { advancedSearchForSongs } from "@/lib/songs/api";
-import Actions from "./actions";
-import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import rison from "rison";
+import Actions from "./actions";
 import SearchShell from "./searchShell";
 
 const title = "曲一覧 | MIMIさん全曲紹介";
@@ -86,24 +86,7 @@ async function MainPage(props: PageProps) {
         redirect(`/songs/${song.id}`);
     }
 
-    return (
-        <>
-            {songs !== null && <Actions songs={songs} songSearchParams={songSearchParams} />}
-            {/* <Drawer
-                opened={opened}
-                onClose={close}
-                title="Authentication"
-                trapFocus={false}
-                withOverlay={false}
-            >
-                Drawer content
-            </Drawer>
-
-            <Button variant="default" onClick={open}>
-                Open Drawer
-            </Button> */}
-        </>
-    );
+    return <>{songs !== null && <Actions songs={songs} songSearchParams={songSearchParams} />}</>;
 }
 
 export default async function Page(props: PageProps) {

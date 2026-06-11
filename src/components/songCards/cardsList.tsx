@@ -1,7 +1,7 @@
 "use client";
 
-import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import Card from "@/components/songCards/card";
+import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { Center, Pagination, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
@@ -27,11 +27,12 @@ export default function CardsList({ songs }: { songs: (Song | SongWithScore | nu
             <Center m="lg">
                 <Pagination total={pages} onChange={setPageIndex} />
             </Center>
-            {songs.every((song) => song && hasScore(song) && song.score !== null) && (
-                <Text size="sm" opacity={0.6} mb="md">
-                    ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
-                </Text>
-            )}
+            {songs.length > 0 &&
+                songs.every((song) => song && hasScore(song) && song.score !== null) && (
+                    <Text size="sm" opacity={0.6} mb="md">
+                        ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
+                    </Text>
+                )}
         </>
     );
 }
