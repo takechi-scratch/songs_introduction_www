@@ -63,7 +63,9 @@ export function createDailySchedule(allSongs: Song[]): SharingSchedule {
 
     const description = [
         "毎日、提供曲も含めた全曲からランダムに再生しています。朝活や寝る前、いろんな曲を聴きたいときにぜひご利用ください！",
-        "※同時視聴イベントを開催する際は、スケジュールが変更になることがあります！",
+        "## 注意事項",
+        "- スケジュールは毎日0時（日本時間）に更新されます。0:00直前の数分間は、スケジュール入れ替えのため再生が止まります。",
+        "- 同時視聴イベントを開催する際は、スケジュールが変更になることがあります！",
     ].join("\n");
 
     return {
@@ -73,120 +75,6 @@ export function createDailySchedule(allSongs: Song[]): SharingSchedule {
         endDate: currentTime,
         songs: songs,
         chatEnabled: false,
-    };
-}
-
-export function createScheduleForAlbumShareing(allSongs: Song[]): SharingSchedule {
-    const songsID = [
-        "SBlkzGiM5uE",
-        "QJaY60vjSxw",
-        "rzamOqbbBfQ",
-        "fztKqreP1pk",
-        "qtuX4cHk-vE",
-        "pPy1m0P3Uvg",
-        "vLigCJOcHOE",
-        "f6TytcA47rI",
-        "1gSMjPLRJik",
-        "7xht3kQO_TM",
-        "340OXvocRMM",
-        "ioW9iGDpQyw",
-        "YN6c7v9Mr1I",
-        "6Qy0Xw_wR0M",
-        "Mb9TWJm_5L4",
-        "Lah9p6KokM8",
-        "m-bvW4pKT68",
-        "TC80uw4HgCw",
-        "hMZOgUJwK_8",
-        "IxVFW1XIW7Q",
-        "jJh0o5KyH8w",
-        "2zyZqXvrIpk",
-    ];
-
-    const startDate = new Date("2026-06-12T21:30:00+09:00").getTime() / 1000;
-    let currentTime = startDate;
-
-    const songs: SharingSong[] = [];
-    for (const id of songsID) {
-        const song = allSongs.find((s) => s.id === id);
-        if (!song) {
-            continue;
-        }
-
-        songs.push({
-            id: song.id,
-            title: song.title,
-            startDate: currentTime,
-        });
-        currentTime += song.durationSeconds || 0;
-    }
-
-    return {
-        title: "10周年記念アルバムを一緒に聴く会",
-        description: [
-            "タイトルの通り、アルバムの曲を順番に再生します！一緒に聴いて、イチオシの曲を見つけましょう！",
-            "不具合があったら[@takechi_scratch](https://x.com/takechi_scratch)まで。",
-            "※開始1時間前～終了30分後の間は、イベント用スケジュールでの再生になっています。その後は、通常のランダム再生スケジュールに切り替わります。",
-        ].join("\n"),
-        startDate: startDate,
-        endDate: currentTime,
-        songs: songs,
-        chatEnabled: true,
-    };
-}
-
-export function createScheduleForSpecialEvent(allSongs: Song[]): SharingSchedule {
-    allSongs.sort((a, b) => a.publishedTimestamp - b.publishedTimestamp);
-    const songDurationMap = new Map(allSongs.map((s) => [s.id, s.durationSeconds || 0]));
-    const songTitleMap = new Map(allSongs.map((s) => [s.id, s.title]));
-
-    const randomIndex = [
-        121, 152, 84, 50, 45, 67, 11, 105, 0, 75, 26, 56, 151, 36, 161, 147, 166, 145, 109, 8, 162,
-        80, 154, 58, 35, 157, 61, 118, 42, 108, 62, 110, 167, 112, 138, 102, 122, 141, 150, 95, 114,
-        131, 103, 10, 51, 43, 101, 1, 63, 24, 74, 39, 40, 116, 77, 83, 6, 132, 130, 100, 5, 81, 137,
-        104, 136,
-    ];
-    const releaseDate = new Date("2026-06-09T21:00:00+09:00").getTime() / 1000;
-    const timeForOneLap = allSongs.reduce((a, b) => a + (b.durationSeconds || 0), 0);
-    const startDate = releaseDate - timeForOneLap * 3;
-
-    const songs: SharingSong[] = [];
-    let currentTime = startDate;
-    for (let i = 0; i < 3; i++) {
-        for (const song of allSongs) {
-            songs.push({
-                id: song.id,
-                title: song.title,
-                startDate: currentTime,
-            });
-            currentTime += song.durationSeconds || 0;
-        }
-    }
-
-    songs.push({
-        id: "SBlkzGiM5uE",
-        title: songTitleMap.get("SBlkzGiM5uE") || "",
-        startDate: currentTime,
-    });
-    currentTime += songDurationMap.get("SBlkzGiM5uE") || 0;
-
-    for (const idx of randomIndex) {
-        const song = allSongs[idx];
-        songs.push({
-            id: song.id,
-            title: song.title,
-            startDate: currentTime,
-        });
-        currentTime += song.durationSeconds || 0;
-    }
-
-    return {
-        title: "MIMIさん活動開始10周年記念！同時視聴会",
-        description: specialEventDescription,
-        startDate: startDate,
-        endDate:
-            songs[songs.length - 1].startDate +
-            (songDurationMap.get(songs[songs.length - 1].id) || 0),
-        songs: songs,
     };
 }
 
@@ -222,5 +110,15 @@ export const pastEvents = [
         description: specialEventDescription,
         startDate: new Date("2026-06-08T21:12:27+09:00").getTime() / 1000,
         endDate: new Date("2026-06-10T00:00:05+09:00").getTime() / 1000,
+    },
+    {
+        title: "10周年記念アルバムを一緒に聴く会",
+        description: [
+            "タイトルの通り、アルバムの曲を順番に再生します！一緒に聴いて、イチオシの曲を見つけましょう！",
+            "不具合があったら[@takechi_scratch](https://x.com/takechi_scratch)まで。",
+            "※開始1時間前～終了30分後の間は、イベント用スケジュールでの再生になっています。その後は、通常のランダム再生スケジュールに切り替わります。",
+        ].join("\n"),
+        startDate: 1781267400,
+        endDate: 1781271269,
     },
 ] as const;

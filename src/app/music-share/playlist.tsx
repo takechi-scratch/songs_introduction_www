@@ -31,12 +31,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import Chat from "./chat";
-import {
-    createDailySchedule,
-    createScheduleForAlbumShareing,
-    pastEvents,
-    SharingSchedule,
-} from "./scheduling";
+import { createDailySchedule, pastEvents, SharingSchedule } from "./scheduling";
 
 const MAX_QUEUEING_SONGS = 150;
 
@@ -289,16 +284,7 @@ function Player({
 }
 
 export default function Page({ allSongs }: { allSongs: Song[] }) {
-    const specialSchedule = createScheduleForAlbumShareing(allSongs);
-    const dailySchedule = createDailySchedule(allSongs);
-    let schedule = dailySchedule;
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (
-        specialSchedule.startDate - 3600 < currentTime &&
-        currentTime < specialSchedule.endDate + 1800
-    ) {
-        schedule = specialSchedule;
-    }
+    const schedule = createDailySchedule(allSongs);
 
     const [songIndex, setSongIndex] = useState(-1);
     const [k, { toggle: reRender }] = useDisclosure(false);
@@ -319,6 +305,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
     );
 
     useEffect(() => {
+        console.log("schedule:", schedule);
         if (schedule.startDate < Math.floor(Date.now() / 1000)) return;
         const timeout = setTimeout(
             reRender,
