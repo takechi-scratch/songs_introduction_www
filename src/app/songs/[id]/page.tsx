@@ -132,7 +132,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     >
                         <Suspense>
                             <ReactPlayer
-                                src={`https://www.youtube.com/watch?v=${song.id}`}
+                                src={`https://www.youtube.com/watch?v=${song.id}&cc_load_policy=0`}
                                 width="100%"
                                 height="100%"
                                 controls
