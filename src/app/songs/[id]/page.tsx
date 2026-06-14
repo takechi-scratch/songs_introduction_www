@@ -185,6 +185,3 @@ export async function generateStaticParams() {
     const songs = await fetchAllSongs();
     return songs.map((song) => ({ id: song.id }));
 }
-
-// バックエンドで曲を直接追加したら、管理者ページからRevalidteを行う
-export const dynamicParams = false;

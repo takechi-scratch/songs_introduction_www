@@ -1,8 +1,8 @@
 import { getCurrentUserRole, getCurrentUserToken } from "@/lib/auth/firebase";
-import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
 import { refreshHomePage, refreshSongPage } from "../refresh";
 import { SongSampleParams, SongSearchParams } from "../search/search";
 import { shuffleArray } from "../utils";
+import { Song, SongWithScore, UpsertLyricsVec, UpsertSong } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -162,7 +162,7 @@ export async function upsertSong(songID: string | null, data: UpsertSong): Promi
                 Authorization: `Bearer ${await getCurrentUserToken()}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ songIDs: [result.id] }),
+            body: JSON.stringify({ songIDs: [songID, result.id] }),
         }).catch((error) => {
             console.error("Failed to trigger revalidation:", error);
         });
