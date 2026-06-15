@@ -1,5 +1,7 @@
 "use client";
 
+import { useColorMode } from "@/contexts/ThemeContext";
+import { ColorThemes, DefaultColorMode } from "@/lib/themes";
 import {
     Anchor,
     AppShell,
@@ -13,16 +15,14 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import Link from "next/link";
-import Image from "next/image";
-import UserMenu from "./userMenu";
-import { noticeActiveAnnouncements } from "../announcements/manager";
 import { IconPlaylist } from "@tabler/icons-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect } from "react";
+import { noticeActiveAnnouncements } from "../announcements/manager";
 import QuickSearch from "../quickSearch";
-import { useColorMode } from "@/contexts/ThemeContext";
 import ColorModeMenu from "./colorModeMenu";
-import { ColorThemes, DefaultColorMode } from "@/lib/themes";
+import UserMenu from "./userMenu";
 
 function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark" }) {
     return (
@@ -47,8 +47,8 @@ function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark"
                 <Anchor component={Link} href="/docs/credits">
                     <Text size="xs">クレジット</Text>
                 </Anchor>
-                <Anchor component={Link} href="/docs/analysis/guidelines">
-                    <Text size="xs">分析ガイドライン</Text>
+                <Anchor component={Link} href="/docs/about">
+                    <Text size="xs">サイトについて</Text>
                 </Anchor>
                 <Text size="xs" mr="xl">
                     {/* 空白を残すため */}

@@ -7,15 +7,15 @@ import { Menu } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
     IconDatabasePlus,
-    IconLogin,
-    IconUserFilled,
-    IconUserCheck,
-    IconLogout,
-    IconUserCog,
     IconFileMusic,
-    IconRefresh,
-    IconCopyleft,
+    IconInfoCircle,
+    IconLogin,
+    IconLogout,
     IconMessageChatbot,
+    IconRefresh,
+    IconUserCheck,
+    IconUserCog,
+    IconUserFilled,
     IconUserQuestion,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -142,11 +142,11 @@ export default function UserMenu() {
                     お問い合わせ・機能提案
                 </Menu.Item>
                 <Menu.Item
-                    href="/docs/credits"
+                    href="/docs/about"
                     component={Link}
-                    leftSection={<IconCopyleft size={14} />}
+                    leftSection={<IconInfoCircle size={14} />}
                 >
-                    クレジット
+                    サイトについて
                 </Menu.Item>
                 <ColorModeMenu submenu />
             </Menu.Dropdown>

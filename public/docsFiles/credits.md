@@ -8,13 +8,25 @@
 - [Vercel](https://vercel.com/)
 
 ### ライブラリ
+以下のライブラリはすべて[MITライセンス](https://opensource.org/licenses/MIT)で提供されています。
 - [Mantine](https://mantine.dev/)
-- [Motion](https://motion.dev/)
+- [dayjs](https://day.js.org/)
+- [embla-carousel](https://www.embla-carousel.com/)
 - [Tabler Icons](https://tabler.io/icons/)
+- [Motion](https://motion.dev/)
 - [react-markdown](https://github.com/remarkjs/react-markdown)
+- [remark-breaks](https://github.com/remarkjs/remark-breaks)
+- [remark-gfm](https://github.com/remarkjs/remark-gfm)
 - [ReactPlayer](https://github.com/CookPete/react-player)
+- [react-youtube](https://github.com/tjallingt/react-youtube)
+- [boring-avatars](https://boringavatars.com/)
+- [recharts](https://recharts.github.io/)
+- [seedrandom](https://github.com/davidbau/seedrandom)
+- [tailwindcss](https://tailwindcss.com/)
 
-以上のライブラリはすべて[MITライセンス](https://opensource.org/licenses/MIT)で提供されています。
+また、以下のライブラリはすべて[Apache-2.0](https://opensource.org/license/apache-2.0)で提供されています。
+- [firebase](https://firebase.google.com/)
+- [rison](https://github.com/jonasfj/rison)
 
 ## 使用技術（バックエンド）
 - [Python 3.13](https://www.python.org/)
@@ -37,9 +49,3 @@
 
 ## 製作
 - [takechi](https://takechi.f5.si/)
-
-### GitHubリポジトリ
-- フロントエンド: https://github.com/takechi-scratch/songs_introduction_www
-- バックエンド: https://github.com/takechi-scratch/songs_introduction_backend
-- 歌詞分析: https://github.com/takechi-scratch/lyrics2vec
-- 歌詞検索アプリ: 公開準備中（著作権保護のため、歌詞のテキストデータは非公開）
