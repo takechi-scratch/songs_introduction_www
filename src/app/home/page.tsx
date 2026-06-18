@@ -2,7 +2,8 @@ import { PinnedAnnouncements } from "@/components/announcements/manager";
 import MyAppShell from "@/components/appshell/myAppshell";
 import KoeLoopWidget from "@/components/feedbackWidget";
 import { NextLinkedButton } from "@/components/nextLink";
-import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
+import { fetchAllSongs } from "@/lib/songs/api";
+import { advancedSearchForSongsAndCache } from "@/lib/songs/cachedapi";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { Divider, Flex, Text, Title } from "@mantine/core";
 import { IconMusicHeart, IconPlaylist } from "@tabler/icons-react";
@@ -17,7 +18,7 @@ export default async function HomePage() {
         // 並列実行で待機時間を短縮
         [latestSongsData, colaborationSongsData] = await Promise.all([
             fetchAllSongs(),
-            advancedSearchForSongs({ filter: { publishedType: 0 } }),
+            advancedSearchForSongsAndCache({ filter: { publishedType: 0 } }),
         ]);
     } catch (error) {
         console.error("Error fetching songs data:", error);

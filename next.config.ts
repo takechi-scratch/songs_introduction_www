@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
             new URL("https://**.twimg.com/**"),
         ],
     },
+    cacheComponents: true,
 };
 
 export default nextConfig;

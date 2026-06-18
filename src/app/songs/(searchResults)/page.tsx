@@ -5,7 +5,7 @@ import { IconZoomExclamation } from "@tabler/icons-react";
 import { PageProps } from "@/lib/utils";
 
 import { SongSearchParams } from "@/lib/search/search";
-import { advancedSearchForSongs } from "@/lib/songs/api";
+import { advancedSearchForSongsAndCache } from "@/lib/songs/cachedapi";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import rison from "rison";
@@ -72,7 +72,7 @@ async function MainPage(props: PageProps) {
 
     let songs;
     try {
-        songs = await advancedSearchForSongs(songSearchParams);
+        songs = await advancedSearchForSongsAndCache(songSearchParams);
     } catch (e) {
         return (
             <Alert icon={<IconZoomExclamation />} title="読み込みエラー" color="red" m="md">

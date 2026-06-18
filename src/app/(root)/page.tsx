@@ -2,7 +2,8 @@ import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import MyAppShell from "@/components/appshell/myAppshell";
 import { NextAnchor } from "@/components/nextLink";
-import { advancedSearchForSongs, fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
+import { fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
+import { advancedSearchForSongsAndCache } from "@/lib/songs/cachedapi";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import {
     Anchor,
@@ -35,7 +36,7 @@ export default async function HomePage() {
         // 並列実行で待機時間を短縮
         [latestSongsData, colaborationSongsData] = await Promise.all([
             fetchAllSongs(),
-            advancedSearchForSongs({ filter: { publishedType: 0 } }),
+            advancedSearchForSongsAndCache({ filter: { publishedType: 0 } }),
         ]);
     } catch (error) {
         console.error("Error fetching songs data:", error);
