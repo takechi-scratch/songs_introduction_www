@@ -11,7 +11,7 @@
         "deploy": "vercel --prod --logs",
         "preview": "vercel dev"
     },
-    "packageManager": "yarn@1.22.22",
+    "packageManager": "pnpm@11.8.0",
     "dependencies": {
         "@mantine/carousel": "^8.3.0",
         "@mantine/charts": "^8.3.1",
@@ -30,6 +30,7 @@
         "embla-carousel-react": "^8.5.2",
         "firebase": "^12.9.0",
         "firebase-admin": "^13.6.1",
+        "framer-motion": "^12.40.0",
         "motion": "^12.23.12",
         "next": "15.5.10",
         "postcss": "^8.5.8",
