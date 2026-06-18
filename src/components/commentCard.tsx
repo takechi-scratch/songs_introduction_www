@@ -1,32 +1,32 @@
 "use client";
 
-import {
-    Text,
-    Avatar as MantineAvatar,
-    Group,
-    Box,
-    HoverCard,
-    Textarea,
-    Button,
-    Anchor,
-    Alert,
-    List,
-} from "@mantine/core";
-import MantineMarkdown from "./markdown";
-import Avatar from "boring-avatars";
-import { Comment } from "@/lib/interaction/types";
-import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { useAuth } from "@/contexts/AuthContext";
-import Link from "next/link";
-import { IconEdit, IconTrash, IconUserQuestion } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { deleteComment, postComment, updateComment } from "@/lib/interaction/api";
-import { refreshComments } from "@/lib/refresh";
+import { useUserRole } from "@/hooks/auth";
 import { loginWithAnonymous } from "@/lib/auth/firebase";
+import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
+import { deleteComment, postComment, updateComment } from "@/lib/interaction/api";
+import { Comment } from "@/lib/interaction/types";
+import { refreshComments } from "@/lib/refresh";
+import {
+    Alert,
+    Box,
+    Button,
+    Group,
+    HoverCard,
+    List,
+    Avatar as MantineAvatar,
+    Text,
+    Textarea,
+} from "@mantine/core";
 import { getHotkeyHandler, useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
+import { IconEdit, IconTrash, IconUserQuestion } from "@tabler/icons-react";
+import Avatar from "boring-avatars";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import randomContents from "./guestAvatar";
-import { useUserRole } from "@/hooks/auth";
+import MantineMarkdown from "./markdown";
+import { NextAnchor } from "./nextLink";
 
 const messages = [
     "コメントを入力...",
@@ -242,9 +242,9 @@ export function NewCommentCard({
                 <Group gap="sm" mb="xs">
                     <Text>{displayName}</Text>
                     {linkedUser && (
-                        <Anchor ml="md" component={Link} href="/settings/" size="sm">
+                        <NextAnchor ml="md" href="/settings/" size="sm">
                             ユーザー設定
-                        </Anchor>
+                        </NextAnchor>
                     )}
                 </Group>
                 <Textarea
@@ -275,9 +275,9 @@ export function NewCommentCard({
                             コメントを投稿すると、ゲストアカウントが自動で作成されます。
                         </Text>
                         <Text size="sm">
-                            <Anchor href="/login/" component={Link} size="sm">
+                            <NextAnchor href="/login/" size="sm">
                                 ログイン
-                            </Anchor>
+                            </NextAnchor>
                             すると、アイコン・表示名の変更や、コメントの編集・削除ができるようになります！（後から連携することもできます）
                         </Text>
                     </Alert>
@@ -289,9 +289,9 @@ export function NewCommentCard({
                         icon={<IconUserQuestion />}
                         mb="xs"
                     >
-                        <Anchor href="/login/" component={Link} size="sm">
+                        <NextAnchor href="/login/" size="sm">
                             アカウント連携
-                        </Anchor>
+                        </NextAnchor>
                         をすると、
                         <List size="sm" mt="xs">
                             <List.Item>アイコン・名前を変えられます！</List.Item>

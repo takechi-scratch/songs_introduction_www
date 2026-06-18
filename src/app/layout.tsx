@@ -51,6 +51,7 @@ export const metadata: Metadata = {
 
 const theme = createTheme({
     fontFamily: "Noto Sans JP, Arial, sans-serif",
+    defaultRadius: "sm",
 });
 
 export async function RootLayout({ children }: { children: React.ReactNode }) {

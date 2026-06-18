@@ -1,6 +1,7 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextAnchor } from "@/components/nextLink";
 import GoogleSignInButton from "@/components/signIn/google";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorMode } from "@/contexts/ThemeContext";
@@ -12,7 +13,7 @@ import {
     loginWithProvider,
     logout,
 } from "@/lib/auth/firebase";
-import { Alert, Anchor, Button, Flex, Paper, Text, Title } from "@mantine/core";
+import { Alert, Button, Flex, Paper, Text, Title } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import {
@@ -113,9 +114,9 @@ export default function LoginPage() {
                             ゲストとしてログイン
                         </Text>
                     </Button>
-                    <Anchor component={Link} href="/login/examining">
+                    <NextAnchor href="/login/examining">
                         <Text size="sm">監査用アカウントでログイン</Text>
-                    </Anchor>
+                    </NextAnchor>
                 </Flex>
             </>
         );
@@ -199,9 +200,7 @@ export default function LoginPage() {
                 </Text>
                 <Text size="sm" c="dimmed">
                     コメントなどのデータをまとめる処理をいたしますので、
-                    <Anchor href="/contact" component={Link}>
-                        お問い合わせ
-                    </Anchor>
+                    <NextAnchor href="/contact">お問い合わせ</NextAnchor>
                     からご連絡をお願いいたします。
                 </Text>
             </>

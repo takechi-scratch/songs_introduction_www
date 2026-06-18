@@ -1,6 +1,7 @@
 import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextAnchor } from "@/components/nextLink";
 import { advancedSearchForSongs, fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import {
@@ -24,7 +25,6 @@ import {
     IconRobotOff,
 } from "@tabler/icons-react";
 import NextImage from "next/image";
-import Link from "next/link";
 import { SongsNearestSection, SongsSearchSection } from "./songsSection";
 
 export default async function HomePage() {
@@ -201,12 +201,8 @@ export default async function HomePage() {
             </Flex>
             <Divider mb="xl" />
             <Group gap="xl">
-                <Anchor component={Link} href="/contact">
-                    お問い合わせ・ご意見
-                </Anchor>
-                <Anchor component={Link} href="/home">
-                    旧トップページへ
-                </Anchor>
+                <NextAnchor href="/contact">お問い合わせ・ご意見</NextAnchor>
+                <NextAnchor href="/home">旧トップページへ</NextAnchor>
             </Group>
         </MyAppShell>
     );

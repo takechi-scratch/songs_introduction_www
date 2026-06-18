@@ -1,6 +1,8 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextLinkedButton } from "@/components/nextLink";
+import SongPreferenceQuestion from "@/components/songPreferenceQuestion";
 import { useSampleSongs } from "@/hooks/songs";
 import {
     Button,
@@ -18,8 +20,6 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import SongPreferenceQuestion from "@/components/songPreferenceQuestion";
-import Link from "next/link";
 
 type status = "start" | "prepare" | "choice";
 const songsPeriod = {
@@ -44,9 +44,9 @@ function Start({ startCallback }: { startCallback?: () => void }) {
             <Button size="lg" radius="md" onClick={startCallback}>
                 診断を始める
             </Button>
-            <Button component={Link} href="/recommend/all-ranking" variant="subtle" color="gray">
+            <NextLinkedButton href="/recommend/all-ranking" variant="subtle" color="gray">
                 あなたの全曲ランキングを作る
-            </Button>
+            </NextLinkedButton>
         </Flex>
     );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import randomContents from "@/components/guestAvatar";
+import { NextAnchor } from "@/components/nextLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
 import { getCurrentUserToken, loginWithAnonymous } from "@/lib/auth/firebase";
@@ -8,7 +9,6 @@ import { formatTime } from "@/lib/date";
 import { User } from "@/lib/interaction/types";
 import {
     Alert,
-    Anchor,
     Box,
     Button,
     Divider,
@@ -210,14 +210,9 @@ export default function Chat() {
                                 チャットに参加する際、ゲストアカウントが自動で作成されます。
                             </Text>
                             <Text size="sm">
-                                <Anchor
-                                    href="/login/"
-                                    component={Link}
-                                    size="sm"
-                                    style={{ display: "inline" }}
-                                >
+                                <NextAnchor href="/login/" size="sm" style={{ display: "inline" }}>
                                     ログイン
-                                </Anchor>
+                                </NextAnchor>
                                 すると、アイコン・名前を変えられるようになります！（後から連携することもできます）
                             </Text>
                         </Alert>
@@ -229,9 +224,9 @@ export default function Chat() {
                             icon={<IconUserQuestion />}
                             mb="xs"
                         >
-                            <Anchor href="/login/" component={Link} size="sm">
+                            <NextAnchor href="/login/" size="sm">
                                 アカウント連携
-                            </Anchor>
+                            </NextAnchor>
                             をすると、アイコン・名前を変えられるようになります！
                         </Alert>
                     )}

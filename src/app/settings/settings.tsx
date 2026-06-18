@@ -3,17 +3,19 @@
 import MyAppShell from "@/components/appshell/myAppshell";
 import randomContents from "@/components/guestAvatar";
 import MantineMarkdown from "@/components/markdown";
+import { NextAnchor } from "@/components/nextLink";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/auth";
 import { useMyComments } from "@/hooks/interaction";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { downloadComments } from "@/lib/downloadComments";
 import { updateMyUserInfo } from "@/lib/interaction/api";
 import { Comment, User } from "@/lib/interaction/types";
+import { validateDisplayName } from "@/lib/interaction/validate";
 import { refreshAllComments } from "@/lib/refresh";
 import { Song } from "@/lib/songs/types";
 import {
     Alert,
-    Anchor,
     Avatar,
     Box,
     Button,
@@ -33,19 +35,14 @@ import {
     IconRefresh,
     IconUserQuestion,
 } from "@tabler/icons-react";
-import Link from "next/link";
-import { useState, Fragment } from "react";
 import { User as FirebaseUser } from "firebase/auth";
-import { validateDisplayName } from "@/lib/interaction/validate";
-import { useUserRole } from "@/hooks/auth";
+import { Fragment, useState } from "react";
 
 function MyCommentCard({ comment, songTitle }: { comment: Comment; songTitle: string }) {
     return (
         <Box style={{ flex: 1 }}>
             <Group gap="sm" mb="xs">
-                <Anchor href={`/songs/${comment.songID}`} component={Link}>
-                    {songTitle}
-                </Anchor>
+                <NextAnchor href={`/songs/${comment.songID}`}>{songTitle}</NextAnchor>
                 <HoverCard width={250} shadow="sm" position="right">
                     <HoverCard.Target>
                         <Text size="sm" opacity={0.6}>
@@ -83,7 +80,9 @@ function SettingsSection({
             <Paper shadow="xs" p="md" mb="md" radius="md">
                 <Alert icon={<IconUserQuestion size={24} />}>
                     ユーザー設定を変更するには、
-                    <Link href="/login">{userInfo ? "アカウント連携" : "ログイン"}</Link>
+                    <NextAnchor href="/login">
+                        {userInfo ? "アカウント連携" : "ログイン"}
+                    </NextAnchor>
                     してください。
                 </Alert>
             </Paper>

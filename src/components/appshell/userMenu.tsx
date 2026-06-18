@@ -3,23 +3,23 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";
 import { logout } from "@/lib/auth/firebase";
-import { Menu } from "@mantine/core";
+import { Menu, MenuItem } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
-    IconDatabasePlus,
-    IconLogin,
-    IconUserFilled,
-    IconUserCheck,
-    IconLogout,
-    IconUserCog,
-    IconFileMusic,
-    IconRefresh,
     IconCopyleft,
+    IconDatabasePlus,
+    IconFileMusic,
+    IconLogin,
+    IconLogout,
     IconMessageChatbot,
+    IconRefresh,
+    IconUserCheck,
+    IconUserCog,
+    IconUserFilled,
     IconUserQuestion,
 } from "@tabler/icons-react";
 import Image from "next/image";
-import Link from "next/link";
+import { NextLinkedMenuItem } from "../nextLink";
 import ColorModeMenu from "./colorModeMenu";
 
 export default function UserMenu() {
@@ -60,13 +60,12 @@ export default function UserMenu() {
                     <>
                         <Menu.Divider />
                         <Menu.Label>編集者用</Menu.Label>
-                        <Menu.Item
+                        <NextLinkedMenuItem
                             href="/songs/edit/"
-                            component={Link}
                             leftSection={<IconDatabasePlus size={14} />}
                         >
                             曲を追加
-                        </Menu.Item>
+                        </NextLinkedMenuItem>
                     </>
                 )}
 
@@ -74,52 +73,48 @@ export default function UserMenu() {
                     <>
                         <Menu.Divider />
                         <Menu.Label>管理者用</Menu.Label>
-                        <Menu.Item
+                        <NextLinkedMenuItem
                             href="/admin/lyrics-vector/"
-                            component={Link}
                             leftSection={<IconFileMusic size={14} />}
                         >
                             歌詞ベクトル情報の更新
-                        </Menu.Item>
-                        <Menu.Item
+                        </NextLinkedMenuItem>
+                        <NextLinkedMenuItem
                             href="/admin/service-account/"
-                            component={Link}
                             leftSection={<IconUserCog size={14} />}
                         >
                             専用アカウントの管理
-                        </Menu.Item>
-                        <Menu.Item
+                        </NextLinkedMenuItem>
+                        <NextLinkedMenuItem
                             href="/admin/revalidate/"
-                            component={Link}
                             leftSection={<IconRefresh size={14} />}
                         >
                             キャッシュの再生成
-                        </Menu.Item>
+                        </NextLinkedMenuItem>
                     </>
                 )}
 
                 <Menu.Divider />
                 <Menu.Label>メニュー</Menu.Label>
                 {userRole === "guest" && (
-                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                    <NextLinkedMenuItem href="/login" leftSection={<IconLogin size={14} />}>
                         ログイン
-                    </Menu.Item>
+                    </NextLinkedMenuItem>
                 )}
                 {userRole === "user-temp" && (
-                    <Menu.Item href="/login" component={Link} leftSection={<IconLogin size={14} />}>
+                    <NextLinkedMenuItem href="/login" leftSection={<IconLogin size={14} />}>
                         アカウント連携
-                    </Menu.Item>
+                    </NextLinkedMenuItem>
                 )}
                 {userRole !== "guest" && userRole !== "user-temp" && (
                     <>
-                        <Menu.Item
+                        <NextLinkedMenuItem
                             href="/settings"
-                            component={Link}
                             leftSection={<IconUserCog size={14} />}
                         >
                             ユーザー設定
-                        </Menu.Item>
-                        <Menu.Item
+                        </NextLinkedMenuItem>
+                        <MenuItem
                             color="red"
                             leftSection={<IconLogout size={14} />}
                             onClick={async () => {
@@ -131,23 +126,15 @@ export default function UserMenu() {
                             }}
                         >
                             ログアウト
-                        </Menu.Item>
+                        </MenuItem>
                     </>
                 )}
-                <Menu.Item
-                    href="/contact"
-                    component={Link}
-                    leftSection={<IconMessageChatbot size={14} />}
-                >
+                <NextLinkedMenuItem href="/contact" leftSection={<IconMessageChatbot size={14} />}>
                     お問い合わせ・機能提案
-                </Menu.Item>
-                <Menu.Item
-                    href="/docs/credits"
-                    component={Link}
-                    leftSection={<IconCopyleft size={14} />}
-                >
+                </NextLinkedMenuItem>
+                <NextLinkedMenuItem href="/docs/credits" leftSection={<IconCopyleft size={14} />}>
                     クレジット
-                </Menu.Item>
+                </NextLinkedMenuItem>
                 <ColorModeMenu submenu />
             </Menu.Dropdown>
         </Menu>

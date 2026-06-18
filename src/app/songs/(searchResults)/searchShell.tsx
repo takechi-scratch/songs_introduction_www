@@ -1,20 +1,12 @@
 "use client";
 
-import {
-    AppShell,
-    AppShellAside,
-    ScrollArea,
-    AppShellMain,
-    Text,
-    Group,
-    Anchor,
-} from "@mantine/core";
+import { AdvancedSearch } from "@/components/advancedSearch";
+import { NextAnchor } from "@/components/nextLink";
+import { AppShell, AppShellAside, AppShellMain, Group, ScrollArea, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import SearchBar from "./searchBar";
-import { useDisclosure } from "@mantine/hooks";
-import { AdvancedSearch } from "@/components/advancedSearch";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 
 function SearchSideBar() {
     const params = useSearchParams();
@@ -56,9 +48,9 @@ export default function SearchShell({ children }: { children: React.ReactNode })
                         <Text size="lg" fw={700}>
                             詳細検索
                         </Text>
-                        <Anchor component={Link} href="/search" style={{ marginLeft: "auto" }}>
+                        <NextAnchor href="/search" style={{ marginLeft: "auto" }}>
                             全画面で見る
-                        </Anchor>
+                        </NextAnchor>
                     </Group>
                     <ScrollArea h="calc(100vh - 200px)">
                         <Suspense fallback={<Text>検索条件を読み込み中...</Text>}>

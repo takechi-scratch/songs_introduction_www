@@ -1,13 +1,13 @@
-import MyAppShell from "@/components/appshell/myAppshell";
-import { Button, Divider, Flex, Text, Title } from "@mantine/core";
-import KoeLoopWidget from "@/components/feedbackWidget";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
-import { Song, SongWithScore } from "@/lib/songs/types";
-import SongsSection from "./songsSection";
-import Link from "next/link";
-import { IconMusicHeart, IconPlaylist } from "@tabler/icons-react";
+import MyAppShell from "@/components/appshell/myAppshell";
+import KoeLoopWidget from "@/components/feedbackWidget";
+import { NextLinkedButton } from "@/components/nextLink";
 import { advancedSearchForSongs, fetchAllSongs } from "@/lib/songs/api";
+import { Song, SongWithScore } from "@/lib/songs/types";
+import { Divider, Flex, Text, Title } from "@mantine/core";
+import { IconMusicHeart, IconPlaylist } from "@tabler/icons-react";
 import FadeInUp from "./fadeInUp";
+import SongsSection from "./songsSection";
 
 export default async function HomePage() {
     let latestSongsData: Song[] | undefined;
@@ -43,14 +43,14 @@ export default async function HomePage() {
                 justify="center"
                 direction={{ base: "column", sm: "row" }}
             >
-                <Button href="/songs/" color="orange.7" size="xl" radius="lg" component={Link}>
+                <NextLinkedButton href="/songs/" color="orange.7" size="xl" radius="lg">
                     <IconPlaylist size={20} style={{ marginRight: 8 }} />
                     すべての曲を見る
-                </Button>
-                <Button href="/recommend" color="green" size="xl" radius="lg" component={Link}>
+                </NextLinkedButton>
+                <NextLinkedButton href="/recommend" color="green" size="xl" radius="lg">
                     <IconMusicHeart size={20} style={{ marginRight: 8 }} />
                     おすすめの曲診断
-                </Button>
+                </NextLinkedButton>
             </Flex>
 
             <Title order={2} mt="lg">

@@ -1,9 +1,15 @@
 "use client";
 
+import CreatorBadges from "@/components/creatorBadges";
+import MantineMarkdown from "@/components/markdown";
+import { NextAnchor, NextLinkedBadge, NextLinkedButton } from "@/components/nextLink";
+import { useUserRole } from "@/hooks/auth";
+import { formatDateTime, formatDuration } from "@/lib/date";
+import { formatOriginalKey, hasLyrics } from "@/lib/musicValues";
+import { Song } from "@/lib/songs/types";
+import { DonutChart } from "@mantine/charts";
 import {
     Alert,
-    Anchor,
-    Badge,
     Box,
     Button,
     Collapse,
@@ -17,21 +23,14 @@ import {
     Text,
     Title,
 } from "@mantine/core";
-import { formatDateTime, formatDuration } from "@/lib/date";
-import { formatOriginalKey, hasLyrics } from "@/lib/musicValues";
+import { useDisclosure } from "@mantine/hooks";
 import {
     IconCopyright,
     IconHelpHexagon,
     IconInfoCircle,
     IconRosetteDiscountCheckFilled,
 } from "@tabler/icons-react";
-import { Song } from "@/lib/songs/types";
-import { DonutChart } from "@mantine/charts";
-import { useUserRole } from "@/hooks/auth";
 import Link from "next/link";
-import CreatorBadges from "@/components/creatorBadges";
-import { useDisclosure } from "@mantine/hooks";
-import MantineMarkdown from "@/components/markdown";
 import rison from "rison";
 
 function valueFormatter(value: number) {
@@ -124,16 +123,15 @@ export default function InfoTabs({ song }: { song: Song }) {
                         <Table.Tr>
                             <Table.Th w={140}>動画URL</Table.Th>
                             <Table.Td>
-                                <Anchor
+                                <NextAnchor
                                     size="sm"
                                     href={`https://www.youtube.com/watch?v=${song.id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    component={Link}
                                     style={{ wordBreak: "break-all" }}
                                 >
                                     https://www.youtube.com/watch?v={song.id}
-                                </Anchor>
+                                </NextAnchor>
                             </Table.Td>
                         </Table.Tr>
 
@@ -232,15 +230,14 @@ export default function InfoTabs({ song }: { song: Song }) {
                             <Table.Th>主なコード</Table.Th>
                             <Table.Td>
                                 {song.mainChord ? (
-                                    <Badge
+                                    <NextLinkedBadge
                                         variant="light"
                                         color={mainChordColor}
-                                        component={Link}
                                         href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
                                         style={{ cursor: "pointer" }}
                                     >
                                         {song.mainChord}
-                                    </Badge>
+                                    </NextLinkedBadge>
                                 ) : (
                                     "不明"
                                 )}
@@ -332,8 +329,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                 </Flex>
 
                 {lyricsStatus !== "なし" && (
-                    <Button
-                        component={Link}
+                    <NextLinkedButton
                         href={`https://www.google.com/search?q=${encodeURIComponent(
                             `${song.title} 歌詞`
                         )}`}
@@ -342,17 +338,16 @@ export default function InfoTabs({ song }: { song: Song }) {
                         mr="md"
                     >
                         Googleで歌詞を検索
-                    </Button>
+                    </NextLinkedButton>
                 )}
 
                 {lyricsStatus !== "なし" && (
-                    <Button
-                        component={Link}
+                    <NextLinkedButton
                         href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
                         mb="md"
                     >
                         歌詞が似ている曲を見る
-                    </Button>
+                    </NextLinkedButton>
                 )}
 
                 {lyricsStatus === "あり" && (
@@ -367,8 +362,8 @@ export default function InfoTabs({ song }: { song: Song }) {
                         </Button>
 
                         {openLyricsDetail && (
-                            <Collapse in={openLyricsDetail} transitionDuration={1000}>
-                                <Grid mb="md" gutter="md">
+                            <Collapse expanded={openLyricsDetail} transitionDuration={1000}>
+                                <Grid mb="md" gap="md">
                                     {song.lyricsVector?.map((value, index) => (
                                         <Grid.Col key={index} span={{ base: 4, sm: 3, lg: 1.5 }}>
                                             <Box pt="sm" pb="sm" bg="gray.0">
@@ -410,14 +405,9 @@ export default function InfoTabs({ song }: { song: Song }) {
                 </Button>
                 {userRole === "admin" && (
                     <>
-                        <Button
-                            ml="md"
-                            component={Link}
-                            href={`/songs/edit?id=${song.id}`}
-                            color="blue"
-                        >
+                        <NextLinkedButton ml="md" href={`/songs/edit?id=${song.id}`} color="blue">
                             データの編集
-                        </Button>
+                        </NextLinkedButton>
                     </>
                 )}
             </Tabs.Panel>

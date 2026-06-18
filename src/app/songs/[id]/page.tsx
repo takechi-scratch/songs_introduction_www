@@ -6,12 +6,13 @@ import {
     fetchSongById,
     scoreCanBeCalculated,
 } from "@/lib/songs/api";
-import { Alert, Anchor, Flex, Paper, Text, Title } from "@mantine/core";
+import { Alert, Flex, Paper, Text, Title } from "@mantine/core";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 
+import { NextAnchor } from "@/components/nextLink";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
 import "@mantine/charts/styles.css";
 import { Suspense } from "react";
@@ -145,9 +146,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                         </Suspense>
                     </div>
                     <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
-                        <Anchor href="/" component={Link}>
-                            ホームに戻る
-                        </Anchor>
+                        <NextAnchor href="/">ホームに戻る</NextAnchor>
                     </Flex>
                 </div>
                 <Paper p="md" radius="md" shadow="sm" withBorder style={{ flex: 1 }}>
@@ -158,12 +157,11 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             <Flex mb="md" mt="xl" gap="xl" align="end">
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
-                    <Anchor
+                    <NextAnchor
                         href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID: song.id } })}`}
-                        component={Link}
                     >
                         高度な条件で探す
-                    </Anchor>
+                    </NextAnchor>
                 )}
             </Flex>
 

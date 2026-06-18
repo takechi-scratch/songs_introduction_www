@@ -1,10 +1,10 @@
 "use client";
 
-import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
-import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
-import Link from "next/link";
+import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
+import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { IconCalendarClock } from "@tabler/icons-react";
+import { NextLinkedCard } from "../nextLink";
 
 export function SongCardSkeleton() {
     return <Skeleton height={350} />;
@@ -68,10 +68,9 @@ export default function SongCard({
     }
 
     return (
-        <Card
+        <NextLinkedCard
             shadow="sm"
             padding="xl"
-            component={Link}
             style={{ height: 350, border: isHighLighted ? "4px solid #fd7e14" : undefined }}
             href={`/songs/${song.id}/`}
         >
@@ -95,6 +94,6 @@ export default function SongCard({
             <Text size="md" mt="md">
                 {song.title}
             </Text>
-        </Card>
+        </NextLinkedCard>
     );
 }
