@@ -2,8 +2,11 @@ import { FadeInUp } from "@/components/animatedContents";
 import { PinnedAnnouncements } from "@/components/announcements/manager";
 import MyAppShell from "@/components/appshell/myAppshell";
 import { NextAnchor } from "@/components/nextLink";
-import { fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
-import { advancedSearchForSongsAndCache } from "@/lib/songs/cachedapi";
+import {
+    advancedSearchForSongsAndCache,
+    fetchAllSongsAndCache,
+    fetchNearestSongsAndCache,
+} from "@/lib/songs/cachedapi";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import {
     Anchor,
@@ -14,6 +17,7 @@ import {
     Group,
     Image,
     Paper,
+    Skeleton,
     Text,
     Title,
 } from "@mantine/core";
@@ -26,6 +30,7 @@ import {
     IconRobotOff,
 } from "@tabler/icons-react";
 import NextImage from "next/image";
+import { Suspense } from "react";
 import { SongsNearestSection, SongsSearchSection } from "./songsSection";
 
 export default async function HomePage() {
@@ -35,7 +40,7 @@ export default async function HomePage() {
     try {
         // 並列実行で待機時間を短縮
         [latestSongsData, colaborationSongsData] = await Promise.all([
-            fetchAllSongs(),
+            fetchAllSongsAndCache(),
             advancedSearchForSongsAndCache({ filter: { publishedType: 0 } }),
         ]);
     } catch (error) {
@@ -47,14 +52,16 @@ export default async function HomePage() {
     let nearestSongsData: SongWithScore[] | undefined;
 
     try {
-        nearestSongsData = await fetchNearestSongs(targetSongID, 10);
+        nearestSongsData = await fetchNearestSongsAndCache(targetSongID, 10);
     } catch (error) {
         console.error("Error fetching nearest songs data:", error);
     }
 
     return (
         <MyAppShell>
-            <PinnedAnnouncements />
+            <Suspense fallback={<Skeleton height={100} radius="md" />}>
+                <PinnedAnnouncements />
+            </Suspense>
             <Grid mb="md">
                 <GridCol span={{ base: 12, sm: 6 }} p="md">
                     <Text
@@ -98,8 +105,8 @@ export default async function HomePage() {
                         <Image
                             src="/assets/detail-screenshot.png"
                             radius="md"
-                            width={0}
-                            height={0}
+                            width={1280}
+                            height={720}
                             sizes="100%"
                             style={{ width: "100%", height: "auto" }}
                             component={NextImage}

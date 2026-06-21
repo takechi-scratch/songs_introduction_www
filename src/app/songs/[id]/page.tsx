@@ -1,11 +1,6 @@
 import MyAppShell from "@/components/appshell/myAppshell";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import {
-    fetchAllSongs,
-    fetchNearestSongs,
-    fetchSongById,
-    scoreCanBeCalculated,
-} from "@/lib/songs/api";
+import { scoreCanBeCalculated } from "@/lib/songs/api";
 import { Alert, Flex, Paper, Text, Title } from "@mantine/core";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import { Metadata } from "next";
@@ -14,6 +9,11 @@ import ReactPlayer from "react-player";
 
 import { NextAnchor } from "@/components/nextLink";
 import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import {
+    fetchAllSongsAndCache,
+    fetchNearestSongsAndCache,
+    fetchSongByIdAndCache,
+} from "@/lib/songs/cachedapi";
 import "@mantine/charts/styles.css";
 import { Suspense } from "react";
 import rison from "rison";
@@ -28,7 +28,7 @@ export const generateMetadata = async ({
     // ブログの詳細データを取得する関数
     let song;
     try {
-        song = await fetchSongById((await params).id);
+        song = await fetchSongByIdAndCache((await params).id);
     } catch (error) {
         console.error("Error fetching song data for metadata:", error);
         return {};
@@ -75,9 +75,9 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 
     let song, nearestSongs;
     try {
-        song = await fetchSongById(id);
+        song = await fetchSongByIdAndCache(id);
         if (scoreCanBeCalculated(song)) {
-            nearestSongs = await fetchNearestSongs(id);
+            nearestSongs = await fetchNearestSongsAndCache(id);
         }
     } catch (error) {
         console.error("Error fetching song data:", error);
@@ -180,6 +180,6 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 }
 
 export async function generateStaticParams() {
-    const songs = await fetchAllSongs();
+    const songs = await fetchAllSongsAndCache();
     return songs.map((song) => ({ id: song.id }));
 }

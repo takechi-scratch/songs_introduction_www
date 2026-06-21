@@ -36,7 +36,7 @@ import {
     IconUserQuestion,
 } from "@tabler/icons-react";
 import { User as FirebaseUser } from "firebase/auth";
-import { Fragment, useState } from "react";
+import { Fragment, Suspense, useState } from "react";
 
 function MyCommentCard({ comment, songTitle }: { comment: Comment; songTitle: string }) {
     return (
@@ -172,22 +172,24 @@ function SettingsSection({
                 <Title order={2} mb="md">
                     コメント履歴
                 </Title>
-                {myComments ? (
-                    myComments.map(
-                        ({ comment, songTitle }: { comment: Comment; songTitle: string }) => (
-                            <Fragment key={comment.id}>
-                                <MyCommentCard
-                                    key={comment.id}
-                                    comment={comment}
-                                    songTitle={songTitle}
-                                />
-                                <Divider my="md" />
-                            </Fragment>
+                <Suspense fallback={<Text>コメントを読み込んでいます...</Text>}>
+                    {myComments ? (
+                        myComments.map(
+                            ({ comment, songTitle }: { comment: Comment; songTitle: string }) => (
+                                <Fragment key={comment.id}>
+                                    <MyCommentCard
+                                        key={comment.id}
+                                        comment={comment}
+                                        songTitle={songTitle}
+                                    />
+                                    <Divider my="md" />
+                                </Fragment>
+                            )
                         )
-                    )
-                ) : (
-                    <Text>コメントを読み込み中...</Text>
-                )}
+                    ) : (
+                        <Text>コメントを読み込み中...</Text>
+                    )}
+                </Suspense>
                 <Group gap="md" mb="md">
                     <Button
                         color="teal"

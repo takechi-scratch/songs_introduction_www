@@ -4,38 +4,31 @@ import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
 import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
 import { IconCalendarClock } from "@tabler/icons-react";
+import { Suspense } from "react";
 import { NextLinkedCard } from "../nextLink";
 
 export function SongCardSkeleton() {
     return <Skeleton height={350} />;
 }
 
-export default function SongCard({
+function HoverData({
     song,
-    isHighLighted,
-    displayScore = null,
+    score,
+    displayScore,
 }: {
-    song: Song | SongWithScore | null;
-    isHighLighted?: boolean;
-    displayScore?: boolean | null;
+    song: Song;
+    score: number | null;
+    displayScore: boolean | null;
 }) {
-    if (!song) return <SongCardSkeleton />;
-
-    let score = null;
-    if (hasScore(song)) {
-        score = song.score;
-        song = song.song;
-        if (displayScore === null && score !== null) {
-            displayScore = true;
-        }
+    if (displayScore === null && typeof score === "number") {
+        displayScore = true;
     }
 
-    let hoverData;
     if (displayScore) {
-        if (score !== null) {
-            hoverData = <Text size="sm">類似度: {(score * 100).toFixed(2)}%</Text>;
+        if (typeof score === "number") {
+            return <Text size="sm">類似度: {(score * 100).toFixed(2)}%</Text>;
         } else {
-            hoverData = (
+            return (
                 <Text size="sm" c="dimmed">
                     類似度: 不明
                 </Text>
@@ -43,7 +36,7 @@ export default function SongCard({
         }
     } else {
         const timeDiff = Number(Date.now() / 1000 - song.publishedTimestamp);
-        hoverData = (
+        return (
             <>
                 {song.publishedType === -1 && (
                     <Tooltip
@@ -65,6 +58,24 @@ export default function SongCard({
                 </HoverCard>
             </>
         );
+    }
+}
+
+export default function SongCard({
+    song,
+    isHighLighted,
+    displayScore = null,
+}: {
+    song: Song | SongWithScore | null;
+    isHighLighted?: boolean;
+    displayScore?: boolean | null;
+}) {
+    if (!song) return <SongCardSkeleton />;
+
+    let score = null;
+    if (hasScore(song)) {
+        score = song.score;
+        song = song.song;
     }
 
     return (
@@ -88,7 +99,9 @@ export default function SongCard({
             </Card.Section>
 
             <Group justify="flex-end" mt="xs">
-                {hoverData}
+                <Suspense fallback={<Skeleton width={80} height={20} />}>
+                    <HoverData song={song} score={score} displayScore={displayScore} />
+                </Suspense>
             </Group>
 
             <Text size="md" mt="md">

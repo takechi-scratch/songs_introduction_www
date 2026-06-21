@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import { cookies } from "next/headers";
 
-const notoSansJP = Noto_Sans_JP({ subsets: ["latin"] });
+const notoSansJP = Noto_Sans_JP({ subsets: ["latin"], display: "swap" });
 
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
@@ -17,6 +17,7 @@ import { Notifications } from "@mantine/notifications";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ColorModeProvider } from "@/contexts/ThemeContext";
 import { ColorMode, ColorThemes } from "@/lib/themes";
+import { Suspense } from "react";
 
 const title = "MIMIさん全曲紹介";
 const description = "MIMIさんの曲を全曲掲載・おすすめの曲が見つかるアプリ。";
@@ -54,7 +55,7 @@ const theme = createTheme({
     defaultRadius: "sm",
 });
 
-export async function RootLayout({ children }: { children: React.ReactNode }) {
+export async function ColorModeProviderWrapper({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
     function toColorMode(value: string | undefined): ColorMode {
         if (value && ColorThemes.hasOwnProperty(value)) {
@@ -64,7 +65,10 @@ export async function RootLayout({ children }: { children: React.ReactNode }) {
     }
 
     const initialColorMode = toColorMode(cookieStore.get("colorMode")?.value);
+    return <ColorModeProvider initialColorMode={initialColorMode}>{children}</ColorModeProvider>;
+}
 
+export async function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ja" {...mantineHtmlProps} className={notoSansJP.className}>
             <head>
@@ -75,9 +79,9 @@ export async function RootLayout({ children }: { children: React.ReactNode }) {
                     <ModalsProvider>
                         <Notifications />
                         <AuthProvider>
-                            <ColorModeProvider initialColorMode={initialColorMode}>
-                                {children}
-                            </ColorModeProvider>
+                            <Suspense>
+                                <ColorModeProviderWrapper>{children}</ColorModeProviderWrapper>
+                            </Suspense>
                         </AuthProvider>
                     </ModalsProvider>
                 </MantineProvider>

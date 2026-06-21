@@ -2,7 +2,7 @@ import MyAppShell from "@/components/appshell/myAppshell";
 import { NextAnchor } from "@/components/nextLink";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { formatDateTime } from "@/lib/date";
-import { fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
+import { fetchAllSongsAndCache, fetchNearestSongsAndCache } from "@/lib/songs/cachedapi";
 import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { PageProps, shuffleArray } from "@/lib/utils";
 import { Alert, Button, Image, Text, Title } from "@mantine/core";
@@ -37,7 +37,7 @@ async function getRecommendedSongs(
     await Promise.all(
         preferenceRanking.map(async (targetSongID, index) => {
             const weight = Math.pow(preferenceRanking.length - index, powerForRankingWeight);
-            const nearestSongs = await fetchNearestSongs(targetSongID, 1 << 28);
+            const nearestSongs = await fetchNearestSongsAndCache(targetSongID, 1 << 28);
             nearestSongs.forEach((song) => {
                 if (!(song.id in preferenceScores)) {
                     preferenceScores[song.id] = 0;
@@ -57,7 +57,7 @@ async function getRecommendedSongs(
     recommendedSongs.sort((a, b) => b.score - a.score);
 
     const randomPickCount = Math.ceil(maxResults / 10);
-    const allSongs = (await fetchAllSongs()).filter(
+    const allSongs = (await fetchAllSongsAndCache()).filter(
         (song) => !(song.id in preferenceSongs || song.publishedType === -1)
     );
     shuffleArray(allSongs);

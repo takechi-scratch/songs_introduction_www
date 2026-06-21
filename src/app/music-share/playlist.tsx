@@ -1,6 +1,5 @@
 "use client";
 
-import MyAppShell from "@/components/appshell/myAppshell";
 import MantineMarkdown from "@/components/markdown";
 import { NextAnchor } from "@/components/nextLink";
 import { formatDateTime, formatTime } from "@/lib/date";
@@ -316,7 +315,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
     const songs = schedule.songs;
 
     return (
-        <MyAppShell>
+        <>
             <Title order={1} mb="md">
                 {schedule.title}
             </Title>
@@ -409,6 +408,6 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                 ))}
             </Accordion>
             <NextAnchor href="/">ホームに戻る</NextAnchor>
-        </MyAppShell>
+        </>
     );
 }
