@@ -1,4 +1,4 @@
-import { cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { SongSearchParams } from "../search/search";
 import {
     advancedSearchForSongs,
@@ -12,12 +12,14 @@ import { Song, SongWithScore } from "./types";
 export async function fetchAllSongsAndCache(): Promise<Song[]> {
     "use cache";
     cacheTag("songs-all");
+    cacheLife("weeks");
     return fetchAllSongs();
 }
 
 export async function fetchSongByIdAndCache(id: string): Promise<Song> {
     "use cache";
     cacheTag(`song-${id}`);
+    cacheLife("weeks");
     return fetchSongById(id);
 }
 
@@ -27,12 +29,14 @@ export async function fetchNearestSongsAndCache(
 ): Promise<SongWithScore[]> {
     "use cache";
     cacheTag("songs-all");
+    cacheLife("weeks");
     return fetchNearestSongs(id, limit);
 }
 
 export async function searchSongsAndCache(q: string): Promise<Song[]> {
     "use cache";
     cacheTag("songs-all");
+    cacheLife("weeks");
     return searchSongs(q);
 }
 
@@ -41,5 +45,6 @@ export async function advancedSearchForSongsAndCache(
 ): Promise<SongWithScore[]> {
     "use cache";
     cacheTag("songs-all");
+    cacheLife("weeks");
     return advancedSearchForSongs(params);
 }
