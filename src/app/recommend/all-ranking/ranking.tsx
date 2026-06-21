@@ -1,12 +1,11 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
-import { Button, Center, Flex, Paper, Text, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import SongsCarousel from "@/components/songCards/cardsCarousel";
 import SongPreferenceQuestion from "@/components/songPreferenceQuestion";
 import { Song } from "@/lib/songs/types";
-import SongsCarousel from "@/components/songCards/cardsCarousel";
+import { Button, Flex, Paper, Text, Title } from "@mantine/core";
+import { useState } from "react";
 
 type status = "start" | "choice" | "result";
 
