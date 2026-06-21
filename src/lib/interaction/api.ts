@@ -1,5 +1,4 @@
 import { User as FirebaseUser } from "firebase/auth";
-import { cacheLife, cacheTag } from "next/cache";
 import { getCurrentUserRole, getCurrentUserToken } from "../auth/firebase";
 import { Comment, UpdateUser, User } from "./types";
 
@@ -87,10 +86,6 @@ export async function fetchMyComments(): Promise<Comment[]> {
 }
 
 export async function fetchCommentsBySongID(songID: string): Promise<Comment[]> {
-    "use cache";
-    cacheTag("comments-" + songID, "comments");
-    cacheLife("weeks");
-
     try {
         const response = await fetch(
             `${API_BASE_URL}/comments/?songID=${encodeURIComponent(songID)}`,

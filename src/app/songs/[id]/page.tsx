@@ -8,7 +8,7 @@ import Link from "next/link";
 import ReactPlayer from "react-player";
 
 import { NextAnchor } from "@/components/nextLink";
-import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import { fetchCommentsBySongIDAndCache } from "@/lib/interaction/cachedapi";
 import {
     fetchAllSongsAndCache,
     fetchNearestSongsAndCache,
@@ -98,7 +98,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
         );
     }
 
-    const comments = await fetchCommentsBySongID(id);
+    const comments = await fetchCommentsBySongIDAndCache(id);
 
     return (
         <MyAppShell>
