@@ -47,8 +47,8 @@ function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark"
                 <NextAnchor href="/docs/credits">
                     <Text size="xs">クレジット</Text>
                 </NextAnchor>
-                <NextAnchor href="/docs/analysis/guidelines">
-                    <Text size="xs">分析ガイドライン</Text>
+                <NextAnchor href="/docs/about">
+                    <Text size="xs">サイトについて</Text>
                 </NextAnchor>
                 <Text size="xs" mr="xl">
                     {/* 空白を残すため */}
