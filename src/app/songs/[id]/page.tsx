@@ -118,7 +118,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     icon={<IconAlertTriangle />}
                 >
                     <Text>
-                        データは先行情報から予想したものであり、不正確である可能性があるので注意してください。
+                        先行情報などに基づき、仮の分析データを公開しています。似ている曲は不正確になっているのでご注意ください。
                     </Text>
                     <Text>また、公開後に本ページのリンクが変更される場合があります。</Text>
                 </Alert>
