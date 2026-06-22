@@ -296,6 +296,9 @@ export default function InfoTabs({ song }: { song: Song }) {
                     データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、
                     <Link href="/contact">お問い合わせ</Link>ください。
                 </Alert>
+                <NextAnchor href="/docs/analysis/guidelines" mt="xs" display="block" size="sm">
+                    分析データの作成方法について
+                </NextAnchor>
             </Tabs.Panel>
 
             <Tabs.Panel value="lyrics">
