@@ -1,10 +1,10 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextAnchor } from "@/components/nextLink";
 import { loginWithEmailAndPassword } from "@/lib/auth/firebase";
-import { TextInput, PasswordInput, Button, Title, Alert, Anchor, Divider } from "@mantine/core";
+import { Alert, Button, Divider, PasswordInput, TextInput, Title } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -53,9 +53,7 @@ export default function LoginPage() {
 
             <Divider my="lg" />
 
-            <Anchor component={Link} href="/login">
-                戻る
-            </Anchor>
+            <NextAnchor href="/login">戻る</NextAnchor>
         </MyAppShell>
     );
 }

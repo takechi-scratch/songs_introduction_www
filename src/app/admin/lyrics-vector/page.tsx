@@ -2,12 +2,12 @@
 
 import AdminOnlyComponent from "@/components/adminOnly";
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextAnchor } from "@/components/nextLink";
 import { upsertLyricsVector } from "@/lib/songs/api";
 import { UpsertLyricsVec } from "@/lib/songs/types";
-import { Alert, Anchor, Button, TextInput, Title } from "@mantine/core";
+import { Alert, Button, TextInput, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconAlertTriangle } from "@tabler/icons-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -94,14 +94,9 @@ export default function Page() {
         <MyAppShell>
             <AdminOnlyComponent>
                 <UpdateLyricsVectorPage />
-                <Anchor
-                    mt="lg"
-                    component={Link}
-                    href="/"
-                    style={{ clear: "both", display: "block" }}
-                >
+                <NextAnchor mt="lg" href="/" style={{ clear: "both", display: "block" }}>
                     ホームに戻る
-                </Anchor>
+                </NextAnchor>
             </AdminOnlyComponent>
         </MyAppShell>
     );

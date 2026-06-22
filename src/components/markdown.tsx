@@ -1,11 +1,10 @@
 "use client";
 
 import { Anchor, Code, Divider, Table, Text, Title } from "@mantine/core";
-import Link from "next/link";
-import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { NextAnchor } from "./nextLink";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
 
@@ -35,14 +34,9 @@ export default function MantineMarkdown({
                         );
                     } else {
                         return (
-                            <Anchor
-                                component={Link}
-                                href={href}
-                                style={{ wordBreak: "break-all" }}
-                                {...props}
-                            >
+                            <NextAnchor href={href} style={{ wordBreak: "break-all" }} {...props}>
                                 {children}
-                            </Anchor>
+                            </NextAnchor>
                         );
                     }
                 },

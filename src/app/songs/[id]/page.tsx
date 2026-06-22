@@ -1,18 +1,19 @@
 import MyAppShell from "@/components/appshell/myAppshell";
 import NearestSongsCarousel from "@/components/songCards/cardsCarousel";
-import {
-    fetchAllSongs,
-    fetchNearestSongs,
-    fetchSongById,
-    scoreCanBeCalculated,
-} from "@/lib/songs/api";
-import { Alert, Anchor, Flex, Paper, Text, Title } from "@mantine/core";
+import { scoreCanBeCalculated } from "@/lib/songs/api";
+import { Alert, Flex, Paper, Text, Title } from "@mantine/core";
 import { IconAlertTriangle, IconExclamationCircle } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 
-import { fetchCommentsBySongID } from "@/lib/interaction/api";
+import { NextAnchor } from "@/components/nextLink";
+import { fetchCommentsBySongIDAndCache } from "@/lib/interaction/cachedapi";
+import {
+    fetchAllSongsAndCache,
+    fetchNearestSongsAndCache,
+    fetchSongByIdAndCache,
+} from "@/lib/songs/cachedapi";
 import "@mantine/charts/styles.css";
 import { Suspense } from "react";
 import rison from "rison";
@@ -27,7 +28,7 @@ export const generateMetadata = async ({
     // ブログの詳細データを取得する関数
     let song;
     try {
-        song = await fetchSongById((await params).id);
+        song = await fetchSongByIdAndCache((await params).id);
     } catch (error) {
         console.error("Error fetching song data for metadata:", error);
         return {};
@@ -74,9 +75,9 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 
     let song, nearestSongs;
     try {
-        song = await fetchSongById(id);
+        song = await fetchSongByIdAndCache(id);
         if (scoreCanBeCalculated(song)) {
-            nearestSongs = await fetchNearestSongs(id);
+            nearestSongs = await fetchNearestSongsAndCache(id);
         }
     } catch (error) {
         console.error("Error fetching song data:", error);
@@ -97,7 +98,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
         );
     }
 
-    const comments = await fetchCommentsBySongID(id);
+    const comments = await fetchCommentsBySongIDAndCache(id);
 
     return (
         <MyAppShell>
@@ -117,7 +118,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     icon={<IconAlertTriangle />}
                 >
                     <Text>
-                        データは先行情報から予想したものであり、不正確である可能性があるので注意してください。
+                        先行情報などに基づき、仮の分析データを公開しています。似ている曲は不正確になっているのでご注意ください。
                     </Text>
                     <Text>また、公開後に本ページのリンクが変更される場合があります。</Text>
                 </Alert>
@@ -145,9 +146,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                         </Suspense>
                     </div>
                     <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
-                        <Anchor href="/" component={Link}>
-                            ホームに戻る
-                        </Anchor>
+                        <NextAnchor href="/">ホームに戻る</NextAnchor>
                     </Flex>
                 </div>
                 <Paper p="md" radius="md" shadow="sm" withBorder style={{ flex: 1 }}>
@@ -158,12 +157,11 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
             <Flex mb="md" mt="xl" gap="xl" align="end">
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
-                    <Anchor
+                    <NextAnchor
                         href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID: song.id } })}`}
-                        component={Link}
                     >
                         高度な条件で探す
-                    </Anchor>
+                    </NextAnchor>
                 )}
             </Flex>
 
@@ -182,6 +180,6 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
 }
 
 export async function generateStaticParams() {
-    const songs = await fetchAllSongs();
+    const songs = await fetchAllSongsAndCache();
     return songs.map((song) => ({ id: song.id }));
 }

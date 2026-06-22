@@ -42,14 +42,11 @@ export async function fetchAllSongs(): Promise<Song[]> {
     }
 }
 
-export async function fetchSongById(
-    id: string,
-    cache: "force-cache" | "no-cache" = "force-cache"
-): Promise<Song> {
+export async function fetchSongById(id: string): Promise<Song> {
     try {
         const url = `${API_BASE_URL}/songs/${id}/`;
 
-        const response = await fetch(url, { cache, next: { tags: [`song-${id}`] } }); // デフォルトでもキャッシュを強制
+        const response = await fetch(url, { cache: "no-cache", next: { tags: [`song-${id}`] } }); // デフォルトでもキャッシュを強制
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -209,7 +206,6 @@ export async function getSampleSongs(params: SongSampleParams): Promise<Song[]> 
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(params),
-            next: { tags: ["songs-all"] },
         });
 
         if (!response.ok) {

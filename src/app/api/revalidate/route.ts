@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Forbidden - Admin only" }, { status: 403 });
         }
 
-        revalidateTag("songs-all");
+        revalidateTag("songs-all", "max");
         const body = await request.json();
         for (const songID of body.songIDs) {
-            revalidateTag(`song-${songID}`);
+            revalidateTag(`song-${songID}`, "max");
         }
 
         return NextResponse.json({ success: true });

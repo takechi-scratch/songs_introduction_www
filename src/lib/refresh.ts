@@ -10,9 +10,9 @@ export async function refreshHomePage() {
 }
 
 export async function refreshComments(songID: string) {
-    revalidateTag("comments-" + songID);
+    revalidateTag("comments-" + songID, "max");
 }
 
 export async function refreshAllComments() {
-    revalidateTag("comments");
+    revalidateTag("comments", "max");
 }

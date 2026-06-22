@@ -1,37 +1,37 @@
 "use client";
 
 import MyAppShell from "@/components/appshell/myAppshell";
-import {
-    Title,
-    Text,
-    Button,
-    TextInput,
-    SegmentedControl,
-    NumberInput,
-    Slider,
-    Select,
-    Rating,
-    Textarea,
-    TagsInput,
-    Flex,
-    Tabs,
-    Switch,
-    Anchor,
-    Divider,
-    Alert,
-} from "@mantine/core";
-import Link from "next/link";
-import { useForm } from "@mantine/form";
 import { useUserRole } from "@/hooks/auth";
 import { upsertSong } from "@/lib/songs/api";
+import {
+    Alert,
+    Anchor,
+    Button,
+    Divider,
+    Flex,
+    NumberInput,
+    Rating,
+    SegmentedControl,
+    Select,
+    Slider,
+    Switch,
+    Tabs,
+    TagsInput,
+    Text,
+    Textarea,
+    TextInput,
+    Title,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import Link from "next/link";
 // app routerの際はuseRouterは`next/navigation`から
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, useEffect } from "react";
-import ReactPlayer from "react-player";
 import { useSong } from "@/hooks/songs";
 import { UpsertSong } from "@/lib/songs/types";
 import { useDisclosure } from "@mantine/hooks";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import ReactPlayer from "react-player";
 
 function inputStylesProps({ example, displayName }: { example: string; displayName: string }) {
     return {
@@ -457,7 +457,7 @@ export default function Page() {
     return (
         <MyAppShell>
             <Title mb="lg">曲の追加・編集</Title>
-            <Suspense fallback={<>loading params...</>}>
+            <Suspense fallback={<Text>loading params...</Text>}>
                 <InfoTabs />
             </Suspense>
         </MyAppShell>

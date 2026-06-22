@@ -1,5 +1,8 @@
-import { fetchAllSongs } from "@/lib/songs/api";
+import MyAppShell from "@/components/appshell/myAppshell";
+import { fetchAllSongsAndCache } from "@/lib/songs/cachedapi";
+import { Text } from "@mantine/core";
 import { Metadata } from "next";
+import { Suspense } from "react";
 import Playlist from "./playlist";
 
 const title = "音楽シェア | MIMIさん全曲紹介";
@@ -34,7 +37,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const songs = await fetchAllSongs();
+    const songs = await fetchAllSongsAndCache();
 
-    return <Playlist allSongs={songs} />;
+    return (
+        <MyAppShell>
+            <Suspense fallback={<Text>再生リストを読み込んでいます...</Text>}>
+                <Playlist allSongs={songs} />
+            </Suspense>
+        </MyAppShell>
+    );
 }

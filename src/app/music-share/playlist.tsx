@@ -1,13 +1,12 @@
 "use client";
 
-import MyAppShell from "@/components/appshell/myAppshell";
 import MantineMarkdown from "@/components/markdown";
+import { NextAnchor } from "@/components/nextLink";
 import { formatDateTime, formatTime } from "@/lib/date";
 import { Song } from "@/lib/songs/types";
 import {
     Accordion,
     alpha,
-    Anchor,
     Box,
     Button,
     Card,
@@ -27,7 +26,6 @@ import {
     Title,
 } from "@mantine/core";
 import { useDisclosure, useInterval } from "@mantine/hooks";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import Chat from "./chat";
@@ -317,7 +315,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
     const songs = schedule.songs;
 
     return (
-        <MyAppShell>
+        <>
             <Title order={1} mb="md">
                 {schedule.title}
             </Title>
@@ -409,9 +407,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                     </Accordion.Item>
                 ))}
             </Accordion>
-            <Anchor href="/" component={Link}>
-                ホームに戻る
-            </Anchor>
-        </MyAppShell>
+            <NextAnchor href="/">ホームに戻る</NextAnchor>
+        </>
     );
 }

@@ -1,7 +1,7 @@
 import { Song } from "@/lib/songs/types";
 import { estimateComparisons } from "@/lib/utils";
-import { Stack, Progress, Flex, Paper, alpha, Text, Tooltip } from "@mantine/core";
-import { useState, useMemo } from "react";
+import { alpha, Button, Flex, Paper, Progress, Stack, Text, Tooltip } from "@mantine/core";
+import { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
 
 type SongsBetter = Map<string, Set<string>>;
@@ -66,7 +66,23 @@ export default function SongPreferenceQuestion({
     }
 
     if (sortedSongs) {
-        completedCallback(sortedSongs);
+        return (
+            <Stack gap="lg" align="center">
+                <Text size="lg" fw={500}>
+                    結果が出ました！
+                </Text>
+
+                <Progress radius="md" size="lg" value={100} w="100%" />
+                <Button
+                    size="xl"
+                    radius="md"
+                    color="green"
+                    onClick={() => completedCallback(sortedSongs)}
+                >
+                    結果を見る
+                </Button>
+            </Stack>
+        );
     }
 
     if (!currentPair) {

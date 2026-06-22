@@ -1,6 +1,6 @@
+import { User as FirebaseUser } from "firebase/auth";
 import { getCurrentUserRole, getCurrentUserToken } from "../auth/firebase";
 import { Comment, UpdateUser, User } from "./types";
-import { User as FirebaseUser } from "firebase/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 

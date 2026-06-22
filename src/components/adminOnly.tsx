@@ -1,9 +1,9 @@
 "use client";
 
 import { useUserRole } from "@/hooks/auth";
-import { Alert, Anchor } from "@mantine/core";
+import { Alert } from "@mantine/core";
 import { IconShieldLockFilled } from "@tabler/icons-react";
-import Link from "next/link";
+import { NextAnchor } from "./nextLink";
 
 export default function AdminOnlyComponent({ children }: { children: React.ReactNode }) {
     const userRole = useUserRole();
@@ -14,9 +14,9 @@ export default function AdminOnlyComponent({ children }: { children: React.React
                 <Alert title="403 Forbidden" color="red" icon={<IconShieldLockFilled />} mb="md">
                     アクセス権限がありません。
                 </Alert>
-                <Anchor href="/" mb="md" component={Link}>
+                <NextAnchor href="/" mb="md">
                     トップページに戻る
-                </Anchor>
+                </NextAnchor>
             </>
         );
     }

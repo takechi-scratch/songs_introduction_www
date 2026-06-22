@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { SongSampleParams, SongSearchParams } from "@/lib/search/search";
 import {
     advancedSearchForSongs,
     fetchNearestSongs,
-    fetchSongById,
     getSampleSongs as fetchSampleSongs,
+    fetchSongById,
 } from "@/lib/songs/api";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { SongSampleParams, SongSearchParams } from "@/lib/search/search";
 import { shuffleArray } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export function useAdvancedSearch(searchParams: SongSearchParams, random: boolean = false) {
     const [songs, setSongs] = useState<(SongWithScore | null)[]>([...Array(10).fill(null)]);
@@ -56,7 +56,7 @@ export function useSong(id: string | null) {
 
         try {
             setLoading(true);
-            const data = await fetchSongById(id, "no-cache");
+            const data = await fetchSongById(id);
             setSong(data);
             setError(null);
         } catch (err) {

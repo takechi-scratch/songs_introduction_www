@@ -1,8 +1,8 @@
-import { Song, SongWithScore } from "./songs/types";
 import { getCurrentUser, getCurrentUserToken } from "./auth/firebase";
 import { formatDate } from "./date";
-import { fetchSongById } from "./songs/api";
 import { FilterableLabels, SongFilters, SongSearchParams } from "./search/search";
+import { fetchSongById } from "./songs/api";
+import { Song, SongWithScore } from "./songs/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -81,6 +81,7 @@ export async function createMetaDataFromSearchQuery(
     songCount: number,
     searchParams: SongSearchParams
 ): Promise<{ title: string; description: string }> {
+    // ここでの詳細データ取得はキャッシュが効いていないが、アクセスする人は特定されており量も少ないので許す
     let title = "";
     let description = "";
 

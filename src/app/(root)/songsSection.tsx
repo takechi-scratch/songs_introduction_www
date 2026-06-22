@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { NextAnchor } from "@/components/nextLink";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { Alert, Anchor, Box, Flex, Group, Switch, Text, Title } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
+import { Alert, Box, Flex, Switch, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import Link from "next/link";
+import { notifications } from "@mantine/notifications";
+import { useEffect } from "react";
 import rison from "rison";
 
 export function SongsSearchSection({
@@ -51,9 +51,7 @@ export function SongsSearchSection({
                 <Title order={2} style={{ alignItems: "center" }}>
                     最新の曲
                 </Title>
-                <Anchor component={Link} href={linkToAllSongs}>
-                    もっと見る
-                </Anchor>
+                <NextAnchor href={linkToAllSongs}>もっと見る</NextAnchor>
                 <Box style={{ flex: 1 }} />
                 <Switch
                     label="提供曲のみに絞り込む"
@@ -95,15 +93,12 @@ export function SongsNearestSection({
                 <Title order={2} style={{ alignItems: "center" }}>
                     「{targetSongTitle}」に似ている曲
                 </Title>
-                <Anchor component={Link} href={`/songs/${targetSongID}`}>
-                    曲の詳細を見る
-                </Anchor>
-                <Anchor
-                    component={Link}
+                <NextAnchor href={`/songs/${targetSongID}`}>曲の詳細を見る</NextAnchor>
+                <NextAnchor
                     href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID } })}`}
                 >
                     高度な条件で探す
-                </Anchor>
+                </NextAnchor>
             </Flex>
             <SongsCarousel songs={nearestSongsData} size="small" />
         </>

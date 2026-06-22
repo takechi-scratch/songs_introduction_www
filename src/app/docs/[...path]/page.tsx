@@ -2,10 +2,9 @@
 
 import MyAppShell from "@/components/appshell/myAppshell";
 import { useDocsFile } from "@/hooks/docs";
-import MarkdownDocs from "./markdownDocs";
-import { use } from "react";
-import React from "react";
 import { Button, Skeleton } from "@mantine/core";
+import { use } from "react";
+import MarkdownDocs from "./markdownDocs";
 
 // useを使えーって出るときは、引数部分をPromiseで囲む！
 export default function DocsPage({ params }: { params: Promise<{ path: string[] }> }) {
@@ -28,7 +27,7 @@ export default function DocsPage({ params }: { params: Promise<{ path: string[] 
 
             <Button
                 variant="light"
-                color="dark.4"
+                color="gray"
                 component="a"
                 target="_blank"
                 rel="noopener noreferrer"

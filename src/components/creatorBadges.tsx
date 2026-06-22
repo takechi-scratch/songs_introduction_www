@@ -1,6 +1,6 @@
 import { SearchQuery } from "@/lib/search/filter";
-import { Badge, BadgeProps } from "@mantine/core";
-import Link from "next/link";
+import { BadgeProps } from "@mantine/core";
+import { NextLinkedBadge } from "./nextLink";
 
 export default function CreatorBadges({
     creators,
@@ -20,11 +20,10 @@ export default function CreatorBadges({
                 const creator = rawCreator.trim();
 
                 return (
-                    <Badge
+                    <NextLinkedBadge
                         mr="sm"
                         tt="none"
                         variant="light"
-                        component={Link}
                         href={`/songs/?params=filter:(${searchQueryName}:'"${encodeURIComponent(
                             creator
                         )}"')`}
@@ -33,7 +32,7 @@ export default function CreatorBadges({
                         style={{ cursor: "pointer" }}
                     >
                         {creator}
-                    </Badge>
+                    </NextLinkedBadge>
                 );
             })}
         </>

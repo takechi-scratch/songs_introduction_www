@@ -1,15 +1,16 @@
 import MyAppShell from "@/components/appshell/myAppshell";
+import { NextAnchor } from "@/components/nextLink";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
 import { formatDateTime } from "@/lib/date";
-import { fetchAllSongs, fetchNearestSongs } from "@/lib/songs/api";
+import { fetchAllSongsAndCache, fetchNearestSongsAndCache } from "@/lib/songs/cachedapi";
 import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
-import { Alert, Anchor, Button, Image, Text, Title } from "@mantine/core";
+import { PageProps, shuffleArray } from "@/lib/utils";
+import { Alert, Button, Image, Text, Title } from "@mantine/core";
 import { IconFlaskFilled } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
-import { PageProps, shuffleArray } from "@/lib/utils";
 
 async function getRecommendedSongs(
     preferenceRankingParam: string,
@@ -36,7 +37,7 @@ async function getRecommendedSongs(
     await Promise.all(
         preferenceRanking.map(async (targetSongID, index) => {
             const weight = Math.pow(preferenceRanking.length - index, powerForRankingWeight);
-            const nearestSongs = await fetchNearestSongs(targetSongID, 1 << 28);
+            const nearestSongs = await fetchNearestSongsAndCache(targetSongID, 1 << 28);
             nearestSongs.forEach((song) => {
                 if (!(song.id in preferenceScores)) {
                     preferenceScores[song.id] = 0;
@@ -56,7 +57,7 @@ async function getRecommendedSongs(
     recommendedSongs.sort((a, b) => b.score - a.score);
 
     const randomPickCount = Math.ceil(maxResults / 10);
-    const allSongs = (await fetchAllSongs()).filter(
+    const allSongs = (await fetchAllSongsAndCache()).filter(
         (song) => !(song.id in preferenceSongs || song.publishedType === -1)
     );
     shuffleArray(allSongs);
@@ -180,12 +181,10 @@ export default async function RecommendPage(props: PageProps) {
             <Suspense fallback={<Text>結果を読み込み中...</Text>}>
                 <RecommendResultPage searchParams={props.searchParams} />
             </Suspense>
-            <Anchor component={Link} mr="md" href="/recommend">
+            <NextAnchor mr="md" href="/recommend">
                 もう一度診断
-            </Anchor>
-            <Anchor component={Link} href="/docs/analysis/recommend">
-                診断の仕組み（詳しい情報）
-            </Anchor>
+            </NextAnchor>
+            <NextAnchor href="/docs/analysis/recommend">診断の仕組み（詳しい情報）</NextAnchor>
             <Alert mt="lg" color="green" icon={<IconFlaskFilled />}>
                 <Text size="sm">
                     診断アルゴリズムをよりよいものにするため、好きになった曲・あまり好みではなかった曲をシェアしていただけると嬉しいです！

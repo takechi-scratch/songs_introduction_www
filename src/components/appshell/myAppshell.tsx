@@ -1,7 +1,8 @@
 "use client";
 
+import { useColorMode } from "@/contexts/ThemeContext";
+import { ColorThemes, DefaultColorMode } from "@/lib/themes";
 import {
-    Anchor,
     AppShell,
     Badge,
     Box,
@@ -13,16 +14,15 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import Link from "next/link";
-import Image from "next/image";
-import UserMenu from "./userMenu";
-import { noticeActiveAnnouncements } from "../announcements/manager";
 import { IconPlaylist } from "@tabler/icons-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect } from "react";
+import { noticeActiveAnnouncements } from "../announcements/manager";
+import { NextAnchor } from "../nextLink";
 import QuickSearch from "../quickSearch";
-import { useColorMode } from "@/contexts/ThemeContext";
 import ColorModeMenu from "./colorModeMenu";
-import { ColorThemes, DefaultColorMode } from "@/lib/themes";
+import UserMenu from "./userMenu";
 
 function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark" }) {
     return (
@@ -41,26 +41,25 @@ function Footer({ computedColorScheme }: { computedColorScheme: "light" | "dark"
             }}
         >
             <Flex direction={{ base: "column", sm: "row" }} flex="1" gap={{ base: 1, sm: "sm" }}>
-                <Anchor component={Link} href="/docs/terms">
+                <NextAnchor href="/docs/terms">
                     <Text size="xs">規約など</Text>
-                </Anchor>
-                <Anchor component={Link} href="/docs/credits">
+                </NextAnchor>
+                <NextAnchor href="/docs/credits">
                     <Text size="xs">クレジット</Text>
-                </Anchor>
-                <Anchor component={Link} href="/docs/analysis/guidelines">
+                </NextAnchor>
+                <NextAnchor href="/docs/analysis/guidelines">
                     <Text size="xs">分析ガイドライン</Text>
-                </Anchor>
+                </NextAnchor>
                 <Text size="xs" mr="xl">
                     {/* 空白を残すため */}
                     {"製作: "}
-                    <Anchor
-                        component={Link}
+                    <NextAnchor
                         href="https://takechi.f5.si/"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
                         takechi
-                    </Anchor>
+                    </NextAnchor>
                 </Text>
                 <Text
                     size="xs"
@@ -185,15 +184,14 @@ export default function MyAppShell({
                                 position="bottom"
                                 events={{ hover: true, focus: true, touch: true }}
                             >
-                                <Anchor
+                                <NextAnchor
                                     href="/songs"
                                     c="orange.8"
                                     mr="sm"
-                                    component={Link}
                                     className="flex items-center"
                                 >
                                     <IconPlaylist />
-                                </Anchor>
+                                </NextAnchor>
                             </Tooltip>
                             <ColorModeMenu />
                         </Flex>
