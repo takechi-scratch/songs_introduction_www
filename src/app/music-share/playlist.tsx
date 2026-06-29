@@ -29,7 +29,12 @@ import { useDisclosure, useInterval } from "@mantine/hooks";
 import { useEffect, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import Chat from "./chat";
-import { createDailySchedule, pastEvents, SharingSchedule } from "./scheduling";
+import {
+    createDailySchedule,
+    createScheduleForThemedParty,
+    pastEvents,
+    SharingSchedule,
+} from "./scheduling";
 
 const MAX_QUEUEING_SONGS = 150;
 
@@ -282,7 +287,17 @@ function Player({
 }
 
 export default function Page({ allSongs }: { allSongs: Song[] }) {
-    const schedule = createDailySchedule(allSongs);
+    const specialSchedule = createScheduleForThemedParty(allSongs);
+    const dailySchedule = createDailySchedule(allSongs);
+    let schedule = dailySchedule;
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (
+        specialSchedule &&
+        specialSchedule.startDate - 3600 < currentTime &&
+        currentTime < specialSchedule.endDate + 600
+    ) {
+        schedule = specialSchedule;
+    }
 
     const [songIndex, setSongIndex] = useState(-1);
     const [k, { toggle: reRender }] = useDisclosure(false);
@@ -294,7 +309,7 @@ export default function Page({ allSongs }: { allSongs: Song[] }) {
                 Boolean(
                     schedule.chatEnabled &&
                     schedule.startDate - 3600 < currentTime &&
-                    currentTime < schedule.endDate + 1800
+                    currentTime < schedule.endDate + 600
                 )
             );
         },

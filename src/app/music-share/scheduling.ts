@@ -40,6 +40,53 @@ export function createTestSchedule(allSongs: Song[]): SharingSchedule {
     };
 }
 
+export function createScheduleForThemedParty(allSongs: Song[]): SharingSchedule {
+    // 所要時間: 01:05:16
+    const sources = [
+        "ioW9iGDpQyw",
+        "Wiz0Ap2ge5U",
+        "HkTihNKCWFA",
+        "LKyLOLosp54",
+        "IxVFW1XIW7Q",
+        "YN6c7v9Mr1I",
+    ];
+
+    const songsID = [...sources, ...sources, ...sources, ...sources];
+
+    const startDate = new Date("2026-07-01T21:00:00+09:00").getTime() / 1000;
+    let currentTime = startDate;
+
+    const songs: SharingSong[] = [];
+    for (const id of songsID) {
+        const song = allSongs.find((s) => s.id === id);
+        if (!song) {
+            continue;
+        }
+
+        songs.push({
+            id: song.id,
+            title: song.title,
+            startDate: currentTime,
+        });
+        currentTime += song.durationSeconds || 0;
+    }
+
+    return {
+        title: "哀歌シリーズ！",
+        description: [
+            "哀歌シリーズだけの1時間！初公開が昔の曲から、順番に4周流します！",
+            "一緒に聴いて、イチオシの曲を見つけましょう！",
+            "",
+            "不具合があったら[@takechi_scratch](https://x.com/takechi_scratch)まで。",
+            "※開始1時間前～終了10分後の間は、イベント用スケジュールでの再生になっています。その後は、通常のランダム再生スケジュールに切り替わります。",
+        ].join("\n"),
+        startDate: startDate,
+        endDate: currentTime,
+        songs: songs,
+        chatEnabled: true,
+    };
+}
+
 export function createDailySchedule(allSongs: Song[]): SharingSchedule {
     const today = Math.floor((Date.now() / 1000 + 3600 * 9) / 86400);
     const startDate = today * 86400 - 3600 * 9;
