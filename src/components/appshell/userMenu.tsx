@@ -6,9 +6,9 @@ import { logout } from "@/lib/auth/firebase";
 import { Menu, MenuItem } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
-    IconCopyleft,
     IconDatabasePlus,
     IconFileMusic,
+    IconInfoCircle,
     IconLogin,
     IconLogout,
     IconMessageChatbot,
@@ -132,8 +132,8 @@ export default function UserMenu() {
                 <NextLinkedMenuItem href="/contact" leftSection={<IconMessageChatbot size={14} />}>
                     お問い合わせ・機能提案
                 </NextLinkedMenuItem>
-                <NextLinkedMenuItem href="/docs/credits" leftSection={<IconCopyleft size={14} />}>
-                    クレジット
+                <NextLinkedMenuItem href="/docs/about" leftSection={<IconInfoCircle size={14} />}>
+                    サイトについて
                 </NextLinkedMenuItem>
                 <ColorModeMenu submenu />
             </Menu.Dropdown>
