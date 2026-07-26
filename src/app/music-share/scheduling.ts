@@ -96,6 +96,11 @@ export function createDailySchedule(allSongs: Song[]): SharingSchedule {
     const songs: SharingSong[] = [];
     while (currentTime < startDate + 86400) {
         const song = allSongs[Math.floor(rng() * allSongs.length)];
+        if (song.publishedTimestamp > startDate) {
+            // 当日に公開された曲でスケジュールがずれるのを防ぐ
+            continue;
+        }
+
         if (currentTime + (song.durationSeconds || 0) > startDate + 86400) {
             break;
         }
@@ -167,5 +172,17 @@ export const pastEvents = [
         ].join("\n"),
         startDate: 1781267400,
         endDate: 1781271269,
+    },
+    {
+        title: "哀歌シリーズ！",
+        description: [
+            "哀歌シリーズだけの1時間！初公開が昔の曲から、順番に4周流します！",
+            "一緒に聴いて、イチオシの曲を見つけましょう！",
+            "",
+            "不具合があったら[@takechi_scratch](https://x.com/takechi_scratch)まで。",
+            "※開始1時間前～終了10分後の間は、イベント用スケジュールでの再生になっています。その後は、通常のランダム再生スケジュールに切り替わります。",
+        ].join("\n"),
+        startDate: new Date("2026-07-01T21:00:00+09:00").getTime() / 1000,
+        endDate: new Date("2026-07-01T22:05:56+09:00").getTime() / 1000,
     },
 ] as const;
