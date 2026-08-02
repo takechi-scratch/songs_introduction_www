@@ -26,7 +26,7 @@ import Avatar from "boring-avatars";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import randomContents from "./guestAvatar";
-import MantineMarkdown from "./markdown";
+import MantineMarkdown from "./markdown/mantineMarkdown";
 import { NextAnchor } from "./nextLink";
 
 const messages = [

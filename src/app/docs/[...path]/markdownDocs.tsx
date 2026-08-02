@@ -1,6 +1,6 @@
+import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { Alert } from "@mantine/core";
 import { IconExclamationCircle } from "@tabler/icons-react";
-import MantineMarkdown from "@/components/markdown";
 
 export default function MarkdownDocs({ docs, error }: { docs: string; error: string | null }) {
     if (error) {

@@ -2,7 +2,7 @@
 
 import MyAppShell from "@/components/appshell/myAppshell";
 import randomContents from "@/components/guestAvatar";
-import MantineMarkdown from "@/components/markdown";
+import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { NextAnchor } from "@/components/nextLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/auth";

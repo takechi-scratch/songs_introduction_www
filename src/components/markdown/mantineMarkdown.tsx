@@ -1,10 +1,10 @@
 "use client";
 
+import { NextAnchor } from "@/components/nextLink";
 import { Anchor, Code, Divider, Table, Text, Title } from "@mantine/core";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
-import { NextAnchor } from "./nextLink";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
 

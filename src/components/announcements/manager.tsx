@@ -1,6 +1,6 @@
 "use client";
 
-import MantineMarkdown from "@/components/markdown";
+import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { Alert, Paper, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";

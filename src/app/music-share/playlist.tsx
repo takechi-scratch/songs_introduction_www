@@ -1,6 +1,6 @@
 "use client";
 
-import MantineMarkdown from "@/components/markdown";
+import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { NextAnchor } from "@/components/nextLink";
 import { formatDateTime, formatTime } from "@/lib/date";
 import { Song } from "@/lib/songs/types";

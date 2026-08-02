@@ -1,7 +1,7 @@
 "use client";
 
 import CreatorBadges from "@/components/creatorBadges";
-import MantineMarkdown from "@/components/markdown";
+import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { NextAnchor, NextLinkedBadge, NextLinkedButton } from "@/components/nextLink";
 import { useUserRole } from "@/hooks/auth";
 import { formatDateTime, formatDuration } from "@/lib/date";
