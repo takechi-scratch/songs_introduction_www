@@ -1,6 +1,7 @@
 "use client";
 
 import CreatorBadges from "@/components/creatorBadges";
+import generateDetailsMarkdown from "@/components/markdown/detailsMarkdown";
 import MantineMarkdown from "@/components/markdown/mantineMarkdown";
 import { NextAnchor, NextLinkedBadge, NextLinkedButton } from "@/components/nextLink";
 import { useUserRole } from "@/hooks/auth";
@@ -92,328 +93,373 @@ export default function InfoTabs({ song }: { song: Song }) {
         lyricsStatus = "なし";
     }
 
+    let announcementsData: {
+            title: string;
+            description: string;
+            pinned: boolean;
+        }[],
+        body;
+    if (song.comment) {
+        ({ announcementsData, body } = generateDetailsMarkdown({ text: song.comment }));
+    } else {
+        announcementsData = [];
+        body = <Text m="sm">なし</Text>;
+    }
+
     const [openLyricsDetail, { toggle: toggleOpenLyricsDetail }] = useDisclosure(false);
 
     return (
-        <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
-            <Tabs.List mb="md">
-                <Tabs.Tab value="basicInfo" color="red">
-                    概要
-                </Tabs.Tab>
-                <Tabs.Tab value="analysis" color="blue">
-                    分析情報
-                </Tabs.Tab>
-                <Tabs.Tab value="lyrics" color="cyan">
-                    歌詞
-                </Tabs.Tab>
-                <Tabs.Tab value="others" color="teal">
-                    その他
-                </Tabs.Tab>
-            </Tabs.List>
+        <>
+            {announcementsData
+                .filter((a) => a.pinned)
+                .map((announcement, index) => (
+                    <Alert icon={<IconInfoCircle />} key={index} title={announcement.title} mb="sm">
+                        <MantineMarkdown text={announcement.description} textSize="sm" />
+                    </Alert>
+                ))}
+            <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
+                <Tabs.List mb="md">
+                    <Tabs.Tab value="basicInfo" color="red">
+                        概要
+                    </Tabs.Tab>
+                    <Tabs.Tab value="analysis" color="blue">
+                        分析情報
+                    </Tabs.Tab>
+                    <Tabs.Tab value="lyrics" color="cyan">
+                        歌詞
+                    </Tabs.Tab>
+                    <Tabs.Tab value="others" color="teal">
+                        その他
+                    </Tabs.Tab>
+                </Tabs.List>
 
-            <Tabs.Panel value="basicInfo">
-                <Flex mb="sm" gap="sm" align="center">
-                    <Title order={4}>動画データ</Title>
-                    <Text size="sm" opacity={0.6}>
-                        （YouTube Data APIより取得）
-                    </Text>
-                </Flex>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
-                    <Table.Tbody>
-                        <Table.Tr>
-                            <Table.Th w={140}>動画URL</Table.Th>
-                            <Table.Td>
-                                <NextAnchor
-                                    size="sm"
-                                    href={`https://www.youtube.com/watch?v=${song.id}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ wordBreak: "break-all" }}
-                                >
-                                    https://www.youtube.com/watch?v={song.id}
-                                </NextAnchor>
-                            </Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>公開時刻</Table.Th>
-                            <Table.Td>{formatDateTime(song.publishedTimestamp)}</Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>長さ</Table.Th>
-                            <Table.Td>
-                                {song.durationSeconds
-                                    ? formatDuration(song.durationSeconds)
-                                    : "不明"}
-                            </Table.Td>
-                        </Table.Tr>
-                    </Table.Tbody>
-                </Table>
-                <Title order={4} mb="sm">
-                    曲に関するデータ
-                </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
-                    <Table.Tbody>
-                        <Table.Tr>
-                            <Table.Th w={140}>公開形式</Table.Th>
-                            <Table.Td>{publishedType}</Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>ボーカル</Table.Th>
-                            <Table.Td>
-                                {song.vocal !== null ? (
-                                    <CreatorBadges
-                                        color="orange"
-                                        searchQueryName="vocal"
-                                        creators={song.vocal}
-                                    />
-                                ) : (
-                                    "不明"
-                                )}
-                            </Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>イラスト等</Table.Th>
-                            <Table.Td>
-                                {song.illustrations !== null ? (
-                                    <CreatorBadges
-                                        color="blue"
-                                        searchQueryName="illustrations"
-                                        creators={song.illustrations}
-                                    />
-                                ) : (
-                                    "不明"
-                                )}
-                            </Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>動画</Table.Th>
-                            <Table.Td>
-                                {song.movie !== null ? (
-                                    <CreatorBadges
-                                        color="teal"
-                                        searchQueryName="movie"
-                                        creators={song.movie}
-                                    />
-                                ) : (
-                                    "不明"
-                                )}
-                            </Table.Td>
-                        </Table.Tr>
-                    </Table.Tbody>
-                </Table>
-            </Tabs.Panel>
-
-            <Tabs.Panel value="analysis">
-                <Title order={4} mb="sm">
-                    基本データ
-                </Title>
-                <Table variant="vertical" layout="fixed" withTableBorder mb="md">
-                    <Table.Tbody>
-                        <Table.Tr>
-                            <Table.Th w={140}>BPM</Table.Th>
-                            <Table.Td>{song.bpm !== null ? song.bpm : "不明"}</Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>主なキー</Table.Th>
-                            <Table.Td>
-                                {song.mainKey !== null ? formatOriginalKey(song.mainKey) : "不明"}
-                            </Table.Td>
-                        </Table.Tr>
-
-                        <Table.Tr>
-                            <Table.Th>主なコード</Table.Th>
-                            <Table.Td>
-                                {song.mainChord ? (
-                                    <NextLinkedBadge
-                                        variant="light"
-                                        color={mainChordColor}
-                                        href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
-                                        style={{ cursor: "pointer" }}
+                <Tabs.Panel value="basicInfo">
+                    <Flex mb="sm" gap="sm" align="center">
+                        <Title order={4}>動画データ</Title>
+                        <Text size="sm" opacity={0.6}>
+                            （YouTube Data APIより取得）
+                        </Text>
+                    </Flex>
+                    <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                        <Table.Tbody>
+                            <Table.Tr>
+                                <Table.Th w={140}>動画URL</Table.Th>
+                                <Table.Td>
+                                    <NextAnchor
+                                        size="sm"
+                                        href={`https://www.youtube.com/watch?v=${song.id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ wordBreak: "break-all" }}
                                     >
-                                        {song.mainChord}
-                                    </NextLinkedBadge>
-                                ) : (
-                                    "不明"
-                                )}
-                            </Table.Td>
-                        </Table.Tr>
+                                        https://www.youtube.com/watch?v={song.id}
+                                    </NextAnchor>
+                                </Table.Td>
+                            </Table.Tr>
 
-                        <Table.Tr>
-                            <Table.Th>転調</Table.Th>
-                            <Table.Td>{displayedModulationTimes}</Table.Td>
-                        </Table.Tr>
-                    </Table.Tbody>
-                </Table>
+                            <Table.Tr>
+                                <Table.Th>公開時刻</Table.Th>
+                                <Table.Td>{formatDateTime(song.publishedTimestamp)}</Table.Td>
+                            </Table.Tr>
 
-                <Flex
-                    direction={{ base: "column", sm: "row" }}
-                    gap="xl"
-                    style={{ alignItems: "flex-start" }}
-                    mb="md"
-                >
-                    {/* Divで囲んだところは縦方向の並びになる */}
-                    <div>
-                        {chordData !== null ? (
-                            <>
-                                <Title order={4} mb="sm">
-                                    コード進行
-                                </Title>
-                                <div style={{ height: 80 }}>
-                                    <DonutChart
-                                        data={chordData}
-                                        startAngle={180}
-                                        endAngle={0}
-                                        valueFormatter={valueFormatter}
-                                        tooltipProps={{
-                                            allowEscapeViewBox: { x: true, y: true },
-                                            wrapperStyle: { zIndex: 1000 },
-                                        }}
-                                    />
-                                </div>
-                            </>
-                        ) : (
-                            <Text>コード進行: 不明</Text>
-                        )}
-                    </div>
-                    <div>
-                        <Title order={4} mb="sm">
-                            ピアノの使用度
-                        </Title>
-                        {song.pianoRate !== null ? (
-                            <Rating value={song.pianoRate} size={30} mb="md" readOnly />
-                        ) : (
-                            <Text>不明</Text>
-                        )}
-                    </div>
-                </Flex>
-                <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>
-                    データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、
-                    <Link href="/contact">お問い合わせ</Link>ください。
-                </Alert>
-                <NextAnchor href="/docs/analysis/guidelines" mt="xs" display="block" size="sm">
-                    分析データの作成方法について
-                </NextAnchor>
-            </Tabs.Panel>
+                            <Table.Tr>
+                                <Table.Th>長さ</Table.Th>
+                                <Table.Td>
+                                    {song.durationSeconds
+                                        ? formatDuration(song.durationSeconds)
+                                        : "不明"}
+                                </Table.Td>
+                            </Table.Tr>
+                        </Table.Tbody>
+                    </Table>
+                    <Title order={4} mb="sm">
+                        曲に関するデータ
+                    </Title>
+                    <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                        <Table.Tbody>
+                            <Table.Tr>
+                                <Table.Th w={140}>公開形式</Table.Th>
+                                <Table.Td>{publishedType}</Table.Td>
+                            </Table.Tr>
 
-            <Tabs.Panel value="lyrics">
-                <Flex mb="md" gap="sm" align="center">
-                    <Title order={4}>歌詞</Title>
-                    <Text>{lyricsStatus}</Text>
-                    {lyricsStatus === "あり" &&
-                        (song.lyricsOfficiallyReleased ? (
-                            <HoverCard width={280} shadow="md">
-                                <HoverCard.Target>
-                                    <IconRosetteDiscountCheckFilled size={24} color="teal" />
-                                </HoverCard.Target>
-                                <HoverCard.Dropdown>
-                                    <Text size="sm">
-                                        公式（概要欄、MV内の歌詞の正確な文字起こしなど）のソースから収集した歌詞データを使用しています。
-                                    </Text>
-                                </HoverCard.Dropdown>
-                            </HoverCard>
-                        ) : (
-                            <HoverCard width={280} shadow="md">
-                                <HoverCard.Target>
-                                    <IconHelpHexagon size={24} color="orange" />
-                                </HoverCard.Target>
-                                <HoverCard.Dropdown>
-                                    <Text size="sm">
-                                        非公式（コメントなど）のソースから収集した歌詞データを使用しています。
-                                    </Text>
-                                </HoverCard.Dropdown>
-                            </HoverCard>
-                        ))}
-                </Flex>
+                            <Table.Tr>
+                                <Table.Th>ボーカル</Table.Th>
+                                <Table.Td>
+                                    {song.vocal !== null ? (
+                                        <CreatorBadges
+                                            color="orange"
+                                            searchQueryName="vocal"
+                                            creators={song.vocal}
+                                        />
+                                    ) : (
+                                        "不明"
+                                    )}
+                                </Table.Td>
+                            </Table.Tr>
 
-                {lyricsStatus !== "なし" && (
-                    <NextLinkedButton
-                        href={`https://www.google.com/search?q=${encodeURIComponent(
-                            `${song.title} 歌詞`
-                        )}`}
-                        target="_blank"
+                            <Table.Tr>
+                                <Table.Th>イラスト等</Table.Th>
+                                <Table.Td>
+                                    {song.illustrations !== null ? (
+                                        <CreatorBadges
+                                            color="blue"
+                                            searchQueryName="illustrations"
+                                            creators={song.illustrations}
+                                        />
+                                    ) : (
+                                        "不明"
+                                    )}
+                                </Table.Td>
+                            </Table.Tr>
+
+                            <Table.Tr>
+                                <Table.Th>動画</Table.Th>
+                                <Table.Td>
+                                    {song.movie !== null ? (
+                                        <CreatorBadges
+                                            color="teal"
+                                            searchQueryName="movie"
+                                            creators={song.movie}
+                                        />
+                                    ) : (
+                                        "不明"
+                                    )}
+                                </Table.Td>
+                            </Table.Tr>
+                        </Table.Tbody>
+                    </Table>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="analysis">
+                    <Title order={4} mb="sm">
+                        基本データ
+                    </Title>
+                    <Table variant="vertical" layout="fixed" withTableBorder mb="md">
+                        <Table.Tbody>
+                            <Table.Tr>
+                                <Table.Th w={140}>BPM</Table.Th>
+                                <Table.Td>{song.bpm !== null ? song.bpm : "不明"}</Table.Td>
+                            </Table.Tr>
+
+                            <Table.Tr>
+                                <Table.Th>主なキー</Table.Th>
+                                <Table.Td>
+                                    {song.mainKey !== null
+                                        ? formatOriginalKey(song.mainKey)
+                                        : "不明"}
+                                </Table.Td>
+                            </Table.Tr>
+
+                            <Table.Tr>
+                                <Table.Th>主なコード</Table.Th>
+                                <Table.Td>
+                                    {song.mainChord ? (
+                                        <NextLinkedBadge
+                                            variant="light"
+                                            color={mainChordColor}
+                                            href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            {song.mainChord}
+                                        </NextLinkedBadge>
+                                    ) : (
+                                        "不明"
+                                    )}
+                                </Table.Td>
+                            </Table.Tr>
+
+                            <Table.Tr>
+                                <Table.Th>転調</Table.Th>
+                                <Table.Td>{displayedModulationTimes}</Table.Td>
+                            </Table.Tr>
+                        </Table.Tbody>
+                    </Table>
+
+                    <Flex
+                        direction={{ base: "column", sm: "row" }}
+                        gap="xl"
+                        style={{ alignItems: "flex-start" }}
                         mb="md"
-                        mr="md"
                     >
-                        Googleで歌詞を検索
-                    </NextLinkedButton>
-                )}
+                        {/* Divで囲んだところは縦方向の並びになる */}
+                        <div>
+                            {chordData !== null ? (
+                                <>
+                                    <Title order={4} mb="sm">
+                                        コード進行
+                                    </Title>
+                                    <div style={{ height: 80 }}>
+                                        <DonutChart
+                                            data={chordData}
+                                            startAngle={180}
+                                            endAngle={0}
+                                            valueFormatter={valueFormatter}
+                                            tooltipProps={{
+                                                allowEscapeViewBox: { x: true, y: true },
+                                                wrapperStyle: { zIndex: 1000 },
+                                            }}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <Text>コード進行: 不明</Text>
+                            )}
+                        </div>
+                        <div>
+                            <Title order={4} mb="sm">
+                                ピアノの使用度
+                            </Title>
+                            {song.pianoRate !== null ? (
+                                <Rating value={song.pianoRate} size={30} mb="md" readOnly />
+                            ) : (
+                                <Text>不明</Text>
+                            )}
+                        </div>
+                    </Flex>
+                    <Alert variant="light" color="blue" radius="md" icon={<IconInfoCircle />}>
+                        データは手動で作成しているため、間違いがあるかもしれません。修正・変更提案があれば、
+                        <Link href="/contact">お問い合わせ</Link>ください。
+                    </Alert>
+                    <NextAnchor href="/docs/analysis/guidelines" mt="xs" display="block" size="sm">
+                        分析データの作成方法について
+                    </NextAnchor>
+                </Tabs.Panel>
 
-                {lyricsStatus !== "なし" && (
-                    <NextLinkedButton
-                        href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
-                        mb="md"
-                    >
-                        歌詞が似ている曲を見る
-                    </NextLinkedButton>
-                )}
+                <Tabs.Panel value="lyrics">
+                    <Flex mb="md" gap="sm" align="center">
+                        <Title order={4}>歌詞</Title>
+                        <Text>{lyricsStatus}</Text>
+                        {lyricsStatus === "あり" &&
+                            (song.lyricsOfficiallyReleased ? (
+                                <HoverCard width={280} shadow="md">
+                                    <HoverCard.Target>
+                                        <IconRosetteDiscountCheckFilled size={24} color="teal" />
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Text size="sm">
+                                            公式（概要欄、MV内の歌詞の正確な文字起こしなど）のソースから収集した歌詞データを使用しています。
+                                        </Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            ) : (
+                                <HoverCard width={280} shadow="md">
+                                    <HoverCard.Target>
+                                        <IconHelpHexagon size={24} color="orange" />
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown>
+                                        <Text size="sm">
+                                            非公式（コメントなど）のソースから収集した歌詞データを使用しています。
+                                        </Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                            ))}
+                    </Flex>
 
-                {lyricsStatus === "あり" && (
-                    <Box maw="100%">
-                        <Button
-                            variant="outline"
-                            color="gray"
-                            onClick={toggleOpenLyricsDetail}
+                    {lyricsStatus !== "なし" && (
+                        <NextLinkedButton
+                            href={`https://www.google.com/search?q=${encodeURIComponent(
+                                `${song.title} 歌詞`
+                            )}`}
+                            target="_blank"
+                            mb="md"
+                            mr="md"
+                        >
+                            Googleで歌詞を検索
+                        </NextLinkedButton>
+                    )}
+
+                    {lyricsStatus !== "なし" && (
+                        <NextLinkedButton
+                            href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
                             mb="md"
                         >
-                            {openLyricsDetail ? "歌詞ベクトル情報を隠す" : "歌詞ベクトル情報を表示"}
-                        </Button>
-
-                        {openLyricsDetail && (
-                            <Collapse expanded={openLyricsDetail} transitionDuration={1000}>
-                                <Grid mb="md" gap="md">
-                                    {song.lyricsVector?.map((value, index) => (
-                                        <Grid.Col key={index} span={{ base: 4, sm: 3, lg: 1.5 }}>
-                                            <Box pt="sm" pb="sm" bg="gray.0">
-                                                <Text size="sm" c="gray.7" ta="center">
-                                                    {index}
-                                                </Text>
-                                                <Text size="md" fw="bold" ta="center">
-                                                    {value.toFixed(5)}
-                                                </Text>
-                                            </Box>
-                                        </Grid.Col>
-                                    ))}
-                                </Grid>
-                            </Collapse>
-                        )}
-                    </Box>
-                )}
-
-                <Alert color="cyan" radius="md" icon={<IconCopyright />}>
-                    著作権保護のため、歌詞本文は掲載していません。
-                </Alert>
-            </Tabs.Panel>
-
-            <Tabs.Panel value="others">
-                <Title order={4} mb="md">
-                    補足・メモ
-                </Title>
-                {song.comment ? <MantineMarkdown text={song.comment} /> : <Text m="sm">なし</Text>}
-                <Divider my="md" />
-                <Button
-                    component="a"
-                    href={`https://open.spotify.com/search/${encodeURIComponent(song.title)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="filled"
-                    color="teal"
-                >
-                    Spotifyで検索
-                </Button>
-                {userRole === "admin" && (
-                    <>
-                        <NextLinkedButton ml="md" href={`/songs/edit?id=${song.id}`} color="blue">
-                            データの編集
+                            歌詞が似ている曲を見る
                         </NextLinkedButton>
-                    </>
-                )}
-            </Tabs.Panel>
-        </Tabs>
+                    )}
+
+                    {lyricsStatus === "あり" && (
+                        <Box maw="100%">
+                            <Button
+                                variant="outline"
+                                color="gray"
+                                onClick={toggleOpenLyricsDetail}
+                                mb="md"
+                            >
+                                {openLyricsDetail
+                                    ? "歌詞ベクトル情報を隠す"
+                                    : "歌詞ベクトル情報を表示"}
+                            </Button>
+
+                            {openLyricsDetail && (
+                                <Collapse expanded={openLyricsDetail} transitionDuration={1000}>
+                                    <Grid mb="md" gap="md">
+                                        {song.lyricsVector?.map((value, index) => (
+                                            <Grid.Col
+                                                key={index}
+                                                span={{ base: 4, sm: 3, lg: 1.5 }}
+                                            >
+                                                <Box pt="sm" pb="sm" bg="gray.0">
+                                                    <Text size="sm" c="gray.7" ta="center">
+                                                        {index}
+                                                    </Text>
+                                                    <Text size="md" fw="bold" ta="center">
+                                                        {value.toFixed(5)}
+                                                    </Text>
+                                                </Box>
+                                            </Grid.Col>
+                                        ))}
+                                    </Grid>
+                                </Collapse>
+                            )}
+                        </Box>
+                    )}
+
+                    <Alert color="cyan" radius="md" icon={<IconCopyright />}>
+                        著作権保護のため、歌詞本文は掲載していません。
+                    </Alert>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="others">
+                    <Title order={4} mb="md">
+                        補足・メモ
+                    </Title>
+                    {announcementsData
+                        .filter((a) => !a.pinned)
+                        .map((announcement, index) => (
+                            <Alert
+                                icon={<IconInfoCircle />}
+                                key={index}
+                                title={announcement.title}
+                                mb="sm"
+                            >
+                                {announcement.description}
+                            </Alert>
+                        ))}
+                    {body}
+                    <Divider my="md" />
+                    <Button
+                        component="a"
+                        href={`https://open.spotify.com/search/${encodeURIComponent(song.title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="filled"
+                        color="teal"
+                    >
+                        Spotifyで検索
+                    </Button>
+                    {userRole === "admin" && (
+                        <>
+                            <NextLinkedButton
+                                ml="md"
+                                href={`/songs/edit?id=${song.id}`}
+                                color="blue"
+                            >
+                                データの編集
+                            </NextLinkedButton>
+                        </>
+                    )}
+                </Tabs.Panel>
+            </Tabs>
+        </>
     );
 }
