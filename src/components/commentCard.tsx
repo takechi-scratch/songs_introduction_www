@@ -9,6 +9,7 @@ import { Comment } from "@/lib/interaction/types";
 import { refreshComments } from "@/lib/refresh";
 import {
     Alert,
+    Anchor,
     Box,
     Button,
     Group,
@@ -259,7 +260,15 @@ export function NewCommentCard({
                     onKeyDown={getHotkeyHandler([["mod+Enter", handlePostComment]])}
                 />
                 <Text size="sm" c="dimmed" mb="xs">
-                    **太字**、- 箇条書き などのマークダウン記法が使えます。
+                    **太字**、- 箇条書き など、一部の
+                    <Anchor
+                        href="https://qiita.com/Qiita/items/c686397e4a0f4f11683d"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        マークダウン記法
+                    </Anchor>
+                    が使えます。
                 </Text>
                 <Button mb="xs" onClick={handlePostComment} loading={sending}>
                     コメントを投稿
