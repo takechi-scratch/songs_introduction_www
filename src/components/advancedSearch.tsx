@@ -3,19 +3,19 @@
 import { SortableKeys } from "@/lib/search/filter";
 import { CustomParams, specifiableParams } from "@/lib/search/nearest";
 import {
-    Title,
-    Select,
-    TextInput,
-    Button,
-    Text,
-    SegmentedControl,
-    Slider,
-    Flex,
-    NumberInput,
-    Group,
     Accordion,
     Alert,
+    Button,
+    Flex,
+    Group,
+    NumberInput,
+    SegmentedControl,
+    Select,
+    Slider,
     Switch,
+    Text,
+    TextInput,
+    Title,
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -28,11 +28,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 // Date関連のモジュールを使用する際は忘れずに追加
-import "@mantine/dates/styles.css";
 import JapaneseDateInput from "@/components/dateInput";
 import WarningTip from "@/components/warningTip";
-import { IconDatabaseStar, IconExclamationCircle, IconFilter } from "@tabler/icons-react";
+import { formatOriginalKey } from "@/lib/musicValues";
 import { SongFilters, SongSearchParams } from "@/lib/search/search";
+import "@mantine/dates/styles.css";
+import { IconDatabaseStar, IconExclamationCircle, IconFilter } from "@tabler/icons-react";
 import rison from "rison";
 
 function FilterTextInput({
@@ -71,49 +72,6 @@ function FilterTextInput({
                     filter: {
                         ...searchParams.filter,
                         [key]: e.target.value !== "" ? e.target.value : undefined,
-                    },
-                })
-            }
-        />
-    );
-}
-
-function FilterNumberInput({
-    filterableKey: key,
-    example,
-    displayName,
-    searchParams,
-    setSearchParams,
-}: {
-    filterableKey: keyof SongFilters;
-    example: string;
-    displayName: string;
-    searchParams: SongSearchParams;
-    setSearchParams: (params: SongSearchParams) => void;
-}) {
-    return (
-        <NumberInput
-            key={key}
-            label={
-                <Text size="sm" style={{ width: 100 }}>
-                    {displayName}
-                </Text>
-            }
-            value={Number(searchParams.filter?.[key] ?? "")}
-            placeholder={example}
-            style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-            }}
-            mb="xs"
-            styles={{ wrapper: { width: "100%", maxWidth: 300 } }}
-            onChange={(e) =>
-                setSearchParams({
-                    ...searchParams,
-                    filter: {
-                        ...searchParams.filter,
-                        [key]: e !== "" ? Number(e) : undefined,
                     },
                 })
             }
@@ -219,12 +177,44 @@ function FilterTab({
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
             />
-            <FilterNumberInput
-                filterableKey="mainKey"
-                displayName="主なキー"
-                example="60"
-                searchParams={searchParams}
-                setSearchParams={setSearchParams}
+            <Select
+                data={[
+                    ...[...Array(12).keys()].map((i) => i + 60),
+                    ...[...Array(12).keys()].map((i) => -i - 60),
+                ].map((key) => ({
+                    value: key.toString(),
+                    label: `${key} (${formatOriginalKey(key)})`,
+                }))}
+                placeholder="C major"
+                searchable
+                clearable
+                autoSelectOnBlur
+                label={
+                    <Text size="sm" style={{ width: 100 }}>
+                        主なキー
+                    </Text>
+                }
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                }}
+                mb="xs"
+                styles={{ wrapper: { width: "100%", maxWidth: 300 } }}
+                value={
+                    searchParams.filter.mainKey !== undefined
+                        ? searchParams.filter.mainKey.toString()
+                        : null
+                }
+                onChange={(value) => {
+                    setSearchParams({
+                        ...searchParams,
+                        filter: {
+                            ...searchParams.filter,
+                            mainKey: value ? Number(value) : undefined,
+                        },
+                    });
+                }}
             />
 
             <Group gap="md" mt="sm" align="center" mb="md">

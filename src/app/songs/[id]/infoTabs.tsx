@@ -244,9 +244,19 @@ export default function InfoTabs({ song }: { song: Song }) {
                             <Table.Tr>
                                 <Table.Th>主なキー</Table.Th>
                                 <Table.Td>
-                                    {song.mainKey !== null
-                                        ? formatOriginalKey(song.mainKey)
-                                        : "不明"}
+                                    {song.mainKey !== null ? (
+                                        <NextLinkedBadge
+                                            tt="none"
+                                            variant="light"
+                                            color={mainChordColor}
+                                            href={`/songs/?params=${rison.encode_object({ filter: { mainKey: song.mainKey } })}`}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            {formatOriginalKey(song.mainKey)}
+                                        </NextLinkedBadge>
+                                    ) : (
+                                        "不明"
+                                    )}
                                 </Table.Td>
                             </Table.Tr>
 
