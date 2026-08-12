@@ -7,6 +7,7 @@ import {
     Alert,
     Anchor,
     Button,
+    Card,
     Divider,
     Flex,
     NumberInput,
@@ -188,45 +189,40 @@ function InfoTabs() {
                             aspectRatio: "16/9",
                         }}
                     >
-                        <Suspense>
-                            <ReactPlayer
-                                src={`https://www.youtube.com/watch?v=${playerID}`}
-                                width="100%"
-                                height="100%"
-                                controls
-                                fallback={
-                                    <div style={{ width: "100%", aspectRatio: "16/9" }}>
-                                        Loading...
-                                    </div>
-                                }
-                            />
-                        </Suspense>
+                        {playerID ? (
+                            <Suspense>
+                                <ReactPlayer
+                                    src={`https://www.youtube.com/watch?v=${playerID}`}
+                                    width="100%"
+                                    height="100%"
+                                    controls
+                                    fallback={
+                                        <div style={{ width: "100%", aspectRatio: "16/9" }}>
+                                            Loading...
+                                        </div>
+                                    }
+                                />
+                            </Suspense>
+                        ) : (
+                            <Card
+                                w="100%"
+                                h="100%"
+                                withBorder
+                                radius="xl"
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Text size="lg">ここに動画が表示されます</Text>
+                            </Card>
+                        )}
                     </div>
-                    <Flex m="md" gap="md" align="center" direction={{ base: "column", sm: "row" }}>
-                        <Button
-                            component="a"
-                            href={`https://www.youtube.com/watch?v=${playerID}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="red"
-                        >
-                            YouTubeで聴く
-                        </Button>
-                        <Button
-                            component="a"
-                            href={`https://open.spotify.com/search/${encodeURIComponent(form.values.title ?? "")}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="filled"
-                            color="teal"
-                        >
-                            Spotifyで検索
-                        </Button>
-                        <Anchor onClick={() => router.back()} style={{ cursor: "pointer" }}>
-                            前のページに戻る
-                        </Anchor>
-                    </Flex>
+                    <Divider my="md" />
+                    <Anchor onClick={() => router.back()} style={{ cursor: "pointer" }}>
+                        前のページに戻る
+                    </Anchor>
                 </div>
 
                 <Tabs defaultValue="basicInfo" style={{ flex: 1 }}>
@@ -263,7 +259,32 @@ function InfoTabs() {
                                 {...form.getInputProps("id")}
                                 data-video-id-input
                             />
-                            <Button onClick={() => setPlayerID(form.values.id)}>動画を表示</Button>
+                            <Button
+                                onClick={() => {
+                                    const inputID = form.getValues().id;
+                                    if (URL.canParse(inputID)) {
+                                        const url = new URL(inputID);
+                                        if (
+                                            url.hostname === "www.youtube.com" ||
+                                            url.hostname === "youtube.com"
+                                        ) {
+                                            const videoID = url.searchParams.get("v");
+                                            if (videoID) {
+                                                form.setFieldValue("id", videoID);
+                                            }
+                                        } else if (url.hostname === "youtu.be") {
+                                            const videoID = url.pathname.slice(1);
+                                            if (videoID) {
+                                                form.setFieldValue("id", videoID);
+                                            }
+                                        }
+                                    }
+                                    setPlayerID(inputID);
+                                    console.log("playerID set to:", inputID);
+                                }}
+                            >
+                                動画を表示
+                            </Button>
                         </Flex>
 
                         <Switch
