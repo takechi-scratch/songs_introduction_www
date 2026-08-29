@@ -18,15 +18,17 @@ export default function CreatorBadges({
         <>
             {creators.map((rawCreator) => {
                 const creator = rawCreator.trim();
+                let encodedCreator = encodeURIComponent(creator);
+                if (creator.includes(" ")) {
+                    encodedCreator = `"${encodedCreator}"`;
+                }
 
                 return (
                     <NextLinkedBadge
                         mr="sm"
                         tt="none"
                         variant="light"
-                        href={`/songs/?params=filter:(${searchQueryName}:'"${encodeURIComponent(
-                            creator
-                        )}"')`}
+                        href={`/songs/?params=filter:(${searchQueryName}:'${encodedCreator}')`}
                         key={creator}
                         {...props}
                         style={{ cursor: "pointer" }}
