@@ -66,13 +66,6 @@ export default function InfoTabs({ song }: { song: Song }) {
         }
     }
 
-    let mainChordColor = "gray";
-    if (song.mainChord?.startsWith("6")) {
-        mainChordColor = "blue";
-    } else if (song.mainChord?.startsWith("4")) {
-        mainChordColor = "orange";
-    }
-
     let displayedModulationTimes;
     if (song.modulationTimes === null) {
         displayedModulationTimes = "不明";
@@ -248,7 +241,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                                         <NextLinkedBadge
                                             tt="none"
                                             variant="light"
-                                            color={mainChordColor}
+                                            color={song.mainKey < 0 ? "gray" : "blue"}
                                             href={`/songs/?params=${rison.encode_object({ filter: { mainKey: song.mainKey } })}`}
                                             style={{ cursor: "pointer" }}
                                         >
@@ -266,7 +259,13 @@ export default function InfoTabs({ song }: { song: Song }) {
                                     {song.mainChord ? (
                                         <NextLinkedBadge
                                             variant="light"
-                                            color={mainChordColor}
+                                            color={
+                                                song.mainChord.startsWith("6")
+                                                    ? "blue"
+                                                    : song.mainChord.startsWith("4")
+                                                      ? "orange"
+                                                      : "gray"
+                                            }
                                             href={`/songs/?params=${rison.encode_object({ filter: { mainChord: song.mainChord } })}`}
                                             style={{ cursor: "pointer" }}
                                         >
@@ -458,15 +457,9 @@ export default function InfoTabs({ song }: { song: Song }) {
                         Spotifyで検索
                     </Button>
                     {userRole === "admin" && (
-                        <>
-                            <NextLinkedButton
-                                ml="md"
-                                href={`/songs/edit?id=${song.id}`}
-                                color="blue"
-                            >
-                                データの編集
-                            </NextLinkedButton>
-                        </>
+                        <NextLinkedButton ml="md" href={`/songs/edit?id=${song.id}`} color="blue">
+                            データの編集
+                        </NextLinkedButton>
                     )}
                 </Tabs.Panel>
             </Tabs>
