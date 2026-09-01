@@ -377,7 +377,7 @@ export default function InfoTabs({ song }: { song: Song }) {
                         </NextLinkedButton>
                     )}
 
-                    {lyricsStatus !== "なし" && (
+                    {lyricsStatus === "あり" && (
                         <NextLinkedButton
                             href={`/songs?params=${rison.encode_object({ nearest: { parameters: { lyricsVector: 1 }, targetSongID: song.id } })}`}
                             mb="md"
