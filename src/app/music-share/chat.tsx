@@ -21,9 +21,9 @@ import {
     TextInput,
     Title,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { getHotkeyHandler, useHotkeys } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
-import { IconTrash, IconUserQuestion } from "@tabler/icons-react";
+import { IconTrash, IconUserQuestion, IconWifiOff } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -109,14 +109,15 @@ export default function Chat() {
     const { user: authUser, userInfo } = useAuth();
     const linkedUser = authUser && authUser.providerData.length > 0;
 
-    const [enabled, { toggle: toggleEnabled }] = useDisclosure(false);
+    const [chatStatus, setChatStatus] = useState<"active" | "inactive" | "disconnected">(
+        "inactive"
+    );
     const socketRef = useRef<WebSocket | null>(null);
     const viewportRef = useRef<HTMLDivElement | null>(null);
     const [inputValue, setInputValue] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
-    console.log(messages);
 
-    const onMessage = (event: MessageEvent<string>) => {
+    function onMessage(event: MessageEvent<string>) {
         const data = JSON.parse(event.data);
         if (data.type === "post") {
             setMessages((prev) => [...prev, data]);
@@ -142,7 +143,12 @@ export default function Chat() {
                 },
             ]);
         }
-    };
+    }
+
+    function onClose(event: CloseEvent) {
+        console.log("Chat connection closed", event);
+        setChatStatus("disconnected");
+    }
 
     async function onStartChat() {
         if (!authUser) {
@@ -163,19 +169,28 @@ export default function Chat() {
         });
 
         websocket.addEventListener("message", onMessage);
-        toggleEnabled();
+        websocket.addEventListener("close", onClose);
+        setChatStatus("active");
+    }
+
+    function sendMessage() {
+        if (chatStatus === "active" && inputValue.length <= 140 && inputValue.trim() !== "") {
+            socketRef.current?.send(JSON.stringify({ type: "post", content: inputValue.trim() }));
+            setInputValue("");
+        }
     }
 
     useEffect(() => {
-        if (!enabled) return;
+        if (chatStatus !== "active") return;
         return () => {
             socketRef.current?.removeEventListener("message", onMessage);
+            socketRef.current?.removeEventListener("close", onClose);
             socketRef.current?.close();
         };
-    }, [enabled]);
+    }, [chatStatus]);
 
     useEffect(() => {
-        if (enabled && viewportRef.current) {
+        if (chatStatus === "active" && viewportRef.current) {
             try {
                 viewportRef.current.scrollTo({
                     top: viewportRef.current.scrollHeight,
@@ -186,9 +201,11 @@ export default function Chat() {
                 viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
             }
         }
-    }, [messages, enabled]);
+    }, [messages, chatStatus]);
 
-    if (!enabled) {
+    useHotkeys([["mod + Enter", sendMessage]]);
+
+    if (chatStatus === "inactive") {
         return (
             <Paper shadow="sm" p="md" h="100%" radius="md" style={{ overflowY: "auto" }}>
                 <Flex direction="column" align="center" justify="center" h="100%">
@@ -266,26 +283,34 @@ export default function Chat() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.currentTarget.value)}
                     error={inputValue.length > 140 ? "140文字以内で入力してください" : false}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && inputValue.trim() !== "") {
-                            socketRef.current?.send(
-                                JSON.stringify({ type: "post", content: inputValue.trim() })
-                            );
-                            setInputValue("");
-                        }
-                    }}
+                    disabled={chatStatus !== "active"}
+                    onKeyDown={getHotkeyHandler([["mod + Enter", sendMessage]])}
                 />
                 <Button
-                    onClick={() => {
-                        socketRef.current?.send(
-                            JSON.stringify({ type: "post", content: inputValue.trim() })
-                        );
-                        setInputValue("");
-                    }}
+                    disabled={
+                        inputValue.trim() === "" ||
+                        inputValue.length > 140 ||
+                        chatStatus !== "active"
+                    }
+                    onClick={sendMessage}
                 >
                     送信
                 </Button>
             </Group>
+            {chatStatus === "disconnected" && (
+                <Alert color="red" mt="sm" icon={<IconWifiOff />} title="">
+                    <Text size="sm" mb="xs">
+                        チャットサーバーとの接続が切断されました。ページを更新して再接続してください。
+                    </Text>
+                    <Text size="sm">
+                        更新しても直らない場合は、お手数ですが
+                        <NextAnchor href="/contact/" size="sm">
+                            お問い合わせ
+                        </NextAnchor>
+                        をお願いします。
+                    </Text>
+                </Alert>
+            )}
         </Paper>
     );
 }
