@@ -158,7 +158,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 <Title order={2}>似ている曲</Title>
                 {nearestSongs && (
                     <NextAnchor
-                        href={`/songs/?params=${rison.encode_object({ nearest: { targetSongID: song.id } })}`}
+                        href={`/songs/?params=${rison.encode_object({ limit: 50, nearest: { targetSongID: song.id } })}`}
                     >
                         高度な条件で探す
                     </NextAnchor>
