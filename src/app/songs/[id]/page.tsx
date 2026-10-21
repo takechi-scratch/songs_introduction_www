@@ -70,7 +70,15 @@ export const generateMetadata = async ({
     return metadata;
 };
 
-export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {
+function SongPageFallback() {
+    return (
+        <Text mb="lg" visibleFrom="sm">
+            曲を読み込んでいます...
+        </Text>
+    );
+}
+
+async function SongDetails({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;
 
     let song, nearestSongs;
@@ -82,7 +90,7 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
     } catch (error) {
         console.error("Error fetching song data:", error);
         return (
-            <MyAppShell>
+            <>
                 <Alert
                     variant="light"
                     color="red"
@@ -94,14 +102,14 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                     曲のデータを取得できませんでした。時間を置いて再度アクセスしてください。
                 </Alert>
                 <Link href="/">ホームに戻る</Link>
-            </MyAppShell>
+            </>
         );
     }
 
     const comments = await fetchCommentsBySongIDAndCache(id);
 
     return (
-        <MyAppShell>
+        <>
             <Title order={1} size="h2" mb="lg" visibleFrom="sm">
                 {song.title}
             </Title>
@@ -175,6 +183,16 @@ export default async function SongPage({ params }: { params: Promise<{ id: strin
                 コメント
             </Title>
             <CommentSection songID={song.id} initialComments={comments} />
+        </>
+    );
+}
+
+export default function SongPage({ params }: { params: Promise<{ id: string }> }) {
+    return (
+        <MyAppShell>
+            <Suspense fallback={<SongPageFallback />}>
+                <SongDetails params={params} />
+            </Suspense>
         </MyAppShell>
     );
 }
