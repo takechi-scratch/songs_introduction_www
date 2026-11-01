@@ -64,9 +64,11 @@ export default function CommentSection() {
                         title="コメント機能終了"
                         icon={<IconHistoryToggle />}
                     >
-                        <Text>
+                        <Text size="sm">
                             コメントを投稿できる機能は終了しました。
-                            <NextAnchor href="/settings/">ユーザー設定</NextAnchor>
+                            <NextAnchor href="/settings/" size="sm">
+                                ユーザー設定
+                            </NextAnchor>
                             から、過去に投稿したコメントを確認・ダウンロードできます。
                         </Text>
                     </Alert>
