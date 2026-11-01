@@ -29,7 +29,7 @@ export function FadeInUp({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true, amount: 0.3 }}
-            style={{ flex: 1 }}
+            style={{ flex: 1, height: "100%" }}
         >
             <Card
                 shadow={href ? "sm" : undefined}

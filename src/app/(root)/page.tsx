@@ -156,33 +156,50 @@ export default async function HomePage() {
             <Title order={2} mb="md" mt="md">
                 「MIMIさん全曲紹介」の機能
             </Title>
-            <Flex gap="md" direction={{ base: "column", sm: "row" }} mb="xl">
-                <FadeInUp
-                    title="曲一覧"
-                    description={
-                        "すべての曲を確認・検索できます。\nまた、検索した曲でルーレットを回したり、YouTubeの再生リストを作ったりもできます！"
-                    }
-                    icon={<IconPlaylist size={40} color="#fd7e14" />}
-                    backgroundColor="#fd7e14"
-                    href="/songs"
-                />
-                <FadeInUp
-                    title="おすすめ曲診断"
-                    description="約20問の質問で、あなたにおすすめのMIMIさんの曲が見つかります！"
-                    icon={<IconMusicHeart size={40} color="#40c057" />}
-                    backgroundColor="#40c057"
-                    href="/recommend"
-                />
-                <FadeInUp
-                    title="音楽シェア"
-                    description={
-                        "楽曲を毎日ランダムに再生中です。みんなで聴きましょう！\nときどきイベントも開催しています！"
-                    }
-                    icon={<IconRadio size={40} color="#588dd3" />}
-                    backgroundColor="#588dd3"
-                    href="/music-share"
-                />
-            </Flex>
+            <Grid gap="md" mb="xl" align="stretch" h="100%">
+                <GridCol span={{ base: 12, sm: 6, lg: 3 }} style={{ display: "flex" }}>
+                    <FadeInUp
+                        title="曲一覧"
+                        description={
+                            "すべての曲を確認・検索できます。\nまた、検索した曲でルーレットを回したり、YouTubeの再生リストを作ったりもできます！"
+                        }
+                        icon={<IconPlaylist size={40} color="#fd7e14" />}
+                        backgroundColor="#fd7e14"
+                        href="/songs"
+                    />
+                </GridCol>
+                <GridCol span={{ base: 12, sm: 6, lg: 3 }} style={{ display: "flex" }}>
+                    <FadeInUp
+                        title="コレクション"
+                        description={
+                            "コード進行やボーカル、ジャンルなど、さまざまなテーマでまとめたコレクションが見られます！"
+                        }
+                        icon={<IconRadio size={40} color="#fa5252" />}
+                        backgroundColor="#fa5252"
+                        href="/collections"
+                    />
+                </GridCol>
+                <GridCol span={{ base: 12, sm: 6, lg: 3 }} style={{ display: "flex" }}>
+                    <FadeInUp
+                        title="おすすめ曲診断"
+                        description="約20問の質問で、あなたにおすすめのMIMIさんの曲が見つかります！"
+                        icon={<IconMusicHeart size={40} color="#40c057" />}
+                        backgroundColor="#40c057"
+                        href="/recommend"
+                    />
+                </GridCol>
+                <GridCol span={{ base: 12, sm: 6, lg: 3 }} style={{ display: "flex" }}>
+                    <FadeInUp
+                        title="音楽シェア"
+                        description={
+                            "楽曲を毎日ランダムに再生中です。みんなで聴きましょう！\nときどきイベントも開催しています！"
+                        }
+                        icon={<IconRadio size={40} color="#588dd3" />}
+                        backgroundColor="#588dd3"
+                        href="/music-share"
+                    />
+                </GridCol>
+            </Grid>
             <Title order={2} mb="md">
                 知っておいてほしいこと
             </Title>
@@ -210,7 +227,6 @@ export default async function HomePage() {
             <Divider mb="xl" />
             <Group gap="xl">
                 <NextAnchor href="/contact">お問い合わせ・ご意見</NextAnchor>
-                <NextAnchor href="/home">旧トップページへ</NextAnchor>
             </Group>
         </MyAppShell>
     );
