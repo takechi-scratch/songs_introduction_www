@@ -24,10 +24,13 @@ const description = "MIMIさんの曲を全曲掲載・おすすめの曲が見�
 const imageUrl = "https://mimi.takechi.f5.si/assets/card.png";
 
 export const metadata: Metadata = {
-    title: title,
+    title: {
+        template: `%s | ${title}`,
+        default: title,
+    },
     description: description,
     openGraph: {
-        title: title,
+        title: { template: `%s | ${title}`, default: title },
         description: description,
         url: imageUrl,
         siteName: title,
@@ -44,7 +47,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary",
-        title: title,
+        title: { template: `%s | ${title}`, default: title },
         description: description,
         images: [imageUrl],
     },

@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import Playlist from "./playlist";
 
-const title = "音楽シェア | MIMIさん全曲紹介";
+const title = "音楽シェア";
 const description = "MIMIさんの曲をリアルタイムで一緒に聴こう！";
 const imageUrl = "https://mimi.takechi.f5.si/assets/card.png";
 

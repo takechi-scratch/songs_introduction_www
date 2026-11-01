@@ -17,16 +17,20 @@ import {
     Title,
 } from "@mantine/core";
 import { IconMessageChatbot } from "@tabler/icons-react";
-import { ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import rison from "rison";
 import { CollectionsData } from "../collections";
 
 export async function generateMetadata(
-    { params }: { params: Promise<{ slug: string }> },
+    {
+        params,
+    }: {
+        params: Promise<{ slug: string }>;
+    },
     parent: ResolvingMetadata
-) {
+): Promise<Metadata> {
     const { slug } = await params;
     const collection = CollectionsData.find((collection) => collection.slug === slug);
 
@@ -34,10 +38,21 @@ export async function generateMetadata(
         notFound();
     }
 
+    const parentMetadata = await parent;
+
     return {
-        ...(await parent),
         title: collection.title,
         description: collection.description,
+        openGraph: {
+            title: collection.title,
+            description: collection.description,
+            ...parentMetadata.openGraph,
+        },
+        twitter: {
+            title: collection.title,
+            description: collection.description,
+            ...parentMetadata.twitter,
+        },
     };
 }
 

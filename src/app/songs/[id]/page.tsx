@@ -2,7 +2,7 @@ import MyAppShell from "@/components/appshell/myAppshell";
 import { scoreCanBeCalculated } from "@/lib/songs/api";
 import { Alert, Text } from "@mantine/core";
 import { IconExclamationCircle } from "@tabler/icons-react";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 
 import {
@@ -14,11 +14,14 @@ import "@mantine/charts/styles.css";
 import { Suspense } from "react";
 import { SongDetails } from "./songDetails";
 
-export const generateMetadata = async ({
-    params,
-}: {
-    params: Promise<{ id: string }>;
-}): Promise<Metadata> => {
+export const generateMetadata = async (
+    {
+        params,
+    }: {
+        params: Promise<{ id: string }>;
+    },
+    parent: ResolvingMetadata
+): Promise<Metadata> => {
     // ブログの詳細データを取得する関数
     let song;
     try {
@@ -28,8 +31,9 @@ export const generateMetadata = async ({
         return {};
     }
 
-    const title = `${song.title} | MIMIさん全曲紹介`;
+    const title = `${song.title}`;
     const description = `「${song.title}」の詳細分析ページ。似ている曲も探せます。`;
+    const parentMetadata = await parent;
 
     const metadata: Metadata = {
         title: title,
@@ -41,23 +45,14 @@ export const generateMetadata = async ({
             title: song.title,
             description: description,
             url: song.thumbnailURL,
-            siteName: "MIMIさん全曲紹介",
-            images: [
-                {
-                    url: song.thumbnailURL,
-                    width: 1280,
-                    height: 720,
-                    alt: song.title,
-                },
-            ],
-            locale: "ja_JP",
-            type: "website",
+            ...parentMetadata.openGraph,
         };
         metadata.twitter = {
             card: "summary_large_image",
             title: title,
             description: description,
             images: [song.thumbnailURL],
+            ...parentMetadata.twitter,
         };
     }
 

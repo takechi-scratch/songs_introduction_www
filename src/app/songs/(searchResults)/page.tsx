@@ -12,7 +12,7 @@ import rison from "rison";
 import Actions from "./actions";
 import SearchShell from "./searchShell";
 
-const title = "曲一覧 | MIMIさん全曲紹介";
+const title = "曲一覧";
 const description = "MIMIさんの曲を全曲紹介。気になるあの曲も検索できます。";
 const imageUrl = "https://mimi.takechi.f5.si/assets/card.png";
 

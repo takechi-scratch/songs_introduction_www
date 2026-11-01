@@ -7,7 +7,7 @@ import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { PageProps, shuffleArray } from "@/lib/utils";
 import { Alert, Button, Image, Text, Title } from "@mantine/core";
 import { IconFlaskFilled } from "@tabler/icons-react";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
@@ -69,14 +69,16 @@ async function getRecommendedSongs(
     ];
 }
 
-export const generateMetadata = async ({ searchParams }: PageProps): Promise<Metadata> => {
+export const generateMetadata = async (
+    { searchParams }: PageProps,
+    parent: ResolvingMetadata
+): Promise<Metadata> => {
     const params = await searchParams;
     const name = params.name;
     const preferenceRankingParam = params.preferenceRanking;
 
-    const title = `${name} さんのおすすめ曲診断結果 | MIMIさん全曲紹介`;
+    const title = `${name} さんのおすすめ曲診断結果`;
     let description = "おすすめ曲診断の結果ページ。";
-    const imageURL = "https://mimi.takechi.f5.si/assets/card.png";
 
     if (typeof preferenceRankingParam === "string") {
         const recommendedSongs = await getRecommendedSongs(preferenceRankingParam);
@@ -85,28 +87,21 @@ export const generateMetadata = async ({ searchParams }: PageProps): Promise<Met
         }
     }
 
+    const parentMetadata = await parent;
+
     return {
-        title: `${name} さんのおすすめ曲診断結果 | MIMIさん全曲紹介`,
+        title: title,
         description: description,
         openGraph: {
             title: title,
             description: description,
-            url: imageURL,
-            siteName: "MIMIさん全曲紹介",
-            images: {
-                url: imageURL,
-                width: 1280,
-                height: 720,
-                alt: `${name} さんのおすすめ曲診断結果`,
-            },
-            locale: "ja_JP",
-            type: "website",
+            ...parentMetadata.openGraph,
         },
         twitter: {
             card: "summary",
             title: title,
             description: description,
-            images: imageURL,
+            ...parentMetadata.twitter,
         },
         robots: { index: false },
     };
