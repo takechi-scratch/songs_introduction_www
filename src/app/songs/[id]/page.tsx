@@ -5,7 +5,6 @@ import { IconExclamationCircle } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
-import { fetchCommentsBySongIDAndCache } from "@/lib/interaction/cachedapi";
 import {
     fetchAllSongsAndCache,
     fetchNearestSongsAndCache,
@@ -78,7 +77,11 @@ async function SongLoadingPage({ params }: { params: Promise<{ id: string }> }) 
 
     let song, nearestSongs;
     try {
-        song = await fetchSongByIdAndCache(id);
+        const allSongs = await fetchAllSongsAndCache();
+        song = allSongs.find((s) => s.id === id);
+        if (!song) {
+            song = await fetchSongByIdAndCache(id);
+        }
         if (scoreCanBeCalculated(song)) {
             nearestSongs = await fetchNearestSongsAndCache(id);
         }
@@ -101,9 +104,7 @@ async function SongLoadingPage({ params }: { params: Promise<{ id: string }> }) 
         );
     }
 
-    const comments = await fetchCommentsBySongIDAndCache(id);
-
-    return <SongDetails song={song} nearestSongs={nearestSongs || []} comments={comments} />;
+    return <SongDetails song={song} nearestSongs={nearestSongs || []} />;
 }
 
 export default async function SongPage({ params }: { params: Promise<{ id: string }> }) {

@@ -231,7 +231,7 @@ export default function LoginPage() {
             <Title mb="lg">ログイン</Title>
 
             <Alert radius="md" mb="lg" icon={<IconUserFilled />}>
-                ログインすると、再生リストの作成・コメントなどができるようになります。
+                ログインすると、再生リストの作成・音楽シェアでのチャットなどができるようになります。
             </Alert>
 
             <Alert color="green" radius="md" mb="lg" icon={<IconShieldLockFilled />}>

@@ -2,7 +2,6 @@
 
 import { NextAnchor } from "@/components/nextLink";
 import SongsCarousel from "@/components/songCards/cardsCarousel";
-import { Comment } from "@/lib/interaction/types";
 import { Song, SongWithScore } from "@/lib/songs/types";
 import { Alert, Flex, Paper, Text, Title } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
@@ -12,15 +11,7 @@ import rison from "rison";
 import CommentSection from "./commentSection";
 import InfoTabs from "./infoTabs";
 
-export function SongDetails({
-    song,
-    nearestSongs,
-    comments,
-}: {
-    song: Song;
-    nearestSongs: SongWithScore[];
-    comments: Comment[];
-}) {
+export function SongDetails({ song, nearestSongs }: { song: Song; nearestSongs: SongWithScore[] }) {
     return (
         <>
             <Title order={1} size="h2" mb="lg" visibleFrom="sm">
@@ -95,7 +86,7 @@ export function SongDetails({
             <Title mb="md" mt="xl" order={2}>
                 コメント
             </Title>
-            <CommentSection songID={song.id} initialComments={comments} />
+            <CommentSection />
         </>
     );
 }

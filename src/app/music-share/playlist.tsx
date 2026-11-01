@@ -251,7 +251,7 @@ function Player({
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                似ている曲・コメント
+                似ている曲を見る
             </Button>
             <Button
                 mt="md"

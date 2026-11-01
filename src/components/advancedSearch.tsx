@@ -165,7 +165,7 @@ function FilterTab({
             />
             <FilterTextInput
                 filterableKey="comment"
-                displayName="コメント"
+                displayName="補足・メモ"
                 example="ノリが良い"
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
