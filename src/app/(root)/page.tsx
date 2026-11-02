@@ -22,6 +22,7 @@ import {
     Title,
 } from "@mantine/core";
 import {
+    IconBookmarks,
     IconCurrencyYenOff,
     IconHeart,
     IconMusicHeart,
@@ -174,7 +175,7 @@ export default async function HomePage() {
                         description={
                             "コード進行やボーカル、ジャンルなど、さまざまなテーマでまとめたコレクションが見られます！"
                         }
-                        icon={<IconRadio size={40} color="#fa5252" />}
+                        icon={<IconBookmarks size={40} color="#fa5252" />}
                         backgroundColor="#fa5252"
                         href="/collections"
                     />

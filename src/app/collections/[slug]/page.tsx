@@ -44,14 +44,14 @@ export async function generateMetadata(
         title: collection.title,
         description: collection.description,
         openGraph: {
+            ...parentMetadata.openGraph,
             title: collection.title,
             description: collection.description,
-            ...parentMetadata.openGraph,
         },
         twitter: {
+            ...parentMetadata.twitter,
             title: collection.title,
             description: collection.description,
-            ...parentMetadata.twitter,
         },
     };
 }
@@ -60,7 +60,10 @@ async function CollectionPage({ params }: { params: Promise<{ slug: string }> })
     const { slug } = await params;
     const collection = CollectionsData.find((collection) => collection.slug === slug);
 
-    if (!collection || (!collection.songs && !collection.searchParams)) {
+    if (
+        !collection ||
+        (!collection.songs && !collection.searchParams && !collection.searchFunction)
+    ) {
         notFound();
     }
 
@@ -76,6 +79,9 @@ async function CollectionPage({ params }: { params: Promise<{ slug: string }> })
                 notFound();
             }
         }
+    } else if (collection.searchFunction) {
+        const allSongs = await fetchAllSongsAndCache();
+        songs = allSongs.filter(collection.searchFunction);
     } else if (collection.searchParams) {
         for (const searchParam of collection.searchParams) {
             const searchResults = await advancedSearchForSongsAndCache(searchParam);
