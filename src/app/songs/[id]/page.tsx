@@ -25,7 +25,11 @@ export const generateMetadata = async (
     // ブログの詳細データを取得する関数
     let song;
     try {
-        song = await fetchSongByIdAndCache((await params).id);
+        const allSongs = await fetchAllSongsAndCache();
+        song = allSongs.find(async (s) => s.id === (await params).id);
+        if (!song) {
+            song = await fetchSongByIdAndCache((await params).id);
+        }
     } catch (error) {
         console.error("Error fetching song data for metadata:", error);
         return {};
