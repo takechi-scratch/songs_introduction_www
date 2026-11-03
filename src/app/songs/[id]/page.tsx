@@ -22,13 +22,14 @@ export const generateMetadata = async (
     },
     parent: ResolvingMetadata
 ): Promise<Metadata> => {
-    // ブログの詳細データを取得する関数
+    const id = (await params).id;
+
     let song;
     try {
         const allSongs = await fetchAllSongsAndCache();
-        song = allSongs.find(async (s) => s.id === (await params).id);
+        song = allSongs.find((s) => s.id === id);
         if (!song) {
-            song = await fetchSongByIdAndCache((await params).id);
+            song = await fetchSongByIdAndCache(id);
         }
     } catch (error) {
         console.error("Error fetching song data for metadata:", error);
