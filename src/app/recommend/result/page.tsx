@@ -12,12 +12,14 @@ import Link from "next/link";
 import { Suspense } from "react";
 import CreatePlaylistButton from "./createPlaylist";
 
+// おすすめ曲を選出するアルゴリズム
 async function getRecommendedSongs(
     preferenceRankingParam: string,
     powerForRankingWeight: number = 2,
     powerForEachScore: number = 1,
     maxResults: number = 15
 ): Promise<Song[] | SongWithScore[] | null> {
+    // URLが正しくない（診断ページで出力したものではない）場合は結果を出さない
     const preferenceRanking = preferenceRankingParam.split(",").map((item) => item.trim());
     if (
         preferenceRanking.length === 0 ||
@@ -29,11 +31,13 @@ async function getRecommendedSongs(
 
     const preferenceScores: { [key: string]: number } = {};
     const preferenceSongs: { [key: string]: Song } = {};
+    // 作成したランキングから、類似スコアの重みを決定する
     const weightSum = Array.from({ length: preferenceRanking.length })
         .keys()
         .map((index) => Math.pow(preferenceRanking.length - index, powerForRankingWeight))
         .reduce((a, b) => a + b, 0);
 
+    // 各曲の「似ている曲」を取得し、重みをかけてスコアに加算する
     await Promise.all(
         preferenceRanking.map(async (targetSongID, index) => {
             const weight = Math.pow(preferenceRanking.length - index, powerForRankingWeight);
@@ -49,6 +53,7 @@ async function getRecommendedSongs(
         })
     );
 
+    // 好みスコアの高い順にソートして、上位の曲を返す
     const recommendedSongs = Object.keys(preferenceSongs).map((key) => ({
         id: key,
         song: preferenceSongs[key],
@@ -56,6 +61,7 @@ async function getRecommendedSongs(
     }));
     recommendedSongs.sort((a, b) => b.score - a.score);
 
+    // 結果の10%は全曲からランダムに選出する
     const randomPickCount = Math.ceil(maxResults / 10);
     const allSongs = (await fetchAllSongsAndCache()).filter(
         (song) => !(song.id in preferenceSongs || song.publishedType === -1)
