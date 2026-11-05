@@ -8,9 +8,15 @@ import { useUserRole } from "@/hooks/auth";
 import { usePlaylistManager } from "@/hooks/playlist";
 import { SongSearchParams } from "@/lib/search/search";
 import { Song, SongWithScore } from "@/lib/songs/types";
-import { Flex, Button, Text } from "@mantine/core";
+import { Button, Flex, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+declare global {
+    interface Window {
+        searchResults: SongWithScore[];
+    }
+}
 
 function ActionButtons({
     songs,
@@ -93,6 +99,9 @@ export default function Actions({
     songSearchParams: SongSearchParams;
 }) {
     const [slotsActive, setSlotsActive] = useState(false);
+    useEffect(() => {
+        window.searchResults = songs;
+    }, [songs]);
 
     return (
         <>
