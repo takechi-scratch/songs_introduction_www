@@ -1,7 +1,7 @@
 import { SongSearchParams } from "@/lib/search/search";
 import { Song } from "@/lib/songs/types";
 
-export type CollectionCategory = "profile" | "theory" | "recommendation" | "other";
+export type CollectionCategory = "profile" | "analysis" | "recommendation" | "other";
 export type Collection = {
     slug: string;
     title: string;
@@ -32,7 +32,7 @@ export const CollectionsData: Collection[] = [
                 filter: { mainChord: "61451" },
             },
         ],
-        category: "theory",
+        category: "analysis",
     },
     {
         slug: "vocaloid",
@@ -77,7 +77,7 @@ export const CollectionsData: Collection[] = [
                 typeof song.modulationTimes === "number" && song.modulationTimes > 0;
             return hasKeyChange;
         },
-        category: "theory",
+        category: "analysis",
     },
     {
         slug: "illustrator-Driedflower",
@@ -101,6 +101,33 @@ export const CollectionsData: Collection[] = [
             "優しいボーカルが引き立つ曲から、駆け回るようなピアノソロまで、さまざまなピアノの音色を聴き比べてみてください！",
         ].join("\n"),
         searchFunction: (song: Song) => song.pianoRate === 5,
-        category: "theory",
+        category: "analysis",
+    },
+    {
+        slug: "illustrator-makoron",
+        title: "まころんさんのイラストの曲",
+        description: [
+            "MVに[まころんさん](https://x.com/makoron117117)のイラストが使われている曲をまとめました！",
+            "綺麗なイラストに合った、優しく美しい曲調が魅力的です！",
+        ].join("\n"),
+        searchParams: [
+            {
+                filter: { illustrations: "まころん" },
+            },
+        ],
+        category: "profile",
+    },
+    {
+        slug: "duration-3min",
+        title: "3分くらいの曲",
+        description: [
+            "3分前後の曲をまとめました！",
+            "休憩時間に1曲聞きたいときや、カップラーメンのお供などにどうぞ！",
+        ].join("\n"),
+        searchFunction: (song: Song) =>
+            Boolean(
+                song.durationSeconds && song.durationSeconds >= 160 && song.durationSeconds <= 200
+            ),
+        category: "analysis",
     },
 ] as const;

@@ -30,10 +30,10 @@ function CollectionIcon({ category, size }: { category?: CollectionCategory; siz
                     <IconUserCircle size={size} color="#fa5252" />
                 </Tooltip>
             );
-        case "theory":
+        case "analysis":
             return (
                 <Tooltip
-                    label="音楽理論からの分析"
+                    label="分析データのまとめ"
                     events={{ hover: true, focus: true, touch: true }}
                 >
                     <IconClefStaff size={size} color="#228be6" />
@@ -63,7 +63,7 @@ export default function CollectionsList() {
                     data={[
                         { label: "すべて", value: "all" },
                         { label: "基本情報", value: "profile" },
-                        { label: "音楽理論", value: "theory" },
+                        { label: "分析データ", value: "analysis" },
                         { label: "おすすめ", value: "recommendation" },
                         { label: "その他", value: "other" },
                     ]}
