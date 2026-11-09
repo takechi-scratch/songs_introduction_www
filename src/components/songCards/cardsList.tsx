@@ -5,7 +5,13 @@ import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { Center, Pagination, SimpleGrid, Text } from "@mantine/core";
 import { useState } from "react";
 
-export default function CardsList({ songs }: { songs: (Song | SongWithScore | null)[] }) {
+export default function CardsList({
+    songs,
+    forceFullSize = false,
+}: {
+    songs: (Song | SongWithScore | null)[];
+    forceFullSize?: boolean;
+}) {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const songsPerPage = 10;
     const pages = Math.ceil(songs.length / songsPerPage);
@@ -21,7 +27,13 @@ export default function CardsList({ songs }: { songs: (Song | SongWithScore | nu
                 {songs
                     .slice((pageIndex - 1) * songsPerPage, pageIndex * songsPerPage)
                     .map((song, index) => {
-                        return <Card key={song ? song.id : `placeholder-${index}`} song={song} />;
+                        return (
+                            <Card
+                                key={song ? song.id : `placeholder-${index}`}
+                                song={song}
+                                forceFullSize={forceFullSize}
+                            />
+                        );
                     })}
             </SimpleGrid>
             <Center m="lg">

@@ -1,9 +1,9 @@
 "use client";
 
 import SongCard from "@/components/songCards/card";
+import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { Carousel } from "@mantine/carousel";
 import "@mantine/carousel/styles.css";
-import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
 import { Text } from "@mantine/core";
 
 export default function SongsCarousel({
@@ -11,11 +11,13 @@ export default function SongsCarousel({
     displayNotice = true,
     displayScore = null,
     size = "normal",
+    forceFullSize = false,
 }: {
     songs: (Song | SongWithScore | null)[];
     displayNotice?: boolean;
     displayScore?: boolean | null;
     size?: "normal" | "small";
+    forceFullSize?: boolean;
 }) {
     if (displayScore === null) {
         displayScore = songs.every((song) => song && hasScore(song) && song.score !== null);
@@ -31,19 +33,23 @@ export default function SongsCarousel({
     return (
         <>
             <Carousel
-                height={380}
+                height="100%"
                 slideSize={slideSize}
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", skipSnaps: true }}
             >
                 {songs.map((song, index) => (
-                    <Carousel.Slide key={song ? song.id : `placeholder-${index}`}>
-                        <SongCard song={song} displayScore={displayScore} />
+                    <Carousel.Slide key={song ? song.id : `placeholder-${index}`} mb="md">
+                        <SongCard
+                            song={song}
+                            displayScore={displayScore}
+                            forceFullSize={forceFullSize}
+                        />
                     </Carousel.Slide>
                 ))}
             </Carousel>
             {displayNotice && displayScore && (
-                <Text size="sm" opacity={0.6} mb="md">
+                <Text size="sm" opacity={0.6} mt="sm" mb="md">
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>
             )}

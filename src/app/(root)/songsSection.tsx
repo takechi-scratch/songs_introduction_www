@@ -64,6 +64,7 @@ export function SongsSearchSection({
                 songs={showColaborationSongs ? colaborationSongsData : latestSongsData}
                 key={String(showColaborationSongs)}
                 size="small"
+                forceFullSize
             />
         </>
     );
@@ -100,7 +101,7 @@ export function SongsNearestSection({
                     高度な条件で探す
                 </NextAnchor>
             </Flex>
-            <SongsCarousel songs={nearestSongsData} size="small" />
+            <SongsCarousel songs={nearestSongsData} size="small" forceFullSize />
         </>
     );
 }

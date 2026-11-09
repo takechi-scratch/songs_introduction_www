@@ -124,3 +124,5 @@ export default function Actions({
         </>
     );
 }
+
+// TODO: SongsSlotのheightが100%になっておらず、影が付かない問題の修正

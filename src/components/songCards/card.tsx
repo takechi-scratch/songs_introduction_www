@@ -2,10 +2,20 @@
 
 import { formatDateTime, formatElapsedSeconds } from "@/lib/date";
 import { Song, SongWithScore, hasScore } from "@/lib/songs/types";
-import { AspectRatio, Card, Group, HoverCard, Image, Skeleton, Text, Tooltip } from "@mantine/core";
+import {
+    AspectRatio,
+    Flex,
+    Group,
+    HoverCard,
+    Image,
+    Paper,
+    Skeleton,
+    Text,
+    Tooltip,
+} from "@mantine/core";
 import { IconCalendarClock } from "@tabler/icons-react";
+import Link from "next/link";
 import { Suspense } from "react";
-import { NextLinkedCard } from "../nextLink";
 
 export function SongCardSkeleton() {
     return <Skeleton height={350} />;
@@ -48,7 +58,7 @@ function HoverData({
                 )}
                 <HoverCard width={200} shadow="md">
                     <HoverCard.Target>
-                        <Text mt="xs" c="dimmed" size="sm">
+                        <Text c="dimmed" size="sm">
                             {timeDiff < 0 ? "公開予定" : `${formatElapsedSeconds(timeDiff)}前`}
                         </Text>
                     </HoverCard.Target>
@@ -65,10 +75,12 @@ export default function SongCard({
     song,
     isHighLighted,
     displayScore = null,
+    forceFullSize = false,
 }: {
     song: Song | SongWithScore | null;
     isHighLighted?: boolean;
     displayScore?: boolean | null;
+    forceFullSize?: boolean;
 }) {
     if (!song) return <SongCardSkeleton />;
 
@@ -79,13 +91,18 @@ export default function SongCard({
     }
 
     return (
-        <NextLinkedCard
-            shadow="sm"
-            padding="xl"
-            style={{ height: 350, border: isHighLighted ? "4px solid #fd7e14" : undefined }}
-            href={`/songs/${song.id}/`}
-        >
-            <Card.Section>
+        <>
+            <Paper
+                className={`${!forceFullSize && "hidden md:block"}`}
+                shadow="sm"
+                component={Link}
+                style={{
+                    height: 350,
+                    border: isHighLighted ? "4px solid #fd7e14" : undefined,
+                    color: "black",
+                }}
+                href={`/songs/${song.id}/`}
+            >
                 <AspectRatio ratio={16 / 9}>
                     <Image
                         src={song.thumbnailURL || null}
@@ -96,17 +113,60 @@ export default function SongCard({
                         style={{ objectPosition: "center" }}
                     />
                 </AspectRatio>
-            </Card.Section>
 
-            <Group justify="flex-end" mt="xs">
-                <Suspense fallback={<Skeleton width={80} height={20} />}>
-                    <HoverData song={song} score={score} displayScore={displayScore} />
-                </Suspense>
-            </Group>
+                <Flex direction="column" h="auto" px="xl">
+                    <Group justify="flex-end" mt="md">
+                        <Suspense fallback={<Skeleton width={80} height={20} />}>
+                            <HoverData song={song} score={score} displayScore={displayScore} />
+                        </Suspense>
+                    </Group>
 
-            <Text size="md" mt="md">
-                {song.title}
-            </Text>
-        </NextLinkedCard>
+                    <Text size="md" mt="md">
+                        {song.title}
+                    </Text>
+                </Flex>
+            </Paper>
+            {!forceFullSize && (
+                <Paper
+                    className="block md:hidden"
+                    shadow="sm"
+                    component={Link}
+                    style={{
+                        border: isHighLighted ? "4px solid #fd7e14" : undefined,
+                        color: "black",
+                    }}
+                    href={`/songs/${song.id}/`}
+                >
+                    <Flex align="stretch" wrap="nowrap">
+                        <AspectRatio ratio={16 / 9} w="40%">
+                            <Image
+                                src={song.thumbnailURL || null}
+                                alt={`${song.title}のサムネイル`}
+                                fit="cover"
+                                h="100%"
+                                w="100%"
+                                style={{ objectPosition: "center" }}
+                            />
+                        </AspectRatio>
+
+                        <Flex direction="column" h="100%" flex={1} miw={0} px="md" py="sm">
+                            <Group justify="flex-end">
+                                <Suspense fallback={<Skeleton width={80} height={20} />}>
+                                    <HoverData
+                                        song={song}
+                                        score={score}
+                                        displayScore={displayScore}
+                                    />
+                                </Suspense>
+                            </Group>
+
+                            <Text size="sm" mt="xs" h="2.9em" lineClamp={2}>
+                                {song.title}
+                            </Text>
+                        </Flex>
+                    </Flex>
+                </Paper>
+            )}
+        </>
     );
 }

@@ -1,15 +1,15 @@
 "use client";
 
 import SongCard from "@/components/songCards/card";
+import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
+import { shuffleArray } from "@/lib/utils";
 import { Carousel } from "@mantine/carousel";
 import "@mantine/carousel/styles.css";
-import { hasScore, Song, SongWithScore } from "@/lib/songs/types";
-import { Button, Switch, Text, useMatches } from "@mantine/core";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { EmblaCarouselType } from "embla-carousel";
-import { shuffleArray } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { Box, Button, Switch, Text, useMatches } from "@mantine/core";
 import { IconArrowBadgeDownFilled } from "@tabler/icons-react";
+import { EmblaCarouselType } from "embla-carousel";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
 type RollingStatus = "beforeRolling" | "stop" | "rolling" | "slowingDown";
 
@@ -30,7 +30,13 @@ function SlowDownSlot(
     );
 }
 
-export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | null)[] }) {
+export default function SongsSlot({
+    songs,
+    forceFullSize = false,
+}: {
+    songs: (Song | SongWithScore | null)[];
+    forceFullSize?: boolean;
+}) {
     const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
     const [rollingStatus, setRollingStatus] = useState<RollingStatus>("beforeRolling");
     const [autoTransition, setAutoTransition] = useState<boolean>(true);
@@ -91,14 +97,14 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
     }, [rollingStatus, embla, selectedIndexOffset, autoTransition, router, songsInCarousel]);
 
     return (
-        <>
+        <Box m="md">
             <IconArrowBadgeDownFilled
                 size={48}
                 color="#fd7e14"
                 style={{ display: "block", margin: "0 auto" }}
             />
             <Carousel
-                height={380}
+                height="100%"
                 slideSize={{ base: "100%", sm: "33.33%", lg: "20%" }}
                 slideGap={{ base: 0, sm: "md" }}
                 emblaOptions={{ align: "start", loop: true }}
@@ -110,6 +116,7 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                         <SongCard
                             song={song}
                             isHighLighted={selectedSongIndex === index && isHighlighted}
+                            forceFullSize={forceFullSize}
                         />
                     </Carousel.Slide>
                 ))}
@@ -120,6 +127,7 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                         if (!embla) return;
                         setRollingStatus("rolling");
                     }}
+                    mt="sm"
                     mb="md"
                     fullWidth
                     color="cyan"
@@ -133,6 +141,7 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                         if (embla) setRollingStatus("slowingDown");
                     }}
                     disabled={rollingStatus !== "rolling"}
+                    mt="sm"
                     mb="md"
                     fullWidth
                     color="orange"
@@ -155,6 +164,6 @@ export default function SongsSlot({ songs }: { songs: (Song | SongWithScore | nu
                     ※表示されている「類似度」は、独自の分析データを用いて算出したものです。YouTubeでの人気度や評価を反映したものではありません。
                 </Text>
             )}
-        </>
+        </Box>
     );
 }
