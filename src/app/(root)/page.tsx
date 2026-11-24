@@ -97,11 +97,13 @@ export default async function HomePage() {
                         </Anchor>
                         」さんが公開しているすべての曲を聴けるサイトです。
                         <br />
-                        曲の分析データをもとにしたおすすめ機能も充実。あなたにぴったりの曲が、きっと見つかる。
+                        曲の分析データをもとにしたおすすめ機能も充実。
+                        <br />
+                        あなたにぴったりの曲が、きっと見つかる。
                     </Text>
                 </GridCol>
 
-                <GridCol span={{ base: 12, sm: 6 }}>
+                <GridCol span={{ base: 12, sm: 6 }} visibleFrom="sm">
                     <Paper radius="md" p="xs" mt="md" mb="xl">
                         <Image
                             src="/assets/detail-screenshot.png"

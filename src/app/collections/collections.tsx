@@ -40,7 +40,7 @@ export const CollectionsData: Collection[] = [
         description: "MIMIさんのボカロ曲（合成音声をボーカルにした曲）をまとめました！",
         searchParams: [
             {
-                q: "初音ミク | 可不 | 重音テト | 重音テトSV | 音街ウナ | 音街ウナSV | 狐子 | 羽累 | 裏命 | 星界",
+                q: "初音ミク | 可不 | 重音テト | 重音テトSV | 音街ウナ | 音街ウナSV | 狐子 | 羽累 | 裏命 | 星界 | GUMI",
             },
         ],
         category: "profile",
@@ -128,6 +128,20 @@ export const CollectionsData: Collection[] = [
             Boolean(
                 song.durationSeconds && song.durationSeconds >= 160 && song.durationSeconds <= 200
             ),
+        category: "analysis",
+    },
+    {
+        slug: "modulation-frequently",
+        title: "たくさん転調する曲",
+        description: [
+            "2回以上転調する曲をまとめました。転調しながらどんどん移っていく曲調の変化が見逃せません！",
+            "1回転調も含めた[転調する曲](/collections/modulation)のコレクションもあります。",
+        ].join("\n"),
+        searchFunction: (song: Song) => {
+            const hasKeyChange =
+                typeof song.modulationTimes === "number" && song.modulationTimes >= 2;
+            return hasKeyChange;
+        },
         category: "analysis",
     },
 ] as const;

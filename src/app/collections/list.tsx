@@ -9,6 +9,7 @@ import {
     Grid,
     GridCol,
     SegmentedControl,
+    Select,
     Text,
     Tooltip,
 } from "@mantine/core";
@@ -55,11 +56,30 @@ export default function CollectionsList() {
 
     return (
         <>
-            <Flex gap="xs" direction={{ base: "column", sm: "row" }} mb="xl" align="center">
+            <Flex gap="xs" direction="row" mb="xl" align="center">
                 <Text>絞り込み：</Text>
                 <SegmentedControl
+                    visibleFrom="sm"
+                    orientation="horizontal"
                     value={selectedCategory}
                     onChange={setSelectedCategory}
+                    data={[
+                        { label: "すべて", value: "all" },
+                        { label: "基本情報", value: "profile" },
+                        { label: "分析データ", value: "analysis" },
+                        { label: "おすすめ", value: "recommendation" },
+                        { label: "その他", value: "other" },
+                    ]}
+                />
+                <Select
+                    hiddenFrom="sm"
+                    flex={1}
+                    value={selectedCategory}
+                    onChange={(value) => {
+                        if (value) {
+                            setSelectedCategory(value as CollectionCategory | "all");
+                        }
+                    }}
                     data={[
                         { label: "すべて", value: "all" },
                         { label: "基本情報", value: "profile" },
